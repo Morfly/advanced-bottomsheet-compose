@@ -11,10 +11,8 @@ import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -26,10 +24,11 @@ import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import io.morfly.composelayouts.DragValue.*
+import io.morfly.composelayouts.DragValue.Center
+import io.morfly.composelayouts.DragValue.End
+import io.morfly.composelayouts.DragValue.Start
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -55,7 +54,7 @@ fun BottomSheet() {
 //    }
     val state = remember {
         AnchoredDraggableState(
-            initialValue = End,
+            initialValue = Center,
             positionalThreshold = { 0f },
             velocityThreshold = { 0f },
             animationSpec = spring(
@@ -86,9 +85,9 @@ fun BottomSheet() {
             BottomSheetView(state) { sheetSize ->
                 val sheetHeight = sheetSize.height
                 DraggableAnchors {
-                    Start at screenHeightPx - 400f
-                    Center at screenHeightPx - 1000f
-                    End at 100f
+                    Start at layoutHeight - 400f
+                    Center at layoutHeight - 1000f
+                    End at (layoutHeight - sheetHeight).toFloat()
                 }
             }
         }[0].measure(constraints)
@@ -167,7 +166,7 @@ fun BottomSheetView(
                 userScrollEnabled = true,
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                for (i in 0..17) {
+                for (i in 0..25) {
                     item {
                         Text(text = "Test_$i")
                     }
