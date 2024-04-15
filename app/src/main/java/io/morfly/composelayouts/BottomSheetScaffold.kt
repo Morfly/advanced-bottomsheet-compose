@@ -1,5 +1,8 @@
+@file:OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+
 package io.morfly.composelayouts
 
+import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -40,8 +43,33 @@ import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 @Composable
+fun <T: Any> rememberAnchoredDraggableState(
+    initialValue: T,
+    positionalThreshold: (totalDistance: Float) -> Float = { 0f },
+    velocityThreshold: () -> Float = { 0f },
+    animationSpec: AnimationSpec<Float> = spring(
+        dampingRatio = Spring.DampingRatioNoBouncy,
+        stiffness = Spring.StiffnessMedium,
+    ),
+    confirmValueChange: (newValue: T) -> Boolean = { true }
+) = remember {
+    AnchoredDraggableState(
+        initialValue = initialValue,
+        positionalThreshold = positionalThreshold,
+        velocityThreshold = velocityThreshold,
+        animationSpec = animationSpec,
+        confirmValueChange = confirmValueChange
+    )
+}
+
+@Composable
 fun UsingBottomSheetScaffold() {
+    val state = rememberAnchoredDraggableState(
+        initialValue = DragValue.Start
+    )
+
     BottomSheetScaffold(
+        state = state,
         sheetContent = {
             LazyColumn(
                 userScrollEnabled = true,
@@ -60,12 +88,11 @@ fun UsingBottomSheetScaffold() {
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun BottomSheetScaffold(
+fun <T: Any> BottomSheetScaffold(
+    state: AnchoredDraggableState<T>,
     sheetContent: @Composable ColumnScope.() -> Unit,
     modifier: Modifier = Modifier,
-    // scaffoldState: BottomSheetScaffoldState = rememberBottomSheetScaffoldState(), todo
     sheetMaxWidth: Dp = BottomSheetDefaults.SheetMaxWidth,
     sheetShape: Shape = BottomSheetDefaults.ExpandedShape,
     sheetContainerColor: Color = BottomSheetDefaults.ContainerColor,
@@ -156,9 +183,8 @@ internal fun BottomSheetScaffoldLayout(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
-internal fun <T> BottomSheet(
+internal fun <T: Any> BottomSheet(
     state: AnchoredDraggableState<T>,
     calculateAnchors: (sheetSize: IntSize) -> DraggableAnchors<T>,
     sheetMaxWidth: Dp,
@@ -213,7 +239,6 @@ internal fun <T> BottomSheet(
 }
 
 @Suppress("FunctionName")
-@OptIn(ExperimentalFoundationApi::class)
 internal fun <T> BottomSheetNestedScrollConnection(
     anchoredDraggableState: AnchoredDraggableState<T>,
     orientation: Orientation,
