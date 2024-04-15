@@ -14,7 +14,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             ComposeLayoutsTheme {
-                BottomSheet()
+//                BottomSheet1()
+                UsingBottomSheetScaffold()
 //                DynamicHeaderLayout()
 //                FlowLayout {
 //                    repeat(10) {

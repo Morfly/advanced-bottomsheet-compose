@@ -23,7 +23,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import io.morfly.composelayouts.DragValue.Center
@@ -40,11 +39,7 @@ enum class DragValue {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun BottomSheet() {
-    val density = LocalDensity.current
-    val screenHeightDp = LocalConfiguration.current.screenHeightDp.dp
-    val screenHeightPx = with(density) { screenHeightDp.toPx() }
-
+fun BottomSheet1() {
 //    val anchors = remember {
 //        DraggableAnchors {
 //            Start at screenHeightPx - 400f
@@ -146,7 +141,7 @@ fun BottomSheetView(
                 .fillMaxWidth()
                 .nestedScroll(
                     remember(state) {
-                        CustomNestedScroll(state, Orientation.Vertical) {
+                        BottomSheetNestedScrollConnection(state, Orientation.Vertical) {
                             scope.launch { state.settle(it) }
                         }
                     },
