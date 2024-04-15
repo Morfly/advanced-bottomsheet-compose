@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "io.morfly.composelayouts"
+    namespace = "io.morfly.bottomsheet"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "io.morfly.composelayouts"
+        applicationId = "io.morfly.bottomsheet"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
