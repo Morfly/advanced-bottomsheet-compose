@@ -103,7 +103,7 @@ fun <T: Any> BottomSheetScaffold(
     sheetSwipeEnabled: Boolean = true,
     containerColor: Color = MaterialTheme.colorScheme.surface,
     contentColor: Color = contentColorFor(containerColor),
-    content: @Composable (PaddingValues) -> Unit
+    content: @Composable (PaddingValues) -> Unit // todo padding map resize
 ) {
     val state = remember {
         AnchoredDraggableState(
