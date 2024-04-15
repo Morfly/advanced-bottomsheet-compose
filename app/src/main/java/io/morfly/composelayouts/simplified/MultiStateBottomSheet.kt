@@ -116,8 +116,8 @@ internal fun MultiStateBottomSheetContent(
             .onSizeChanged { layoutSize ->
                 val sheetHeight = layoutSize.height
                 val newAnchors = DraggableAnchors {
-                    BottomSheetValue.Collapsed at layoutHeight - 400f
-                    BottomSheetValue.PartiallyExpanded at maxOf(layoutHeight - 1000f, 0f)
+                    BottomSheetValue.Collapsed at (layoutHeight * 0.8f)
+                    BottomSheetValue.PartiallyExpanded at maxOf(layoutHeight * 0.6f, 0f)
                     BottomSheetValue.Expanded at maxOf(layoutHeight - sheetHeight, 0).toFloat()
                 }
                 state.updateAnchors(newAnchors, state.targetValue)
