@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -65,6 +66,7 @@ fun BottomSheetScaffold(
     sheetContent: @Composable ColumnScope.() -> Unit,
     modifier: Modifier = Modifier,
     // scaffoldState: BottomSheetScaffoldState = rememberBottomSheetScaffoldState(), todo
+    sheetMaxWidth: Dp = BottomSheetDefaults.SheetMaxWidth,
     sheetShape: Shape = BottomSheetDefaults.ExpandedShape,
     sheetContainerColor: Color = BottomSheetDefaults.ContainerColor,
     sheetContentColor: Color = contentColorFor(sheetContainerColor),
@@ -78,7 +80,7 @@ fun BottomSheetScaffold(
 ) {
     val state = remember {
         AnchoredDraggableState(
-            initialValue = DragValue.Center,
+            initialValue = DragValue.Start,
             positionalThreshold = { 0f },
             velocityThreshold = { 0f },
             animationSpec = spring(
@@ -97,13 +99,14 @@ fun BottomSheetScaffold(
         bottomSheet = { layoutHeight ->
             BottomSheet(
                 state = state,
+                sheetMaxWidth = sheetMaxWidth,
                 sheetSwipeEnabled = sheetSwipeEnabled,
                 calculateAnchors = { sheetSize ->
                     val sheetHeight = sheetSize.height
                     DraggableAnchors {
                         DragValue.Start at layoutHeight - 400f
-                        DragValue.Center at layoutHeight - 1000f
-                        DragValue.End at (layoutHeight - sheetHeight).toFloat()
+                        DragValue.Center at maxOf(layoutHeight - 1000f, 0f)
+                        DragValue.End at maxOf(layoutHeight - sheetHeight, 0).toFloat()
                     }
                 },
                 shape = sheetShape,
@@ -131,16 +134,16 @@ internal fun BottomSheetScaffoldLayout(
         val layoutWidth = constraints.maxWidth
         val layoutHeight = constraints.maxHeight
 
+        val sheetPlaceable = subcompose("sheet") {
+            bottomSheet(layoutHeight)
+        }[0].measure(constraints)
+
         val bodyPlaceable = subcompose("body") {
             Surface(
                 modifier = modifier,
                 color = containerColor,
                 contentColor = contentColor,
             ) { body(PaddingValues()) }
-        }[0].measure(constraints)
-
-        val sheetPlaceable = subcompose("sheet") {
-            bottomSheet(layoutHeight)
         }[0].measure(constraints)
 
         layout(width = layoutWidth, height = layoutHeight) {
@@ -158,6 +161,7 @@ internal fun BottomSheetScaffoldLayout(
 internal fun <T> BottomSheet(
     state: AnchoredDraggableState<T>,
     calculateAnchors: (sheetSize: IntSize) -> DraggableAnchors<T>,
+    sheetMaxWidth: Dp,
     sheetSwipeEnabled: Boolean,
     shape: Shape,
     containerColor: Color,
@@ -173,6 +177,7 @@ internal fun <T> BottomSheet(
 
     Surface(
         modifier = Modifier
+            .widthIn(max = sheetMaxWidth)
             .fillMaxWidth()
             .nestedScroll(
                 remember(state) {
