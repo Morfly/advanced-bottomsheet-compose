@@ -7,6 +7,7 @@ import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.anchoredDraggable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
@@ -21,6 +22,7 @@ import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -96,11 +98,6 @@ fun BottomSheetScaffold(
             BottomSheet(
                 state = state,
                 sheetSwipeEnabled = sheetSwipeEnabled,
-                shape = sheetShape,
-                containerColor = sheetContainerColor,
-                contentColor = sheetContentColor,
-                tonalElevation = sheetTonalElevation,
-                shadowElevation = sheetShadowElevation,
                 calculateAnchors = { sheetSize ->
                     val sheetHeight = sheetSize.height
                     DraggableAnchors {
@@ -109,6 +106,12 @@ fun BottomSheetScaffold(
                         DragValue.End at (layoutHeight - sheetHeight).toFloat()
                     }
                 },
+                shape = sheetShape,
+                containerColor = sheetContainerColor,
+                contentColor = sheetContentColor,
+                tonalElevation = sheetTonalElevation,
+                shadowElevation = sheetShadowElevation,
+                dragHandle = sheetDragHandle,
                 content = sheetContent
             )
         },
@@ -161,6 +164,7 @@ internal fun <T> BottomSheet(
     contentColor: Color,
     tonalElevation: Dp,
     shadowElevation: Dp,
+    dragHandle: @Composable (() -> Unit)?,
     content: @Composable ColumnScope.() -> Unit
 ) {
     val scope = rememberCoroutineScope()
@@ -192,7 +196,12 @@ internal fun <T> BottomSheet(
         tonalElevation = tonalElevation,
         shadowElevation = shadowElevation,
     ) {
-        Column(modifier = Modifier.fillMaxWidth()) {
+        Column(Modifier.fillMaxWidth()) {
+            if (dragHandle != null) {
+                Box(modifier = Modifier.align(Alignment.CenterHorizontally)) {
+                    dragHandle()
+                }
+            }
             content()
         }
     }
