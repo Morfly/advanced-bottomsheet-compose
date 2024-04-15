@@ -12,18 +12,25 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.BottomSheetDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.Velocity
 import kotlinx.coroutines.launch
@@ -50,11 +57,21 @@ fun UsingBottomSheetScaffold() {
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun BottomSheetScaffold(
     sheetContent: @Composable ColumnScope.() -> Unit,
     modifier: Modifier = Modifier,
+    // scaffoldState: BottomSheetScaffoldState = rememberBottomSheetScaffoldState(), todo
+    sheetShape: Shape = BottomSheetDefaults.ExpandedShape,
+    sheetContainerColor: Color = BottomSheetDefaults.ContainerColor,
+    sheetContentColor: Color = contentColorFor(sheetContainerColor),
+    sheetTonalElevation: Dp = BottomSheetDefaults.Elevation,
+    sheetShadowElevation: Dp = BottomSheetDefaults.Elevation,
+    sheetDragHandle: @Composable (() -> Unit)? = { BottomSheetDefaults.DragHandle() },
+    sheetSwipeEnabled: Boolean = true,
+    containerColor: Color = MaterialTheme.colorScheme.surface,
+    contentColor: Color = contentColorFor(containerColor),
     content: @Composable (PaddingValues) -> Unit
 ) {
     val state = remember {
@@ -73,9 +90,17 @@ fun BottomSheetScaffold(
         modifier = modifier,
         body = content,
         sheetOffset = { state.requireOffset() },
+        containerColor = containerColor,
+        contentColor = contentColor,
         bottomSheet = { layoutHeight ->
             BottomSheet(
                 state = state,
+                sheetSwipeEnabled = sheetSwipeEnabled,
+                shape = sheetShape,
+                containerColor = sheetContainerColor,
+                contentColor = sheetContentColor,
+                tonalElevation = sheetTonalElevation,
+                shadowElevation = sheetShadowElevation,
                 calculateAnchors = { sheetSize ->
                     val sheetHeight = sheetSize.height
                     DraggableAnchors {
@@ -96,8 +121,9 @@ internal fun BottomSheetScaffoldLayout(
     body: @Composable (innerPadding: PaddingValues) -> Unit,
     bottomSheet: @Composable (layoutHeight: Int) -> Unit,
     sheetOffset: () -> Float,
+    containerColor: Color,
+    contentColor: Color,
 ) {
-
     SubcomposeLayout { constraints ->
         val layoutWidth = constraints.maxWidth
         val layoutHeight = constraints.maxHeight
@@ -105,27 +131,18 @@ internal fun BottomSheetScaffoldLayout(
         val bodyPlaceable = subcompose("body") {
             Surface(
                 modifier = modifier,
-//                color = containerColor, TODO
-//                contentColor = contentColor, TODO
-//            ) { body(PaddingValues(bottom = sheetPeekHeight)) } TODO
+                color = containerColor,
+                contentColor = contentColor,
             ) { body(PaddingValues()) }
         }[0].measure(constraints)
 
         val sheetPlaceable = subcompose("sheet") {
             bottomSheet(layoutHeight)
-//            BottomSheetView(state) { sheetSize ->
-//                val sheetHeight = sheetSize.height
-//                DraggableAnchors {
-//                    DragValue.Start at layoutHeight - 400f
-//                    DragValue.Center at layoutHeight - 1000f
-//                    DragValue.End at (layoutHeight - sheetHeight).toFloat()
-//                }
-//            } todo
         }[0].measure(constraints)
 
         layout(width = layoutWidth, height = layoutHeight) {
             val sheetOffsetY = sheetOffset().roundToInt()
-            val sheetOffsetX = 0
+            val sheetOffsetX = Integer.max(0, (layoutWidth - sheetPlaceable.width) / 2)
 
             bodyPlaceable.placeRelative(x = 0, y = 0)
             sheetPlaceable.placeRelative(sheetOffsetX, sheetOffsetY)
@@ -138,8 +155,12 @@ internal fun BottomSheetScaffoldLayout(
 internal fun <T> BottomSheet(
     state: AnchoredDraggableState<T>,
     calculateAnchors: (sheetSize: IntSize) -> DraggableAnchors<T>,
-//    peekHeight: Dp,
-//    sheetSwipeEnabled: Boolean,
+    sheetSwipeEnabled: Boolean,
+    shape: Shape,
+    containerColor: Color,
+    contentColor: Color,
+    tonalElevation: Dp,
+    shadowElevation: Dp,
     content: @Composable ColumnScope.() -> Unit
 ) {
     val scope = rememberCoroutineScope()
@@ -156,11 +177,20 @@ internal fun <T> BottomSheet(
                     }
                 },
             )
-            .anchoredDraggable(state, orientation)
+            .anchoredDraggable(
+                state = state,
+                orientation = orientation,
+                enabled = sheetSwipeEnabled,
+            )
             .onSizeChanged { layoutSize ->
                 val newAnchors = calculateAnchors(layoutSize)
                 state.updateAnchors(newAnchors, state.targetValue)
-            }
+            },
+        shape = shape,
+        color = containerColor,
+        contentColor = contentColor,
+        tonalElevation = tonalElevation,
+        shadowElevation = shadowElevation,
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             content()
