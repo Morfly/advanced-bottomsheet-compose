@@ -72,13 +72,13 @@ fun <T : Any> rememberAnchoredDraggableState(
 @Composable
 fun BottomSheetScaffoldDemo() {
     val draggableState = rememberAnchoredDraggableState(
-        initialValue = DragValue.Start
+        initialValue = DragValue.Center
     )
 
     BottomSheetScaffold(
         draggableState = draggableState,
         defineStates = {
-            DragValue.Start at height(100.dp)
+            DragValue.Start at height(200.dp)
             if (isInitialState) {
                 DragValue.Center at height(percent = 0.5f)
             }
@@ -108,6 +108,7 @@ fun <T : Any> BottomSheetScaffold(
     defineStates: BottomSheetStateConfig<T>.() -> Unit,
     sheetContent: @Composable ColumnScope.() -> Unit,
     modifier: Modifier = Modifier,
+    minHeightThreshold: Dp = 50.dp,
     sheetMaxWidth: Dp = BottomSheetDefaults.SheetMaxWidth,
     sheetShape: Shape = BottomSheetDefaults.ExpandedShape,
     sheetContainerColor: Color = BottomSheetDefaults.ContainerColor,
@@ -120,9 +121,13 @@ fun <T : Any> BottomSheetScaffold(
     contentColor: Color = contentColorFor(containerColor),
     content: @Composable (PaddingValues) -> Unit // todo padding map resize
 ) {
+    val density = LocalDensity.current
+    val minHeightThresholdPx = remember(minHeightThreshold) {
+        with(density) { minHeightThreshold.toPx() }
+    }
+
     var isInitialState by remember { mutableStateOf(true) }
 
-    val density = LocalDensity.current
     BottomSheetScaffoldLayout(
         modifier = modifier,
         body = content,
@@ -145,9 +150,18 @@ fun <T : Any> BottomSheetScaffold(
                     isInitialState = false
 
                     DraggableAnchors {
-                        for ((state, value) in config.states) {
-                            state at value
+                        val states = config.states.toList().sortedBy { (_, value) -> value }
+
+                        var isEmpty = true
+                        var lastValue = -minHeightThresholdPx
+                        for ((state, value) in states) {
+                            if (isEmpty || value - lastValue >= minHeightThresholdPx) {
+                                state at value
+                                isEmpty = false
+                            }
+                            lastValue = value
                         }
+                        require(!isEmpty) { "No bottom sheet states provided!" }
                     }
                 },
                 shape = sheetShape,
