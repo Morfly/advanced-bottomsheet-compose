@@ -122,9 +122,6 @@ fun <T : Any> BottomSheetScaffold(
     content: @Composable (PaddingValues) -> Unit // todo padding map resize
 ) {
     val density = LocalDensity.current
-    val minHeightThresholdPx = remember(minHeightThreshold) {
-        with(density) { minHeightThreshold.toPx() }
-    }
 
     var isInitialState by remember { mutableStateOf(true) }
 
@@ -150,12 +147,13 @@ fun <T : Any> BottomSheetScaffold(
                     isInitialState = false
 
                     DraggableAnchors {
+                        val minHeightThresholdPx = with(density) { minHeightThreshold.toPx() }
                         val states = config.states.toList().sortedBy { (_, value) -> value }
 
                         var isEmpty = true
                         var lastValue = -minHeightThresholdPx
                         for ((state, value) in states) {
-                            if (isEmpty || value - lastValue >= minHeightThresholdPx) {
+                            if (value - lastValue >= minHeightThresholdPx) {
                                 state at value
                                 isEmpty = false
                             }
