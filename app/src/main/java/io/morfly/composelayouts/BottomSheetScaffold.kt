@@ -72,7 +72,7 @@ fun <T : Any> rememberAnchoredDraggableState(
 @Composable
 fun BottomSheetScaffoldDemo() {
     val draggableState = rememberAnchoredDraggableState(
-        initialValue = DragValue.Center
+        initialValue = DragValue.Start
     )
 
     BottomSheetScaffold(
@@ -330,14 +330,14 @@ class BottomSheetStateConfig<T : Any>(
 ) {
     val contentHeight: Float = (layoutHeight - sheetHeight).toFloat()
 
-    internal val states = mutableMapOf<T, Float>()
+    val states = mutableMapOf<T, Float>()
 
-    infix fun T.at(value: Float) {
-        states[this] = maxOf(value, 0f)
+    infix fun T.at(offsetPx: Float) {
+        states[this] = maxOf(offsetPx, 0f)
     }
 
-    fun offset(value: Int): Float {
-        return value.toFloat()
+    fun offset(px: Int): Float {
+        return px.toFloat()
     }
 
     fun offset(value: Dp): Float {
@@ -348,8 +348,8 @@ class BottomSheetStateConfig<T : Any>(
         return layoutHeight * percent
     }
 
-    fun height(value: Int): Float {
-        return layoutHeight - offset(value)
+    fun height(px: Int): Float {
+        return layoutHeight - offset(px)
     }
 
     fun height(value: Dp): Float {
