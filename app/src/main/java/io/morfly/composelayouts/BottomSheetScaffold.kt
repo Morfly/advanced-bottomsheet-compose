@@ -8,7 +8,6 @@ import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
-import androidx.compose.foundation.gestures.DraggableAnchorsConfig
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.layout.Box
@@ -44,7 +43,7 @@ import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 @Composable
-fun <T: Any> rememberAnchoredDraggableState(
+fun <T : Any> rememberAnchoredDraggableState(
     initialValue: T,
     positionalThreshold: (totalDistance: Float) -> Float = { 0f },
     velocityThreshold: () -> Float = { 0f },
@@ -90,7 +89,7 @@ fun BottomSheetScaffoldDemo() {
 }
 
 @Composable
-fun <T: Any> BottomSheetScaffold(
+fun <T : Any> BottomSheetScaffold(
     draggableState: AnchoredDraggableState<T>,
 //    calculateAnchors: DraggableAnchorsConfig<T>.(layoutHeight: Int, sheetHeight: Int) -> Unit,
     sheetContent: @Composable ColumnScope.() -> Unit,
@@ -186,7 +185,7 @@ internal fun BottomSheetScaffoldLayout(
 }
 
 @Composable
-internal fun <T: Any> BottomSheet(
+internal fun <T : Any> BottomSheet(
     state: AnchoredDraggableState<T>,
     calculateAnchors: (sheetSize: IntSize) -> DraggableAnchors<T>,
     sheetMaxWidth: Dp,
