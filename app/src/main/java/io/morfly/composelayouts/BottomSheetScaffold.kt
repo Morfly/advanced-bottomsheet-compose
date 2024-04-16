@@ -187,11 +187,11 @@ internal fun BottomSheetScaffoldLayout(
         val layoutWidth = constraints.maxWidth
         val layoutHeight = constraints.maxHeight
 
-        val sheetPlaceable = subcompose("sheet") {
+        val sheetPlaceable = subcompose(BottomSheetScaffoldLayoutSlot.Sheet) {
             bottomSheet(layoutHeight)
         }[0].measure(constraints)
 
-        val bodyPlaceable = subcompose("body") {
+        val bodyPlaceable = subcompose(BottomSheetScaffoldLayoutSlot.Body) {
             Surface(
                 modifier = modifier,
                 color = containerColor,
@@ -208,6 +208,8 @@ internal fun BottomSheetScaffoldLayout(
         }
     }
 }
+
+private enum class BottomSheetScaffoldLayoutSlot { Body, Sheet }
 
 @Composable
 internal fun <T : Any> BottomSheet(
