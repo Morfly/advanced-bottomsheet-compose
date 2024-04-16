@@ -8,6 +8,7 @@ import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
+import androidx.compose.foundation.gestures.DraggableAnchorsConfig
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.layout.Box
@@ -63,13 +64,13 @@ fun <T: Any> rememberAnchoredDraggableState(
 }
 
 @Composable
-fun UsingBottomSheetScaffold() {
-    val state = rememberAnchoredDraggableState(
+fun BottomSheetScaffoldDemo() {
+    val draggableState = rememberAnchoredDraggableState(
         initialValue = DragValue.Start
     )
 
     BottomSheetScaffold(
-        state = state,
+        draggableState = draggableState,
         sheetContent = {
             LazyColumn(
                 userScrollEnabled = true,
@@ -90,7 +91,8 @@ fun UsingBottomSheetScaffold() {
 
 @Composable
 fun <T: Any> BottomSheetScaffold(
-    state: AnchoredDraggableState<T>,
+    draggableState: AnchoredDraggableState<T>,
+//    calculateAnchors: DraggableAnchorsConfig<T>.(layoutHeight: Int, sheetHeight: Int) -> Unit,
     sheetContent: @Composable ColumnScope.() -> Unit,
     modifier: Modifier = Modifier,
     sheetMaxWidth: Dp = BottomSheetDefaults.SheetMaxWidth,
@@ -105,7 +107,7 @@ fun <T: Any> BottomSheetScaffold(
     contentColor: Color = contentColorFor(containerColor),
     content: @Composable (PaddingValues) -> Unit // todo padding map resize
 ) {
-    val state = remember {
+    val draggableState = remember {
         AnchoredDraggableState(
             initialValue = DragValue.Start,
             positionalThreshold = { 0f },
@@ -120,12 +122,12 @@ fun <T: Any> BottomSheetScaffold(
     BottomSheetScaffoldLayout(
         modifier = modifier,
         body = content,
-        sheetOffset = { state.requireOffset() },
+        sheetOffset = { draggableState.requireOffset() },
         containerColor = containerColor,
         contentColor = contentColor,
         bottomSheet = { layoutHeight ->
             BottomSheet(
-                state = state,
+                state = draggableState,
                 sheetMaxWidth = sheetMaxWidth,
                 sheetSwipeEnabled = sheetSwipeEnabled,
                 calculateAnchors = { sheetSize ->

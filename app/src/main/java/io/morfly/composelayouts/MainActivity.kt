@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.Placeable
-import io.morfly.composelayouts.simplified.MultiStateBottomSheetDemo
 import io.morfly.composelayouts.ui.theme.ComposeLayoutsTheme
 
 class MainActivity : ComponentActivity() {
@@ -17,8 +16,8 @@ class MainActivity : ComponentActivity() {
             ComposeLayoutsTheme {
 //                BottomSheet1()
 
-//                UsingBottomSheetScaffold()
-                MultiStateBottomSheetDemo()
+                BottomSheetScaffoldDemo()
+//                MultiStateBottomSheetDemo()
 
 //                UsingLibraryBottomSheet()
 //                DynamicHeaderLayout()
