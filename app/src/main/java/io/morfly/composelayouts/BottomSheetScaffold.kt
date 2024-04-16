@@ -24,8 +24,12 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -36,9 +40,12 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.Velocity
+import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -70,6 +77,13 @@ fun BottomSheetScaffoldDemo() {
 
     BottomSheetScaffold(
         draggableState = draggableState,
+        defineStates = {
+            DragValue.Start at height(100.dp)
+            if (isInitialState) {
+                DragValue.Center at height(percent = 0.5f)
+            }
+            DragValue.End at contentHeight
+        },
         sheetContent = {
             LazyColumn(
                 userScrollEnabled = true,
@@ -91,7 +105,7 @@ fun BottomSheetScaffoldDemo() {
 @Composable
 fun <T : Any> BottomSheetScaffold(
     draggableState: AnchoredDraggableState<T>,
-//    calculateAnchors: DraggableAnchorsConfig<T>.(layoutHeight: Int, sheetHeight: Int) -> Unit,
+    defineStates: BottomSheetStateConfig<T>.() -> Unit,
     sheetContent: @Composable ColumnScope.() -> Unit,
     modifier: Modifier = Modifier,
     sheetMaxWidth: Dp = BottomSheetDefaults.SheetMaxWidth,
@@ -106,18 +120,9 @@ fun <T : Any> BottomSheetScaffold(
     contentColor: Color = contentColorFor(containerColor),
     content: @Composable (PaddingValues) -> Unit // todo padding map resize
 ) {
-    val draggableState = remember {
-        AnchoredDraggableState(
-            initialValue = DragValue.Start,
-            positionalThreshold = { 0f },
-            velocityThreshold = { 0f },
-            animationSpec = spring(
-                dampingRatio = Spring.DampingRatioNoBouncy,
-                stiffness = Spring.StiffnessMedium,
-            ),
-        )
-    }
+    var isInitialState by remember { mutableStateOf(true) }
 
+    val density = LocalDensity.current
     BottomSheetScaffoldLayout(
         modifier = modifier,
         body = content,
@@ -130,11 +135,19 @@ fun <T : Any> BottomSheetScaffold(
                 sheetMaxWidth = sheetMaxWidth,
                 sheetSwipeEnabled = sheetSwipeEnabled,
                 calculateAnchors = { sheetSize ->
-                    val sheetHeight = sheetSize.height
+                    val config = BottomSheetStateConfig<T>(
+                        isInitialState = isInitialState,
+                        layoutHeight = layoutHeight,
+                        sheetHeight = sheetSize.height,
+                        density = density,
+                    )
+                    config.defineStates()
+                    isInitialState = false
+
                     DraggableAnchors {
-                        DragValue.Start at layoutHeight - 400f
-                        DragValue.Center at maxOf(layoutHeight - 1000f, 0f)
-                        DragValue.End at maxOf(layoutHeight - sheetHeight, 0).toFloat()
+                        for ((state, value) in config.states) {
+                            state at value
+                        }
                     }
                 },
                 shape = sheetShape,
@@ -294,4 +307,44 @@ internal fun <T> BottomSheetNestedScrollConnection(
 
     @JvmName("offsetToFloat")
     private fun Offset.toFloat(): Float = if (orientation == Orientation.Horizontal) x else y
+}
+
+@Immutable
+class BottomSheetStateConfig<T : Any>(
+    val isInitialState: Boolean,
+    val layoutHeight: Int,
+    val sheetHeight: Int,
+    val density: Density,
+) {
+    val contentHeight: Float = (layoutHeight - sheetHeight).toFloat()
+
+    internal val states = mutableMapOf<T, Float>()
+
+    infix fun T.at(value: Float) {
+        states[this] = maxOf(value, 0f)
+    }
+
+    fun offset(value: Int): Float {
+        return value.toFloat()
+    }
+
+    fun offset(value: Dp): Float {
+        return with(density) { value.toPx() }
+    }
+
+    fun offset(percent: Float): Float {
+        return layoutHeight * percent
+    }
+
+    fun height(value: Int): Float {
+        return layoutHeight - offset(value)
+    }
+
+    fun height(value: Dp): Float {
+        return layoutHeight - offset(value)
+    }
+
+    fun height(percent: Float): Float {
+        return layoutHeight - offset(percent)
+    }
 }
