@@ -25,11 +25,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -108,7 +105,6 @@ fun <T : Any> BottomSheetScaffold(
     defineStates: BottomSheetStateConfig<T>.() -> Unit,
     sheetContent: @Composable ColumnScope.() -> Unit,
     modifier: Modifier = Modifier,
-    minHeightThreshold: Dp = 50.dp,
     sheetMaxWidth: Dp = BottomSheetDefaults.SheetMaxWidth,
     sheetShape: Shape = BottomSheetDefaults.ExpandedShape,
     sheetContainerColor: Color = BottomSheetDefaults.ContainerColor,
@@ -119,11 +115,9 @@ fun <T : Any> BottomSheetScaffold(
     sheetSwipeEnabled: Boolean = true,
     containerColor: Color = MaterialTheme.colorScheme.surface,
     contentColor: Color = contentColorFor(containerColor),
-    content: @Composable (PaddingValues) -> Unit // todo padding map resize
+    content: @Composable (PaddingValues) -> Unit
 ) {
     val density = LocalDensity.current
-
-    var isInitialState by remember { mutableStateOf(true) }
 
     BottomSheetScaffoldLayout(
         modifier = modifier,
@@ -138,28 +132,18 @@ fun <T : Any> BottomSheetScaffold(
                 sheetSwipeEnabled = sheetSwipeEnabled,
                 calculateAnchors = { sheetSize ->
                     val config = BottomSheetStateConfig<T>(
-                        isInitialState = isInitialState,
+                        isInitialState = true,
                         layoutHeight = layoutHeight,
                         sheetHeight = sheetSize.height,
                         density = density,
                     )
                     config.defineStates()
-                    isInitialState = false
+                    require(config.states.isNotEmpty()) { "No bottom sheet states provided!" }
 
                     DraggableAnchors {
-                        val minHeightThresholdPx = with(density) { minHeightThreshold.toPx() }
-                        val states = config.states.toList().sortedBy { (_, value) -> value }
-
-                        var isEmpty = true
-                        var lastValue = -minHeightThresholdPx
-                        for ((state, value) in states) {
-                            if (value - lastValue >= minHeightThresholdPx) {
-                                state at value
-                                isEmpty = false
-                            }
-                            lastValue = value
+                        for ((state, value) in config.states) {
+                            state at value
                         }
-                        require(!isEmpty) { "No bottom sheet states provided!" }
                     }
                 },
                 shape = sheetShape,
