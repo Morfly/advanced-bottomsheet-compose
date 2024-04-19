@@ -46,6 +46,19 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
+class BottomSheetState<T : Any>(
+    val draggableState: AnchoredDraggableState<T>,
+    val onMoved: ((sheetOffsetY: Int) -> Unit)?
+)
+
+@Composable
+fun <T : Any> rememberBottomSheetState(
+    draggableState: AnchoredDraggableState<T>,
+    onMoved: ((sheetOffsetY: Int) -> Unit)? = null
+) = remember(draggableState, onMoved) {
+    BottomSheetState(draggableState, onMoved)
+}
+
 @Composable
 fun <T : Any> rememberAnchoredDraggableState(
     initialValue: T,
@@ -56,7 +69,7 @@ fun <T : Any> rememberAnchoredDraggableState(
         stiffness = Spring.StiffnessMedium,
     ),
     confirmValueChange: (newValue: T) -> Boolean = { true }
-) = remember {
+) = remember(positionalThreshold, velocityThreshold, animationSpec, confirmValueChange) {
     AnchoredDraggableState(
         initialValue = initialValue,
         positionalThreshold = positionalThreshold,
@@ -71,9 +84,13 @@ fun BottomSheetScaffoldDemo() {
     val draggableState = rememberAnchoredDraggableState(
         initialValue = DragValue.Start
     )
+    val state = rememberBottomSheetState(
+        draggableState = draggableState,
+        onMoved = { sheetOffsetY -> println("TTAGG onMoved: ${sheetOffsetY}")  }
+    )
 
     BottomSheetScaffold(
-        draggableState = draggableState,
+        sheetState = state,
         defineStates = {
             DragValue.Start at height(200.dp)
             if (isInitialState) {
@@ -101,7 +118,7 @@ fun BottomSheetScaffoldDemo() {
 
 @Composable
 fun <T : Any> BottomSheetScaffold(
-    draggableState: AnchoredDraggableState<T>,
+    sheetState: BottomSheetState<T>,
     defineStates: BottomSheetStateConfig<T>.() -> Unit,
     sheetContent: @Composable ColumnScope.() -> Unit,
     modifier: Modifier = Modifier,
@@ -122,12 +139,13 @@ fun <T : Any> BottomSheetScaffold(
     BottomSheetScaffoldLayout(
         modifier = modifier,
         body = content,
-        sheetOffset = { draggableState.requireOffset() },
+        sheetOffset = { sheetState.draggableState.requireOffset() },
+        onSheetMoved = sheetState.onMoved,
         containerColor = containerColor,
         contentColor = contentColor,
         bottomSheet = { layoutHeight ->
             BottomSheet(
-                state = draggableState,
+                state = sheetState.draggableState,
                 sheetMaxWidth = sheetMaxWidth,
                 sheetSwipeEnabled = sheetSwipeEnabled,
                 calculateAnchors = { sheetSize ->
@@ -164,6 +182,7 @@ internal fun BottomSheetScaffoldLayout(
     body: @Composable (innerPadding: PaddingValues) -> Unit,
     bottomSheet: @Composable (layoutHeight: Int) -> Unit,
     sheetOffset: () -> Float,
+    onSheetMoved: ((sheetOffsetY: Int) -> Unit)?,
     containerColor: Color,
     contentColor: Color,
 ) {
@@ -189,6 +208,8 @@ internal fun BottomSheetScaffoldLayout(
 
             bodyPlaceable.placeRelative(x = 0, y = 0)
             sheetPlaceable.placeRelative(sheetOffsetX, sheetOffsetY)
+
+            onSheetMoved?.invoke(sheetOffsetY)
         }
     }
 }
@@ -307,7 +328,6 @@ internal fun <T> BottomSheetNestedScrollConnection(
     private fun Offset.toFloat(): Float = if (orientation == Orientation.Horizontal) x else y
 }
 
-@Immutable
 class BottomSheetStateConfig<T : Any>(
     val isInitialState: Boolean,
     val layoutHeight: Int,
