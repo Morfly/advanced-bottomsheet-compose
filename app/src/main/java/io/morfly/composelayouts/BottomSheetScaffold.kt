@@ -301,8 +301,8 @@ internal fun <T : Any> BottomSheet(
             .fillMaxWidth()
             .nestedScroll(
                 remember(state) {
-                    BottomSheetNestedScrollConnection(state, orientation) {
-                        scope.launch { state.settle(it) }
+                    BottomSheetNestedScrollConnection(state, orientation) { velocity ->
+                        scope.launch { state.settle(velocity) }
                     }
                 },
             )
