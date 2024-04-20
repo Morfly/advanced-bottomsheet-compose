@@ -24,9 +24,14 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -49,7 +54,17 @@ import kotlin.math.roundToInt
 @Stable
 class BottomSheetState<T : Any>(
     val draggableState: AnchoredDraggableState<T>,
-)
+) {
+    var layoutSize: IntSize? = null
+        internal set
+
+    internal val onStatesRequested = mutableSetOf<(layoutSize: IntSize) -> Unit>()
+
+    fun redefineStates() {
+        val size = layoutSize ?: return
+        onStatesRequested.forEach { call -> call(size) }
+    }
+}
 
 @Composable
 fun <T : Any> rememberBottomSheetState(
@@ -80,10 +95,23 @@ fun <T : Any> rememberAnchoredDraggableState(
 
 @Composable
 fun BottomSheetScaffoldDemo() {
+    var isInitialState by remember { mutableStateOf(true) }
+    var counter by remember { mutableIntStateOf(0) }
+
+    var state: BottomSheetState<DragValue>? = null
     val draggableState = rememberAnchoredDraggableState(
-        initialValue = DragValue.Start
+        initialValue = DragValue.Center,
+        confirmValueChange = {
+            println("TTAGG dragValue: $it")
+            counter++
+            if (counter == 2) {
+                isInitialState = false
+                state?.redefineStates()
+                true
+            } else true
+        }
     )
-    val state = rememberBottomSheetState(draggableState = draggableState)
+    state = rememberBottomSheetState(draggableState = draggableState)
 
     BottomSheetScaffold(
         sheetState = state,
@@ -141,11 +169,11 @@ fun <T : Any> BottomSheetScaffold(
         bottomSheet = { layoutHeight ->
             BottomSheet(
                 state = sheetState.draggableState,
+                sheetState = sheetState,
                 sheetMaxWidth = sheetMaxWidth,
                 sheetSwipeEnabled = sheetSwipeEnabled,
                 calculateAnchors = { sheetSize ->
                     val config = BottomSheetStateConfig<T>(
-                        isInitialState = true,
                         layoutHeight = layoutHeight,
                         sheetHeight = sheetSize.height,
                         density = density,
@@ -202,6 +230,8 @@ internal fun BottomSheetScaffoldLayout(
 
             bodyPlaceable.placeRelative(x = 0, y = 0)
             sheetPlaceable.placeRelative(sheetOffsetX, sheetOffsetY)
+
+            println("TTAGG layout")
         }
     }
 }
@@ -211,6 +241,7 @@ private enum class BottomSheetScaffoldLayoutSlot { Body, Sheet }
 @Composable
 internal fun <T : Any> BottomSheet(
     state: AnchoredDraggableState<T>,
+    sheetState: BottomSheetState<T>,
     calculateAnchors: (sheetSize: IntSize) -> DraggableAnchors<T>,
     sheetMaxWidth: Dp,
     sheetSwipeEnabled: Boolean,
@@ -225,6 +256,19 @@ internal fun <T : Any> BottomSheet(
     val scope = rememberCoroutineScope()
 
     val orientation = Orientation.Vertical
+
+    fun updateAnchors(layoutSize: IntSize) {
+        val newAnchors = calculateAnchors(layoutSize)
+        state.updateAnchors(newAnchors, state.targetValue)
+    }
+
+    DisposableEffect(sheetState) {
+        val onStatesRequested = ::updateAnchors
+        sheetState.onStatesRequested += onStatesRequested
+        onDispose {
+            sheetState.onStatesRequested -= onStatesRequested
+        }
+    }
 
     Surface(
         modifier = Modifier
@@ -243,6 +287,9 @@ internal fun <T : Any> BottomSheet(
                 enabled = sheetSwipeEnabled,
             )
             .onSizeChanged { layoutSize ->
+                println("TTAGG onSizeChanged")
+                sheetState.layoutSize = layoutSize
+
                 val newAnchors = calculateAnchors(layoutSize)
                 state.updateAnchors(newAnchors, state.targetValue)
             },
@@ -321,7 +368,6 @@ internal fun <T> BottomSheetNestedScrollConnection(
 }
 
 class BottomSheetStateConfig<T : Any>(
-    val isInitialState: Boolean,
     val layoutHeight: Int,
     val sheetHeight: Int,
     val density: Density,
