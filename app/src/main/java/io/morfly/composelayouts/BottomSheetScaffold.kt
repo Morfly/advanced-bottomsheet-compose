@@ -67,13 +67,6 @@ class BottomSheetState<T : Any>(
 }
 
 @Composable
-fun <T : Any> rememberBottomSheetState(
-    draggableState: AnchoredDraggableState<T>,
-) = remember(draggableState) {
-    BottomSheetState(draggableState)
-}
-
-@Composable
 fun <T : Any> rememberAnchoredDraggableState(
     initialValue: T,
     positionalThreshold: (totalDistance: Float) -> Float = { 0f },
@@ -94,24 +87,56 @@ fun <T : Any> rememberAnchoredDraggableState(
 }
 
 @Composable
+fun <T : Any> rememberBottomSheetState(
+    draggableState: AnchoredDraggableState<T>,
+) = remember(draggableState) {
+    BottomSheetState(draggableState)
+}
+
+@Composable
+fun <T : Any> rememberBottomSheetState(
+    initialValue: T,
+    positionalThreshold: (totalDistance: Float) -> Float = { 0f },
+    velocityThreshold: () -> Float = { 0f },
+    animationSpec: AnimationSpec<Float> = spring(
+        dampingRatio = Spring.DampingRatioNoBouncy,
+        stiffness = Spring.StiffnessMedium,
+    ),
+    confirmValueChange: BottomSheetState<T>.(newValue: T) -> Boolean = { true }
+): BottomSheetState<T> {
+    var state: BottomSheetState<T>? = null
+
+    val draggableState = rememberAnchoredDraggableState(
+        initialValue = initialValue,
+        positionalThreshold = positionalThreshold,
+        velocityThreshold = velocityThreshold,
+        animationSpec = animationSpec,
+        confirmValueChange = {
+            state?.confirmValueChange(it) ?: true
+        }
+    )
+
+    state = rememberBottomSheetState(draggableState)
+    return state
+}
+
+@Composable
 fun BottomSheetScaffoldDemo() {
     var isInitialState by remember { mutableStateOf(true) }
     var counter by remember { mutableIntStateOf(0) }
 
-    var state: BottomSheetState<DragValue>? = null
-    val draggableState = rememberAnchoredDraggableState(
+    val state = rememberBottomSheetState(
         initialValue = DragValue.Center,
-        confirmValueChange = {
-            println("TTAGG dragValue: $it")
+        confirmValueChange = { value ->
+            println("TTAGG dragValue: $value")
             counter++
             if (counter == 2) {
                 isInitialState = false
-                state?.redefineStates()
-                true
-            } else true
+                redefineStates()
+            }
+            true
         }
     )
-    state = rememberBottomSheetState(draggableState = draggableState)
 
     BottomSheetScaffold(
         sheetState = state,
@@ -290,8 +315,7 @@ internal fun <T : Any> BottomSheet(
                 println("TTAGG onSizeChanged")
                 sheetState.layoutSize = layoutSize
 
-                val newAnchors = calculateAnchors(layoutSize)
-                state.updateAnchors(newAnchors, state.targetValue)
+                updateAnchors(layoutSize)
             },
         shape = shape,
         color = containerColor,
