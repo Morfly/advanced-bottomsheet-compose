@@ -24,7 +24,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -48,15 +47,13 @@ import kotlin.math.roundToInt
 
 class BottomSheetState<T : Any>(
     val draggableState: AnchoredDraggableState<T>,
-    val onMoved: ((sheetOffsetY: Int) -> Unit)?
 )
 
 @Composable
 fun <T : Any> rememberBottomSheetState(
     draggableState: AnchoredDraggableState<T>,
-    onMoved: ((sheetOffsetY: Int) -> Unit)? = null
-) = remember(draggableState, onMoved) {
-    BottomSheetState(draggableState, onMoved)
+) = remember(draggableState) {
+    BottomSheetState(draggableState)
 }
 
 @Composable
@@ -84,13 +81,11 @@ fun BottomSheetScaffoldDemo() {
     val draggableState = rememberAnchoredDraggableState(
         initialValue = DragValue.Start
     )
-    val state = rememberBottomSheetState(
-        draggableState = draggableState,
-        onMoved = { sheetOffsetY -> println("TTAGG onMoved: ${sheetOffsetY}")  }
-    )
+    val state = rememberBottomSheetState(draggableState = draggableState)
 
     BottomSheetScaffold(
         sheetState = state,
+        onMoved = { sheetOffsetY -> println("TTAGG onMoved: ${sheetOffsetY}") },
         defineStates = {
             DragValue.Start at height(200.dp)
             if (isInitialState) {
@@ -132,6 +127,7 @@ fun <T : Any> BottomSheetScaffold(
     sheetSwipeEnabled: Boolean = true,
     containerColor: Color = MaterialTheme.colorScheme.surface,
     contentColor: Color = contentColorFor(containerColor),
+    onMoved: ((sheetOffsetY: Int) -> Unit)? = null,
     content: @Composable (PaddingValues) -> Unit
 ) {
     val density = LocalDensity.current
@@ -140,7 +136,7 @@ fun <T : Any> BottomSheetScaffold(
         modifier = modifier,
         body = content,
         sheetOffset = { sheetState.draggableState.requireOffset() },
-        onSheetMoved = sheetState.onMoved,
+        onSheetMoved = onMoved,
         containerColor = containerColor,
         contentColor = contentColor,
         bottomSheet = { layoutHeight ->
