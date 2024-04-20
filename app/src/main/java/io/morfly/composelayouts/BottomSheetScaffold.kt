@@ -6,6 +6,7 @@ import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
@@ -14,7 +15,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.BottomSheetDefaults
@@ -56,6 +59,7 @@ import kotlin.math.roundToInt
 @Stable
 class BottomSheetState<T : Any>(
     val draggableState: AnchoredDraggableState<T>,
+    val defineStates: BottomSheetStateConfig<T>.() -> Unit,
 ) {
     var layoutSize: IntSize? = null
         internal set
@@ -93,13 +97,15 @@ fun <T : Any> rememberAnchoredDraggableState(
 @Composable
 fun <T : Any> rememberBottomSheetState(
     draggableState: AnchoredDraggableState<T>,
-) = remember(draggableState) {
-    BottomSheetState(draggableState)
+    defineStates: BottomSheetStateConfig<T>.() -> Unit,
+) = remember(draggableState, defineStates) {
+    BottomSheetState(draggableState, defineStates)
 }
 
 @Composable
 fun <T : Any> rememberBottomSheetState(
     initialValue: T,
+    defineStates: BottomSheetStateConfig<T>.() -> Unit,
     positionalThreshold: (totalDistance: Float) -> Float = { 0f },
     velocityThreshold: () -> Float = { 0f },
     animationSpec: AnimationSpec<Float> = spring(
@@ -115,12 +121,12 @@ fun <T : Any> rememberBottomSheetState(
         positionalThreshold = positionalThreshold,
         velocityThreshold = velocityThreshold,
         animationSpec = animationSpec,
-        confirmValueChange = {
-            state?.confirmValueChange(it) ?: true
+        confirmValueChange = { value ->
+            state?.confirmValueChange(value) ?: true
         }
     )
 
-    state = rememberBottomSheetState(draggableState)
+    state = rememberBottomSheetState(draggableState, defineStates)
     return state
 }
 
@@ -131,6 +137,13 @@ fun BottomSheetScaffoldDemo() {
 
     val state = rememberBottomSheetState(
         initialValue = DragValue.Center,
+        defineStates = {
+            DragValue.Start at height(200.dp)
+            if (isInitialState) {
+                DragValue.Center at height(percent = 0.5f)
+            }
+            DragValue.End at contentHeight
+        },
         confirmValueChange = { value ->
             println("TTAGG dragValue: $value")
             counter++
@@ -142,22 +155,13 @@ fun BottomSheetScaffoldDemo() {
         }
     )
 
-    var mover by remember {
-        mutableIntStateOf(0)
-    }
+    var padding by remember { mutableStateOf(200.dp) }
 
     BottomSheetScaffold(
         sheetState = state,
-        defineStates = {
-            DragValue.Start at height(200.dp)
-            if (isInitialState) {
-                DragValue.Center at height(percent = 0.5f)
-            }
-            DragValue.End at contentHeight
-        },
-        onSheetMoved = {
-            mover++
-            println("TTAGG onMoved: ${it}")
+        onSheetMoved = { bottomPadding ->
+            println("TTAGG onMoved: ${bottomPadding}")
+            padding = bottomPadding
         },
         sheetContent = {
             LazyColumn(
@@ -172,7 +176,12 @@ fun BottomSheetScaffoldDemo() {
             }
         },
         content = {
-
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(bottom = padding - 30.dp)
+                    .background(Color.Magenta)
+            )
         }
     )
 }
@@ -180,7 +189,6 @@ fun BottomSheetScaffoldDemo() {
 @Composable
 fun <T : Any> BottomSheetScaffold(
     sheetState: BottomSheetState<T>,
-    defineStates: BottomSheetStateConfig<T>.() -> Unit,
     sheetContent: @Composable ColumnScope.() -> Unit,
     modifier: Modifier = Modifier,
     sheetMaxWidth: Dp = BottomSheetDefaults.SheetMaxWidth,
@@ -216,7 +224,7 @@ fun <T : Any> BottomSheetScaffold(
                         sheetHeight = sheetSize.height,
                         density = density,
                     )
-                    config.defineStates()
+                    sheetState.defineStates(config)
                     require(config.states.isNotEmpty()) { "No bottom sheet states provided!" }
 
                     DraggableAnchors {
