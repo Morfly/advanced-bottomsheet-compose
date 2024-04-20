@@ -59,18 +59,18 @@ import kotlin.math.roundToInt
 @Stable
 class BottomSheetState<T : Any>(
     val draggableState: AnchoredDraggableState<T>,
-    val defineStates: BottomSheetStateConfig<T>.() -> Unit,
+    val defineValues: BottomSheetStateConfig<T>.() -> Unit,
 ) {
     var layoutSize: IntSize? = null
         internal set
     var sheetOffset: Offset? = null
         internal set
 
-    internal val onStatesRequested = mutableSetOf<(layoutSize: IntSize) -> Unit>()
+    internal val onValuesRequested = mutableSetOf<(layoutSize: IntSize) -> Unit>()
 
-    fun redefineStates() {
+    fun redefineValues() {
         val size = layoutSize ?: return
-        onStatesRequested.forEach { call -> call(size) }
+        onValuesRequested.forEach { call -> call(size) }
     }
 }
 
@@ -97,15 +97,15 @@ fun <T : Any> rememberAnchoredDraggableState(
 @Composable
 fun <T : Any> rememberBottomSheetState(
     draggableState: AnchoredDraggableState<T>,
-    defineStates: BottomSheetStateConfig<T>.() -> Unit,
-) = remember(draggableState, defineStates) {
-    BottomSheetState(draggableState, defineStates)
+    defineValues: BottomSheetStateConfig<T>.() -> Unit,
+) = remember(draggableState, defineValues) {
+    BottomSheetState(draggableState, defineValues)
 }
 
 @Composable
 fun <T : Any> rememberBottomSheetState(
     initialValue: T,
-    defineStates: BottomSheetStateConfig<T>.() -> Unit,
+    defineValues: BottomSheetStateConfig<T>.() -> Unit,
     positionalThreshold: (totalDistance: Float) -> Float = { 0f },
     velocityThreshold: () -> Float = { 0f },
     animationSpec: AnimationSpec<Float> = spring(
@@ -126,7 +126,7 @@ fun <T : Any> rememberBottomSheetState(
         }
     )
 
-    state = rememberBottomSheetState(draggableState, defineStates)
+    state = rememberBottomSheetState(draggableState, defineValues)
     return state
 }
 
@@ -137,7 +137,7 @@ fun BottomSheetScaffoldDemo() {
 
     val state = rememberBottomSheetState(
         initialValue = DragValue.Center,
-        defineStates = {
+        defineValues = {
             DragValue.Start at height(200.dp)
             if (isInitialState) {
                 DragValue.Center at height(percent = 0.5f)
@@ -149,7 +149,7 @@ fun BottomSheetScaffoldDemo() {
             counter++
             if (counter == 2) {
                 isInitialState = false
-                redefineStates()
+                redefineValues()
             }
             true
         }
@@ -224,11 +224,11 @@ fun <T : Any> BottomSheetScaffold(
                         sheetHeight = sheetSize.height,
                         density = density,
                     )
-                    sheetState.defineStates(config)
-                    require(config.states.isNotEmpty()) { "No bottom sheet states provided!" }
+                    sheetState.defineValues(config)
+                    require(config.values.isNotEmpty()) { "No bottom sheet values provided!" }
 
                     DraggableAnchors {
-                        for ((state, value) in config.states) {
+                        for ((state, value) in config.values) {
                             state at value
                         }
                     }
@@ -284,7 +284,7 @@ internal fun BottomSheetScaffoldLayout(
             bodyPlaceable.placeRelative(x = 0, y = 0)
             sheetPlaceable.placeRelative(sheetOffsetX, sheetOffsetY)
 
-            println("TTAGG layout sheetOffsetY: $sheetOffsetY")
+//            println("TTAGG layout sheetOffsetY: $sheetOffsetY")
         }
     }
 }
@@ -317,10 +317,10 @@ internal fun <T : Any> BottomSheet(
     }
 
     DisposableEffect(sheetState) {
-        val onStatesRequested = ::updateAnchors
-        sheetState.onStatesRequested += onStatesRequested
+        val onValuesRequested = ::updateAnchors
+        sheetState.onValuesRequested += onValuesRequested
         onDispose {
-            sheetState.onStatesRequested -= onStatesRequested
+            sheetState.onValuesRequested -= onValuesRequested
         }
     }
 
@@ -434,10 +434,10 @@ class BottomSheetStateConfig<T : Any>(
 ) {
     val contentHeight: Float = (layoutHeight - sheetHeight).toFloat()
 
-    val states = mutableMapOf<T, Float>()
+    val values = mutableMapOf<T, Float>()
 
     infix fun T.at(offsetPx: Float) {
-        states[this] = maxOf(offsetPx, 0f)
+        values[this] = maxOf(offsetPx, 0f)
     }
 
     fun offset(px: Int): Float {
