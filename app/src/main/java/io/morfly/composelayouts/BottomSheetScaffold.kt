@@ -41,7 +41,9 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.SubcomposeLayout
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
@@ -56,6 +58,8 @@ class BottomSheetState<T : Any>(
     val draggableState: AnchoredDraggableState<T>,
 ) {
     var layoutSize: IntSize? = null
+        internal set
+    var sheetOffset: Offset? = null
         internal set
 
     internal val onStatesRequested = mutableSetOf<(layoutSize: IntSize) -> Unit>()
@@ -138,6 +142,10 @@ fun BottomSheetScaffoldDemo() {
         }
     )
 
+    var mover by remember {
+        mutableIntStateOf(0)
+    }
+
     BottomSheetScaffold(
         sheetState = state,
         defineStates = {
@@ -146,6 +154,10 @@ fun BottomSheetScaffoldDemo() {
                 DragValue.Center at height(percent = 0.5f)
             }
             DragValue.End at contentHeight
+        },
+        onSheetMoved = {
+            mover++
+            println("TTAGG onMoved: ${it}")
         },
         sheetContent = {
             LazyColumn(
@@ -181,6 +193,7 @@ fun <T : Any> BottomSheetScaffold(
     sheetSwipeEnabled: Boolean = true,
     containerColor: Color = MaterialTheme.colorScheme.surface,
     contentColor: Color = contentColorFor(containerColor),
+    onSheetMoved: ((bottomPadding: Dp) -> Unit)? = null,
     content: @Composable (PaddingValues) -> Unit
 ) {
     val density = LocalDensity.current
@@ -211,6 +224,13 @@ fun <T : Any> BottomSheetScaffold(
                             state at value
                         }
                     }
+                },
+                onMoved = if (onSheetMoved != null) { offset ->
+                    val padding = layoutHeight - offset.y
+                    val paddingDp = with(density) { padding.toDp() }
+                    onSheetMoved(paddingDp)
+                } else {
+                    null
                 },
                 shape = sheetShape,
                 containerColor = sheetContainerColor,
@@ -256,7 +276,7 @@ internal fun BottomSheetScaffoldLayout(
             bodyPlaceable.placeRelative(x = 0, y = 0)
             sheetPlaceable.placeRelative(sheetOffsetX, sheetOffsetY)
 
-            println("TTAGG layout")
+            println("TTAGG layout sheetOffsetY: $sheetOffsetY")
         }
     }
 }
@@ -268,6 +288,7 @@ internal fun <T : Any> BottomSheet(
     state: AnchoredDraggableState<T>,
     sheetState: BottomSheetState<T>,
     calculateAnchors: (sheetSize: IntSize) -> DraggableAnchors<T>,
+    onMoved: ((sheetOffset: Offset) -> Unit)?,
     sheetMaxWidth: Dp,
     sheetSwipeEnabled: Boolean,
     shape: Shape,
@@ -311,10 +332,17 @@ internal fun <T : Any> BottomSheet(
                 orientation = orientation,
                 enabled = sheetSwipeEnabled,
             )
+            .onGloballyPositioned { coordinates ->
+                if (onMoved != null) {
+                    val offset = coordinates.positionInParent()
+                    if (offset != sheetState.sheetOffset) {
+                        sheetState.sheetOffset = offset
+                        onMoved(coordinates.positionInParent())
+                    }
+                }
+            }
             .onSizeChanged { layoutSize ->
-                println("TTAGG onSizeChanged")
                 sheetState.layoutSize = layoutSize
-
                 updateAnchors(layoutSize)
             },
         shape = shape,
