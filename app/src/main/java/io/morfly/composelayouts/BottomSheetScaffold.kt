@@ -31,7 +31,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -113,17 +112,34 @@ fun <T : Any> rememberBottomSheetState(
         dampingRatio = Spring.DampingRatioNoBouncy,
         stiffness = Spring.StiffnessMedium,
     ),
-    confirmValueChange: BottomSheetState<T>.(newValue: T) -> Boolean = { true }
+    confirmValueChange: BottomSheetState<T>.(newValue: T, canRedefine: Boolean) -> Boolean = { _, _ -> true }
 ): BottomSheetState<T> {
-    var state: BottomSheetState<T>? = null
+    lateinit var state: BottomSheetState<T>
+    lateinit var draggableState: AnchoredDraggableState<T>
 
-    val draggableState = rememberAnchoredDraggableState(
+    val scope = rememberCoroutineScope()
+    var prevValue by remember { mutableStateOf<T?>(null) }
+
+    draggableState = rememberAnchoredDraggableState(
         initialValue = initialValue,
         positionalThreshold = positionalThreshold,
         velocityThreshold = velocityThreshold,
         animationSpec = animationSpec,
         confirmValueChange = { value ->
-            state?.confirmValueChange(value) ?: true
+            with(draggableState) {
+                if (!anchors.hasAnchorFor(value)) {
+                    val closest = anchors.closestAnchor(requireOffset())
+                    if (closest != null) {
+                        scope.launch { animateTo(closest) }
+                    }
+                    false
+                } else {
+                    val canRedefine = prevValue != null && prevValue != value
+                    val confirmed = state.confirmValueChange(value, canRedefine)
+                    if (confirmed) prevValue = value
+                    confirmed
+                }
+            }
         }
     )
 
@@ -134,9 +150,6 @@ fun <T : Any> rememberBottomSheetState(
 @Composable
 fun BottomSheetScaffoldDemo() {
     var isInitialState by remember { mutableStateOf(true) }
-    var counter by remember { mutableIntStateOf(0) }
-
-    val scope = rememberCoroutineScope()
 
     val state = rememberBottomSheetState(
         initialValue = DragValue.Center,
@@ -147,24 +160,12 @@ fun BottomSheetScaffoldDemo() {
             }
             DragValue.End at contentHeight
         },
-        confirmValueChange = { value ->
-            println("TTAGG dragValue: $value")
-            counter++
-            if (counter == 2) {
+        confirmValueChange = { _, canRedefine ->
+            if (isInitialState && canRedefine) {
                 isInitialState = false
                 redefineValues()
             }
-
-            if (!draggableState.anchors.hasAnchorFor(value)) {
-                val closest = draggableState.anchors.closestAnchor(draggableState.requireOffset())
-                scope.launch {
-                    draggableState.animateTo(closest!!)
-                }
-                false
-            } else {
-                true
-            }
-
+            true
         }
     )
 
