@@ -11,6 +11,7 @@ import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.anchoredDraggable
+import androidx.compose.foundation.gestures.animateTo
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -81,7 +82,7 @@ fun <T : Any> rememberAnchoredDraggableState(
     velocityThreshold: () -> Float = { 0f },
     animationSpec: AnimationSpec<Float> = spring(
         dampingRatio = Spring.DampingRatioNoBouncy,
-        stiffness = Spring.StiffnessMedium,
+        stiffness = Spring.StiffnessMediumLow,
     ),
     confirmValueChange: (newValue: T) -> Boolean = { true }
 ) = remember(positionalThreshold, velocityThreshold, animationSpec, confirmValueChange) {
@@ -110,7 +111,7 @@ fun <T : Any> rememberBottomSheetState(
     velocityThreshold: () -> Float = { 0f },
     animationSpec: AnimationSpec<Float> = spring(
         dampingRatio = Spring.DampingRatioNoBouncy,
-        stiffness = Spring.StiffnessMedium,
+        stiffness = Spring.StiffnessMediumLow,
     ),
     confirmValueChange: BottomSheetState<T>.(newValue: T) -> Boolean = { true }
 ): BottomSheetState<T> {
@@ -135,6 +136,8 @@ fun BottomSheetScaffoldDemo() {
     var isInitialState by remember { mutableStateOf(true) }
     var counter by remember { mutableIntStateOf(0) }
 
+    val scope = rememberCoroutineScope()
+
     val state = rememberBottomSheetState(
         initialValue = DragValue.Center,
         defineValues = {
@@ -151,7 +154,17 @@ fun BottomSheetScaffoldDemo() {
                 isInitialState = false
                 redefineValues()
             }
-            true
+
+            if (!draggableState.anchors.hasAnchorFor(value)) {
+                val closest = draggableState.anchors.closestAnchor(draggableState.requireOffset())
+                scope.launch {
+                    draggableState.animateTo(closest!!)
+                }
+                false
+            } else {
+                true
+            }
+
         }
     )
 
@@ -160,7 +173,7 @@ fun BottomSheetScaffoldDemo() {
     BottomSheetScaffold(
         sheetState = state,
         onSheetMoved = { bottomPadding ->
-            println("TTAGG onMoved: ${bottomPadding}")
+//            println("TTAGG onMoved: ${bottomPadding}")
             padding = bottomPadding
         },
         sheetContent = {
