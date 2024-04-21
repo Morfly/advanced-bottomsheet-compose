@@ -82,7 +82,7 @@ fun <T : Any> rememberAnchoredDraggableState(
     velocityThreshold: () -> Float = { 0f },
     animationSpec: AnimationSpec<Float> = spring(
         dampingRatio = Spring.DampingRatioNoBouncy,
-        stiffness = Spring.StiffnessMediumLow,
+        stiffness = Spring.StiffnessMedium,
     ),
     confirmValueChange: (newValue: T) -> Boolean = { true }
 ) = remember(positionalThreshold, velocityThreshold, animationSpec, confirmValueChange) {
@@ -111,7 +111,7 @@ fun <T : Any> rememberBottomSheetState(
     velocityThreshold: () -> Float = { 0f },
     animationSpec: AnimationSpec<Float> = spring(
         dampingRatio = Spring.DampingRatioNoBouncy,
-        stiffness = Spring.StiffnessMediumLow,
+        stiffness = Spring.StiffnessMedium,
     ),
     confirmValueChange: BottomSheetState<T>.(newValue: T) -> Boolean = { true }
 ): BottomSheetState<T> {
