@@ -127,17 +127,30 @@ fun <T : Any> rememberBottomSheetState(
         animationSpec = animationSpec,
         confirmValueChange = { value ->
             with(draggableState) {
+                val currentOffset = anchors.positionOf(currentValue)
+                val targetOffset = anchors.positionOf(targetValue)
+                val searchUpwards = currentOffset < targetOffset
+
                 if (!anchors.hasAnchorFor(value)) {
-                    val closest = anchors.closestAnchor(requireOffset())
+                    val closest = anchors.closestAnchor(requireOffset(), searchUpwards)
                     if (closest != null) {
                         scope.launch { animateTo(closest) }
                     }
                     false
                 } else {
-                    val canRedefine = prevValue != null && prevValue != value
+                    val canRedefine = prevValue != null && prevValue == value
                     val confirmed = state.confirmValueChange(value, canRedefine)
-                    if (confirmed) prevValue = value
-                    confirmed
+
+                    if (!anchors.hasAnchorFor(value)) {
+                        val closest = anchors.closestAnchor(requireOffset(), searchUpwards)
+                        if (closest != null) {
+                            scope.launch { animateTo(closest) }
+                        }
+                        false
+                    } else {
+                        if (confirmed) prevValue = value
+                        confirmed
+                    }
                 }
             }
         }
