@@ -161,14 +161,20 @@ fun BottomSheetScaffoldDemo() {
     var isInitialState by remember { mutableStateOf(true) }
 
     val state = rememberBottomSheetState(
-        initialValue = DragValue.Center,
+        initialValue = DragValue.Start,
         defineValues = {
-            DragValue.Start at height(200.dp)
-            if (isInitialState) {
-                DragValue.Center at height(percent = 50)
-            }
+            if (isInitialState)
+                DragValue.Start at height(200.dp)
+            DragValue.Center at height(percent = 50)
             DragValue.End at contentHeight
         },
+        confirmValueChange = {
+            if (isInitialState) {
+                isInitialState = false
+                redefineValues()
+            }
+            true
+        }
     )
 
     var padding by remember { mutableStateOf(200.dp) }
@@ -177,10 +183,6 @@ fun BottomSheetScaffoldDemo() {
         sheetState = state,
         onSheetMoved = { bottomPadding ->
             padding = bottomPadding
-            if (isInitialState) {
-                isInitialState = false
-                state.redefineValues()
-            }
         },
         sheetContent = {
             LazyColumn(
@@ -328,13 +330,15 @@ internal fun <T : Any> BottomSheet(
     val scope = rememberCoroutineScope()
     val orientation = Orientation.Vertical
 
-    fun updateAnchors(layoutSize: IntSize) {
-        val newAnchors = calculateAnchors(layoutSize)
-        draggableState.updateAnchors(newAnchors, draggableState.targetValue)
-    }
-
     DisposableEffect(state) {
-        val onValuesRequested = ::updateAnchors
+        val onValuesRequested = fun(layoutSize: IntSize) {
+            val newAnchors = calculateAnchors(layoutSize)
+            if (draggableState.offset.isNaN()) {
+                draggableState.updateAnchors(newAnchors, draggableState.targetValue)
+            } else scope.launch {
+                draggableState.updateAnchorsAnimated(newAnchors, draggableState.targetValue)
+            }
+        }
         state.onValuesRequested += onValuesRequested
         onDispose {
             state.onValuesRequested -= onValuesRequested
@@ -362,13 +366,14 @@ internal fun <T : Any> BottomSheet(
                     val offset = coordinates.positionInParent()
                     if (offset != state.sheetOffset) {
                         state.sheetOffset = offset
-                        onMoved(coordinates.positionInParent())
+                        onMoved(offset)
                     }
                 }
             }
             .onSizeChanged { layoutSize ->
                 state.layoutSize = layoutSize
-                updateAnchors(layoutSize)
+                val newAnchors = calculateAnchors(layoutSize)
+                draggableState.updateAnchors(newAnchors, draggableState.targetValue)
             },
         shape = shape,
         color = containerColor,
