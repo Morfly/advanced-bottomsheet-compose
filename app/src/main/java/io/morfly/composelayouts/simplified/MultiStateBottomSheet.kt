@@ -105,13 +105,13 @@ internal fun MultiStateBottomSheetContent(
         modifier = Modifier
             .widthIn(max = 640.dp)
             .fillMaxWidth()
-            .nestedScroll(
-                remember(state) {
-                    BottomSheetNestedScrollConnection(state, Orientation.Vertical) {
-                        scope.launch { state.settle(it) }
-                    }
-                },
-            )
+//            .nestedScroll(
+//                remember(state) {
+//                    BottomSheetNestedScrollConnection(state, Orientation.Vertical) {
+//                        scope.launch { state.settle(it) }
+//                    }
+//                },
+//            )
             .anchoredDraggable(state, Orientation.Vertical)
             .onSizeChanged { layoutSize ->
                 val sheetHeight = layoutSize.height

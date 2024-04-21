@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
-
 package io.morfly.composelayouts
 
 import androidx.annotation.IntRange
@@ -8,11 +6,7 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.AnchoredDraggableState
-import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.anchoredDraggable
-import androidx.compose.foundation.gestures.animateTo
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -55,9 +49,15 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
+import io.morfly.androidx.compose.foundation.gestures.AnchoredDraggableState
+import io.morfly.androidx.compose.foundation.gestures.DraggableAnchors
+import io.morfly.androidx.compose.foundation.gestures.anchoredDraggable
+import io.morfly.androidx.compose.foundation.gestures.animateTo
+import io.morfly.androidx.compose.foundation.gestures.updateAnchorsAnimated
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
+@ExperimentalFoundationApi
 @Stable
 class BottomSheetState<T : Any>(
     val draggableState: AnchoredDraggableState<T>,
@@ -76,6 +76,7 @@ class BottomSheetState<T : Any>(
     }
 }
 
+@ExperimentalFoundationApi
 @Composable
 fun <T : Any> rememberAnchoredDraggableState(
     initialValue: T,
@@ -96,6 +97,7 @@ fun <T : Any> rememberAnchoredDraggableState(
     )
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun <T : Any> rememberBottomSheetState(
     draggableState: AnchoredDraggableState<T>,
@@ -104,6 +106,7 @@ fun <T : Any> rememberBottomSheetState(
     BottomSheetState(draggableState, defineValues)
 }
 
+@ExperimentalFoundationApi
 @Composable
 fun <T : Any> rememberBottomSheetState(
     initialValue: T,
@@ -156,6 +159,7 @@ fun <T : Any> rememberBottomSheetState(
     return state
 }
 
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun BottomSheetScaffoldDemo() {
     var isInitialState by remember { mutableStateOf(true) }
@@ -207,6 +211,8 @@ fun BottomSheetScaffoldDemo() {
     )
 }
 
+@ExperimentalMaterial3Api
+@ExperimentalFoundationApi
 @Composable
 fun <T : Any> BottomSheetScaffold(
     sheetState: BottomSheetState<T>,
@@ -311,6 +317,7 @@ internal fun BottomSheetScaffoldLayout(
 
 private enum class BottomSheetScaffoldLayoutSlot { Body, Sheet }
 
+@ExperimentalFoundationApi
 @Composable
 internal fun <T : Any> BottomSheet(
     state: BottomSheetState<T>,
@@ -392,6 +399,7 @@ internal fun <T : Any> BottomSheet(
     }
 }
 
+@ExperimentalFoundationApi
 @Suppress("FunctionName")
 internal fun <T> BottomSheetNestedScrollConnection(
     anchoredDraggableState: AnchoredDraggableState<T>,

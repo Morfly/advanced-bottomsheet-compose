@@ -139,13 +139,13 @@ fun BottomSheetView(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .nestedScroll(
-                    remember(state) {
-                        BottomSheetNestedScrollConnection(state, Orientation.Vertical) {
-                            scope.launch { state.settle(it) }
-                        }
-                    },
-                )
+//                .nestedScroll(
+//                    remember(state) {
+//                        BottomSheetNestedScrollConnection(state, Orientation.Vertical) {
+//                            scope.launch { state.settle(it) }
+//                        }
+//                    },
+//                )
                 .onSizeChanged { layoutSize ->
                     val newAnchors = calculateAnchors(layoutSize)
                     val newTarget = when (state.targetValue) {

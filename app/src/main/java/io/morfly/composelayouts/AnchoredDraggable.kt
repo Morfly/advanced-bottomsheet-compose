@@ -14,14 +14,19 @@
  * limitations under the License.
  */
 
-package androidx.compose.foundation.gestures
+package io.morfly.androidx.compose.foundation.gestures
 
+import android.annotation.SuppressLint
 import androidx.annotation.FloatRange
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.animate
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.MutatePriority
 import androidx.compose.foundation.MutatorMutex
+import androidx.compose.foundation.gestures.DragScope
+import androidx.compose.foundation.gestures.DraggableState
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Stable
@@ -34,13 +39,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.structuralEqualityPolicy
 import androidx.compose.ui.Modifier
-import kotlin.math.abs
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import kotlin.math.abs
 
 /**
  * Structure that represents the anchors of a [AnchoredDraggableState].
@@ -158,6 +163,7 @@ fun <T : Any> DraggableAnchors(
  * gesture crosses the touchSlop. This is useful to prevent users from "catching" an animating
  * widget when pressing on it. See [draggable] to learn more about startDragImmediately.
  */
+@SuppressLint("ModifierFactoryUnreferencedReceiver")
 @ExperimentalFoundationApi
 fun <T> Modifier.anchoredDraggable(
     state: AnchoredDraggableState<T>,

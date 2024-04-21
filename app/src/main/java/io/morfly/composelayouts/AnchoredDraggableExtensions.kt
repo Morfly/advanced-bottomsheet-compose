@@ -1,9 +1,6 @@
-package io.morfly.composelayouts
+package io.morfly.androidx.compose.foundation.gestures
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.gestures.AnchoredDraggableState
-import androidx.compose.foundation.gestures.DraggableAnchors
-import androidx.compose.foundation.gestures.animateTo
 
 @OptIn(ExperimentalFoundationApi::class)
 suspend fun <T> AnchoredDraggableState<T>.updateAnchorsAnimated(
