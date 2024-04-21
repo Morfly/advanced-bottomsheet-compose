@@ -233,8 +233,7 @@ fun <T : Any> BottomSheetScaffold(
         contentColor = contentColor,
         bottomSheet = { layoutHeight ->
             BottomSheet(
-                state = sheetState.draggableState,
-                sheetState = sheetState,
+                state = sheetState,
                 sheetMaxWidth = sheetMaxWidth,
                 sheetSwipeEnabled = sheetSwipeEnabled,
                 calculateAnchors = { sheetSize ->
@@ -312,8 +311,7 @@ private enum class BottomSheetScaffoldLayoutSlot { Body, Sheet }
 
 @Composable
 internal fun <T : Any> BottomSheet(
-    state: AnchoredDraggableState<T>,
-    sheetState: BottomSheetState<T>,
+    state: BottomSheetState<T>,
     calculateAnchors: (sheetSize: IntSize) -> DraggableAnchors<T>,
     onMoved: ((sheetOffset: Offset) -> Unit)?,
     sheetMaxWidth: Dp,
@@ -326,20 +324,20 @@ internal fun <T : Any> BottomSheet(
     dragHandle: @Composable (() -> Unit)?,
     content: @Composable ColumnScope.() -> Unit
 ) {
+    val draggableState = state.draggableState
     val scope = rememberCoroutineScope()
-
     val orientation = Orientation.Vertical
 
     fun updateAnchors(layoutSize: IntSize) {
         val newAnchors = calculateAnchors(layoutSize)
-        state.updateAnchors(newAnchors, state.targetValue)
+        draggableState.updateAnchors(newAnchors, draggableState.targetValue)
     }
 
-    DisposableEffect(sheetState) {
+    DisposableEffect(state) {
         val onValuesRequested = ::updateAnchors
-        sheetState.onValuesRequested += onValuesRequested
+        state.onValuesRequested += onValuesRequested
         onDispose {
-            sheetState.onValuesRequested -= onValuesRequested
+            state.onValuesRequested -= onValuesRequested
         }
     }
 
@@ -349,27 +347,27 @@ internal fun <T : Any> BottomSheet(
             .fillMaxWidth()
             .nestedScroll(
                 remember(state) {
-                    BottomSheetNestedScrollConnection(state, orientation) { velocity ->
-                        scope.launch { state.settle(velocity) }
+                    BottomSheetNestedScrollConnection(draggableState, orientation) { velocity ->
+                        scope.launch { draggableState.settle(velocity) }
                     }
                 },
             )
             .anchoredDraggable(
-                state = state,
+                state = draggableState,
                 orientation = orientation,
                 enabled = sheetSwipeEnabled,
             )
             .onGloballyPositioned { coordinates ->
                 if (onMoved != null) {
                     val offset = coordinates.positionInParent()
-                    if (offset != sheetState.sheetOffset) {
-                        sheetState.sheetOffset = offset
+                    if (offset != state.sheetOffset) {
+                        state.sheetOffset = offset
                         onMoved(coordinates.positionInParent())
                     }
                 }
             }
             .onSizeChanged { layoutSize ->
-                sheetState.layoutSize = layoutSize
+                state.layoutSize = layoutSize
                 updateAnchors(layoutSize)
             },
         shape = shape,
