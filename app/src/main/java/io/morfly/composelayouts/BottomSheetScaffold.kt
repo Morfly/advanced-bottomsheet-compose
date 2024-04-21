@@ -2,6 +2,7 @@
 
 package io.morfly.composelayouts
 
+import androidx.annotation.IntRange
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
@@ -60,7 +61,7 @@ import kotlin.math.roundToInt
 @Stable
 class BottomSheetState<T : Any>(
     val draggableState: AnchoredDraggableState<T>,
-    val defineValues: BottomSheetStateConfig<T>.() -> Unit,
+    val defineValues: BottomSheetValuesConfig<T>.() -> Unit,
 ) {
     var layoutSize: IntSize? = null
         internal set
@@ -98,7 +99,7 @@ fun <T : Any> rememberAnchoredDraggableState(
 @Composable
 fun <T : Any> rememberBottomSheetState(
     draggableState: AnchoredDraggableState<T>,
-    defineValues: BottomSheetStateConfig<T>.() -> Unit,
+    defineValues: BottomSheetValuesConfig<T>.() -> Unit,
 ) = remember(draggableState, defineValues) {
     BottomSheetState(draggableState, defineValues)
 }
@@ -106,7 +107,7 @@ fun <T : Any> rememberBottomSheetState(
 @Composable
 fun <T : Any> rememberBottomSheetState(
     initialValue: T,
-    defineValues: BottomSheetStateConfig<T>.() -> Unit,
+    defineValues: BottomSheetValuesConfig<T>.() -> Unit,
     positionalThreshold: (totalDistance: Float) -> Float = { 0f },
     velocityThreshold: () -> Float = { 0f },
     animationSpec: AnimationSpec<Float> = spring(
@@ -129,11 +130,17 @@ fun <T : Any> rememberBottomSheetState(
         confirmValueChange = { value ->
             with(draggableState) {
                 val currentOffset = requireOffset()
-                val searchUpwards = prevOffset < currentOffset
+                val searchUpwards =
+                    if (prevOffset == currentOffset) null
+                    else prevOffset < currentOffset
 
                 prevOffset = currentOffset
                 if (!anchors.hasAnchorFor(value)) {
-                    val closest = anchors.closestAnchor(currentOffset, searchUpwards)
+                    val closest = if (searchUpwards != null) {
+                        anchors.closestAnchor(currentOffset, searchUpwards)
+                    } else {
+                        anchors.closestAnchor(currentOffset)
+                    }
                     if (closest != null) {
                         scope.launch { animateTo(closest) }
                     }
@@ -158,7 +165,7 @@ fun BottomSheetScaffoldDemo() {
         defineValues = {
             DragValue.Start at height(200.dp)
             if (isInitialState) {
-                DragValue.Center at height(percent = 0.5f)
+                DragValue.Center at height(percent = 50)
             }
             DragValue.End at contentHeight
         },
@@ -231,7 +238,7 @@ fun <T : Any> BottomSheetScaffold(
                 sheetMaxWidth = sheetMaxWidth,
                 sheetSwipeEnabled = sheetSwipeEnabled,
                 calculateAnchors = { sheetSize ->
-                    val config = BottomSheetStateConfig<T>(
+                    val config = BottomSheetValuesConfig<T>(
                         layoutHeight = layoutHeight,
                         sheetHeight = sheetSize.height,
                         density = density,
@@ -439,40 +446,43 @@ internal fun <T> BottomSheetNestedScrollConnection(
     private fun Offset.toFloat(): Float = if (orientation == Orientation.Horizontal) x else y
 }
 
-class BottomSheetStateConfig<T : Any>(
+class BottomSheetValuesConfig<T : Any>(
     val layoutHeight: Int,
     val sheetHeight: Int,
     val density: Density,
 ) {
-    val contentHeight: Float = (layoutHeight - sheetHeight).toFloat()
+    val contentHeight = Value((layoutHeight - sheetHeight).toFloat())
 
     val values = mutableMapOf<T, Float>()
 
-    infix fun T.at(offsetPx: Float) {
-        values[this] = maxOf(offsetPx, 0f)
+    infix fun T.at(value: Value) {
+        values[this] = maxOf(value.offsetPx, 0f)
     }
 
-    fun offset(px: Int): Float {
-        return px.toFloat()
+    fun offset(px: Float): Value {
+        return Value(px)
     }
 
-    fun offset(value: Dp): Float {
-        return with(density) { value.toPx() }
+    fun offset(offset: Dp): Value {
+        return Value(with(density) { offset.toPx() })
     }
 
-    fun offset(percent: Float): Float {
-        return layoutHeight * percent
+    fun offset(@IntRange(from = 0, to = 100) percent: Int): Value {
+        return Value(layoutHeight * percent / 100f)
     }
 
-    fun height(px: Int): Float {
-        return layoutHeight - offset(px)
+    fun height(px: Float): Value {
+        return Value(layoutHeight - offset(px).offsetPx)
     }
 
-    fun height(value: Dp): Float {
-        return layoutHeight - offset(value)
+    fun height(height: Dp): Value {
+        return Value(layoutHeight - offset(height).offsetPx)
     }
 
-    fun height(percent: Float): Float {
-        return layoutHeight - offset(percent)
+    fun height(@IntRange(from = 0, to = 100) percent: Int): Value {
+        return Value(layoutHeight - offset(percent).offsetPx)
     }
+
+    @JvmInline
+    value class Value internal constructor(val offsetPx: Float)
 }
