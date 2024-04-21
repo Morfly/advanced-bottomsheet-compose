@@ -12,6 +12,8 @@ import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.gestures.animateTo
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -31,6 +33,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -43,6 +46,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
@@ -112,13 +116,13 @@ fun <T : Any> rememberBottomSheetState(
         dampingRatio = Spring.DampingRatioNoBouncy,
         stiffness = Spring.StiffnessMedium,
     ),
-    confirmValueChange: BottomSheetState<T>.(newValue: T, canRedefine: Boolean) -> Boolean = { _, _ -> true }
+    confirmValueChange: BottomSheetState<T>.(newValue: T) -> Boolean = { true }
 ): BottomSheetState<T> {
     lateinit var state: BottomSheetState<T>
     lateinit var draggableState: AnchoredDraggableState<T>
 
     val scope = rememberCoroutineScope()
-    var prevValue by remember { mutableStateOf<T?>(null) }
+    var prevOffset by remember { mutableFloatStateOf(0f) }
 
     draggableState = rememberAnchoredDraggableState(
         initialValue = initialValue,
@@ -127,30 +131,18 @@ fun <T : Any> rememberBottomSheetState(
         animationSpec = animationSpec,
         confirmValueChange = { value ->
             with(draggableState) {
-                val currentOffset = anchors.positionOf(currentValue)
-                val targetOffset = anchors.positionOf(targetValue)
-                val searchUpwards = currentOffset < targetOffset
+                val currentOffset = requireOffset()
+                val searchUpwards = prevOffset < currentOffset
 
+                prevOffset = currentOffset
                 if (!anchors.hasAnchorFor(value)) {
-                    val closest = anchors.closestAnchor(requireOffset(), searchUpwards)
+                    val closest = anchors.closestAnchor(currentOffset, searchUpwards)
                     if (closest != null) {
                         scope.launch { animateTo(closest) }
                     }
                     false
                 } else {
-                    val canRedefine = prevValue != null && prevValue == value
-                    val confirmed = state.confirmValueChange(value, canRedefine)
-
-                    if (!anchors.hasAnchorFor(value)) {
-                        val closest = anchors.closestAnchor(requireOffset(), searchUpwards)
-                        if (closest != null) {
-                            scope.launch { animateTo(closest) }
-                        }
-                        false
-                    } else {
-                        if (confirmed) prevValue = value
-                        confirmed
-                    }
+                    state.confirmValueChange(value)
                 }
             }
         }
@@ -173,13 +165,6 @@ fun BottomSheetScaffoldDemo() {
             }
             DragValue.End at contentHeight
         },
-        confirmValueChange = { _, canRedefine ->
-            if (isInitialState && canRedefine) {
-                isInitialState = false
-                redefineValues()
-            }
-            true
-        }
     )
 
     var padding by remember { mutableStateOf(200.dp) }
@@ -187,8 +172,11 @@ fun BottomSheetScaffoldDemo() {
     BottomSheetScaffold(
         sheetState = state,
         onSheetMoved = { bottomPadding ->
-//            println("TTAGG onMoved: ${bottomPadding}")
             padding = bottomPadding
+            if (isInitialState) {
+                isInitialState = false
+                state.redefineValues()
+            }
         },
         sheetContent = {
             LazyColumn(
