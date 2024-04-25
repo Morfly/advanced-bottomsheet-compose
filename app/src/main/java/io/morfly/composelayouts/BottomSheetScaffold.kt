@@ -185,8 +185,8 @@ fun BottomSheetScaffoldDemo() {
 
     BottomSheetScaffold(
         sheetState = state,
-        onSheetMoved = { bottomPadding ->
-            padding = bottomPadding
+        onSheetMoved = { sheetHeight ->
+            padding = sheetHeight
         },
         sheetContent = {
             LazyColumn(
@@ -228,7 +228,7 @@ fun <T : Any> BottomSheetScaffold(
     sheetSwipeEnabled: Boolean = true,
     containerColor: Color = MaterialTheme.colorScheme.surface,
     contentColor: Color = contentColorFor(containerColor),
-    onSheetMoved: ((bottomPadding: Dp) -> Unit)? = null,
+    onSheetMoved: ((sheetHeight: Dp) -> Unit)? = null,
     content: @Composable (PaddingValues) -> Unit
 ) {
     val density = LocalDensity.current
