@@ -70,6 +70,10 @@ class BottomSheetState<T : Any>(
 
     internal val onValuesRequested = mutableSetOf<(layoutSize: IntSize) -> Unit>()
 
+    fun requireLayoutSize() = layoutSize!!
+
+    fun requireSheetOffse() = sheetOffset!!
+
     fun redefineValues() {
         val size = layoutSize ?: return
         onValuesRequested.forEach { call -> call(size) }
