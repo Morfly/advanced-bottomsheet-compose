@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
@@ -65,12 +64,12 @@ class BottomSheetState<T : Any>(
     val draggableState: AnchoredDraggableState<T>,
     val defineValues: BottomSheetValuesConfig<T>.() -> Unit,
 ) {
+    internal val onValuesRequested = mutableSetOf<(layoutSize: IntSize) -> Unit>()
+
     var layoutSize: IntSize? = null
         internal set
     var sheetOffset: Offset? = null
         internal set
-
-    internal val onValuesRequested = mutableSetOf<(layoutSize: IntSize) -> Unit>()
 
     fun requireLayoutSize() = layoutSize!!
 
