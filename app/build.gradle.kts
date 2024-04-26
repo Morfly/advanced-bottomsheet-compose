@@ -51,7 +51,7 @@ android {
 }
 
 dependencies {
-    implementation(projects.library)
+    implementation(projects.bottomsheetMaterial3)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

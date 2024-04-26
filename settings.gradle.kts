@@ -22,4 +22,4 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 rootProject.name = "MultiState-BottomSheet"
 include(":app")
-include(":library")
+include(":bottomsheet-material3")
