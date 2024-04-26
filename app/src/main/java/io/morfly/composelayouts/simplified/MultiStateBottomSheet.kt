@@ -26,12 +26,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.dp
-import io.morfly.composelayouts.BottomSheetNestedScrollConnection
-import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 enum class BottomSheetValue {
