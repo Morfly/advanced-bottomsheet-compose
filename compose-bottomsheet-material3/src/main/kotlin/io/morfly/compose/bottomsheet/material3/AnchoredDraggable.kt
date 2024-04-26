@@ -387,6 +387,7 @@ class AnchoredDraggableState<T>(
     private var dragTarget: T? by mutableStateOf(null)
 
     var anchors: DraggableAnchors<T> by mutableStateOf(emptyDraggableAnchors())
+//        FIXME: This line was changed as compared to AOSP version of the file.
 //        private set
 
     /**
