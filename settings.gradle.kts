@@ -18,7 +18,8 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
-rootProject.name = "ComposeLayouts"
+rootProject.name = "MultiState-BottomSheet"
 include(":app")
- 
+include(":library")
