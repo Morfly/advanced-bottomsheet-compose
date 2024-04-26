@@ -191,8 +191,10 @@ fun BottomSheetScaffoldDemo() {
     BottomSheetScaffold(
         sheetState = state,
         onSheetMoved = { sheetHeight ->
-            if (sheetHeight <= 420.dp) {
-                padding = sheetHeight
+            padding = if (sheetHeight <= 420.dp) {
+                sheetHeight
+            } else {
+                420.dp
             }
         },
         sheetContent = {
@@ -370,9 +372,13 @@ internal fun <T : Any> BottomSheet(
             .fillMaxWidth()
             .nestedScroll(
                 remember(state) {
-                    BottomSheetNestedScrollConnection(draggableState, orientation) { velocity ->
-                        scope.launch { draggableState.settle(velocity) }
-                    }
+                    BottomSheetNestedScrollConnection(
+                        anchoredDraggableState = draggableState,
+                        orientation = orientation,
+                        onFling = { velocity ->
+                            scope.launch { draggableState.settle(velocity) }
+                        }
+                    )
                 },
             )
             .anchoredDraggable(
