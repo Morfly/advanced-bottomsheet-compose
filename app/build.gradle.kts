@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "io.morfly.bottomsheet"
+    namespace = "io.morfly.compose.bottomsheet.material3.sample"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "io.morfly.bottomsheet.material3"
+        applicationId = "io.morfly.bottomsheet.sample"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
@@ -51,7 +51,7 @@ android {
 }
 
 dependencies {
-    implementation(projects.bottomsheetMaterial3)
+    implementation(projects.composeBottomsheetMaterial3)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

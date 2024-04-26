@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "io.morfly.compose.bottomsheet"
+    namespace = "io.morfly.compose.bottomsheet.material3"
     compileSdk = 34
 
     defaultConfig {
