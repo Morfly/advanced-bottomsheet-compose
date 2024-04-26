@@ -8,7 +8,7 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "io.morfly.bottomsheet"
+        applicationId = "io.morfly.bottomsheet.material3"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
