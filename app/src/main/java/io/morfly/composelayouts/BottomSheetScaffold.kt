@@ -170,7 +170,7 @@ fun BottomSheetScaffoldDemo() {
     var isInitialState by remember { mutableStateOf(true) }
 
     val state = rememberBottomSheetState(
-        initialValue = DragValue.Start,
+        initialValue = DragValue.Center,
         defineValues = {
             DragValue.Start at height(200.dp)
             if (isInitialState)
