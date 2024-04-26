@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,7 +26,7 @@ import io.morfly.compose.bottomsheet.material3.rememberBottomSheetState
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun BottomSheetScaffoldDemo() {
-    var isInitialState by remember { mutableStateOf(true) }
+    var isInitialState by rememberSaveable { mutableStateOf(true) }
 
     val state = rememberBottomSheetState(
         initialValue = DragValue.Center,

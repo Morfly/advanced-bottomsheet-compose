@@ -2,8 +2,6 @@ package io.morfly.compose.bottomsheet.material3
 
 import androidx.annotation.IntRange
 import androidx.compose.animation.core.AnimationSpec
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Box
@@ -19,11 +17,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,41 +43,24 @@ import androidx.compose.ui.unit.Velocity
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
-@ExperimentalFoundationApi
-@Stable
-class BottomSheetState<T : Any>(
-    val draggableState: AnchoredDraggableState<T>,
-    val defineValues: BottomSheetValuesConfig<T>.() -> Unit,
-) {
-    internal val onValuesRequested = mutableSetOf<(layoutSize: IntSize) -> Unit>()
-
-    var layoutSize: IntSize? = null
-        internal set
-    var sheetOffset: Offset? = null
-        internal set
-
-    fun requireLayoutSize() = layoutSize!!
-
-    fun requireSheetOffse() = sheetOffset!!
-
-    fun redefineValues() {
-        val size = layoutSize ?: return
-        onValuesRequested.forEach { call -> call(size) }
-    }
-}
-
+@ExperimentalMaterial3Api
 @ExperimentalFoundationApi
 @Composable
 fun <T : Any> rememberAnchoredDraggableState(
     initialValue: T,
-    positionalThreshold: (totalDistance: Float) -> Float = { 0f },
-    velocityThreshold: () -> Float = { 0f },
-    animationSpec: AnimationSpec<Float> = spring(
-        dampingRatio = Spring.DampingRatioNoBouncy,
-        stiffness = Spring.StiffnessMedium,
-    ),
+    positionalThreshold: (totalDistance: Float) -> Float = BottomSheetDefaults.PositionalThreshold,
+    velocityThreshold: () -> Float = BottomSheetDefaults.VelocityThreshold,
+    animationSpec: AnimationSpec<Float> = BottomSheetDefaults.AnimationSpec,
     confirmValueChange: (newValue: T) -> Boolean = { true }
-) = remember(positionalThreshold, velocityThreshold, animationSpec, confirmValueChange) {
+) = rememberSaveable(
+    positionalThreshold, velocityThreshold, animationSpec, confirmValueChange,
+    saver = AnchoredDraggableState.Saver(
+        animationSpec = animationSpec,
+        positionalThreshold = positionalThreshold,
+        velocityThreshold = velocityThreshold,
+        confirmValueChange = confirmValueChange
+    )
+) {
     AnchoredDraggableState(
         initialValue = initialValue,
         positionalThreshold = positionalThreshold,
@@ -98,17 +79,15 @@ fun <T : Any> rememberBottomSheetState(
     BottomSheetState(draggableState, defineValues)
 }
 
+@ExperimentalMaterial3Api
 @ExperimentalFoundationApi
 @Composable
 fun <T : Any> rememberBottomSheetState(
     initialValue: T,
     defineValues: BottomSheetValuesConfig<T>.() -> Unit,
-    positionalThreshold: (totalDistance: Float) -> Float = { 0f },
-    velocityThreshold: () -> Float = { 0f },
-    animationSpec: AnimationSpec<Float> = spring(
-        dampingRatio = Spring.DampingRatioNoBouncy,
-        stiffness = Spring.StiffnessMedium,
-    ),
+    positionalThreshold: (totalDistance: Float) -> Float = BottomSheetDefaults.PositionalThreshold,
+    velocityThreshold: () -> Float = BottomSheetDefaults.VelocityThreshold,
+    animationSpec: AnimationSpec<Float> = BottomSheetDefaults.AnimationSpec,
     confirmValueChange: BottomSheetState<T>.(newValue: T) -> Boolean = { true }
 ): BottomSheetState<T> {
     lateinit var state: BottomSheetState<T>
@@ -249,8 +228,6 @@ internal fun BottomSheetScaffoldLayout(
 
             bodyPlaceable.placeRelative(x = 0, y = 0)
             sheetPlaceable.placeRelative(sheetOffsetX, sheetOffsetY)
-
-//            println("TTAGG layout sheetOffsetY: $sheetOffsetY")
         }
     }
 }

@@ -423,12 +423,12 @@ class AnchoredDraggableState<T>(
     }
 
     /**
-     * Find the closest anchor, taking into account the [velocityThreshold] and
-     * [positionalThreshold], and settle at it with an animation.
+     * Find the closest anchor, taking into account the [VelocityThreshold] and
+     * [PositionalThreshold], and settle at it with an animation.
      *
-     * If the [velocity] is lower than the [velocityThreshold], the closest anchor by distance and
-     * [positionalThreshold] will be the target. If the [velocity] is higher than the
-     * [velocityThreshold], the [positionalThreshold] will <b>not</b> be considered and the next
+     * If the [velocity] is lower than the [VelocityThreshold], the closest anchor by distance and
+     * [PositionalThreshold] will be the target. If the [velocity] is higher than the
+     * [VelocityThreshold], the [PositionalThreshold] will <b>not</b> be considered and the next
      * anchor in the direction indicated by the sign of the [velocity] will be the target.
      */
     suspend fun settle(velocity: Float) {
