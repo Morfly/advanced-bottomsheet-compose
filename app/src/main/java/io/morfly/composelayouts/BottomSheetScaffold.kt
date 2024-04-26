@@ -5,7 +5,6 @@ import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,6 +12,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
@@ -44,11 +44,13 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import io.morfly.androidx.compose.foundation.gestures.AnchoredDraggableState
 import io.morfly.androidx.compose.foundation.gestures.DraggableAnchors
 import io.morfly.androidx.compose.foundation.gestures.anchoredDraggable
@@ -171,9 +173,9 @@ fun BottomSheetScaffoldDemo() {
     val state = rememberBottomSheetState(
         initialValue = DragValue.Start,
         defineValues = {
+            DragValue.Start at height(200.dp)
             if (isInitialState)
-                DragValue.Start at height(200.dp)
-            DragValue.Center at height(percent = 50)
+                DragValue.Center at height(percent = 50)
             DragValue.End at contentHeight
         },
         confirmValueChange = {
@@ -190,7 +192,9 @@ fun BottomSheetScaffoldDemo() {
     BottomSheetScaffold(
         sheetState = state,
         onSheetMoved = { sheetHeight ->
-            padding = sheetHeight
+            if (sheetHeight <= 420.dp) {
+                padding = sheetHeight
+            }
         },
         sheetContent = {
             LazyColumn(
@@ -208,9 +212,14 @@ fun BottomSheetScaffoldDemo() {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(bottom = padding - 30.dp)
-                    .background(Color.Magenta)
-            )
+                    .padding(start = 16.dp, bottom = padding + 10.dp),
+                contentAlignment = Alignment.BottomStart
+            ) {
+                Text(
+                    text = "Google",
+                    style = TextStyle(fontSize = 16.sp)
+                )
+            }
         }
     )
 }
