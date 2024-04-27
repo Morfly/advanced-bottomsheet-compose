@@ -16,7 +16,7 @@ import io.morfly.compose.bottomsheet.material3.rememberBottomSheetState
 import io.morfly.composelayouts.bottomsheet.BottomSheetContent
 import io.morfly.composelayouts.bottomsheet.BottomSheetScreenBody
 
-private enum class SheetValue { Peek, PartiallyExpanded, Expanded }
+enum class SheetValue { Peek, PartiallyExpanded, Expanded }
 
 @Composable
 fun CustomBottomSheetScreen() {

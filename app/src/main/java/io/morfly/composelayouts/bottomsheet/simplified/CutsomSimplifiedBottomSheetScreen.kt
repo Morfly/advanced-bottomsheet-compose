@@ -15,21 +15,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import io.morfly.composelayouts.bottomsheet.BottomSheetContent
 import io.morfly.composelayouts.bottomsheet.BottomSheetScreenBody
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
-private enum class SheetValue { Peek, PartiallyExpanded, Expanded }
+enum class SheetValue { Peek, PartiallyExpanded, Expanded }
 
 @Composable
 fun CustomSimplifiedBottomSheetScreen() {
@@ -136,64 +132,4 @@ private fun BottomSheet(
     ) {
         sheetContent()
     }
-}
-
-/**
- * Copy of [androidx.compose.material3.ConsumeSwipeWithinBottomSheetBoundsNestedScrollConnection]
- */
-@Suppress("FunctionName", "SameParameterValue")
-private fun BottomSheetNestedScrollConnection(
-    anchoredDraggableState: AnchoredDraggableState<SheetValue>,
-    orientation: Orientation,
-    onFling: (velocity: Float) -> Unit,
-): NestedScrollConnection = object : NestedScrollConnection {
-    override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-        val delta = available.toFloat()
-        return if (delta < 0 && source == NestedScrollSource.Drag) {
-            anchoredDraggableState.dispatchRawDelta(delta).toOffset()
-        } else {
-            Offset.Zero
-        }
-    }
-
-    override fun onPostScroll(
-        consumed: Offset,
-        available: Offset,
-        source: NestedScrollSource,
-    ): Offset {
-        return if (source == NestedScrollSource.Drag) {
-            anchoredDraggableState.dispatchRawDelta(available.toFloat()).toOffset()
-        } else {
-            Offset.Zero
-        }
-    }
-
-    override suspend fun onPreFling(available: Velocity): Velocity {
-        val toFling = available.toFloat()
-        val currentOffset = anchoredDraggableState.requireOffset()
-        val minAnchor = anchoredDraggableState.anchors.minAnchor()
-        return if (toFling < 0 && currentOffset > minAnchor) {
-            onFling(toFling)
-            // since we go to the anchor with tween settling, consume all for the best UX
-            available
-        } else {
-            Velocity.Zero
-        }
-    }
-
-    override suspend fun onPostFling(consumed: Velocity, available: Velocity): Velocity {
-        onFling(available.toFloat())
-        return available
-    }
-
-    private fun Float.toOffset(): Offset = Offset(
-        x = if (orientation == Orientation.Horizontal) this else 0f,
-        y = if (orientation == Orientation.Vertical) this else 0f,
-    )
-
-    @JvmName("velocityToFloat")
-    private fun Velocity.toFloat() = if (orientation == Orientation.Horizontal) x else y
-
-    @JvmName("offsetToFloat")
-    private fun Offset.toFloat(): Float = if (orientation == Orientation.Horizontal) x else y
 }
