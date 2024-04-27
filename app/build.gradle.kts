@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "io.morfly.compose.bottomsheet.material3.sample"
+    namespace = "io.morfly.bottomsheet.sample"
     compileSdk = 34
 
     defaultConfig {
@@ -41,7 +41,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
     }
     packaging {
         resources {
@@ -52,6 +52,7 @@ android {
 
 dependencies {
     implementation(projects.composeBottomsheetMaterial3)
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -60,6 +61,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.navigation)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }

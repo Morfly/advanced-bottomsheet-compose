@@ -1,4 +1,4 @@
-package io.morfly.composelayouts.simplified
+package io.morfly.composelayouts.old.simplified
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn

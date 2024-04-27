@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalFoundationApi::class)
 
-package io.morfly.composelayouts.simplified
+package io.morfly.composelayouts.old.simplified
 
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring

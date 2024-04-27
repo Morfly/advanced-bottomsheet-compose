@@ -3,6 +3,7 @@ package io.morfly.composelayouts
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.Layout
@@ -14,23 +15,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             ComposeLayoutsTheme {
-//                BottomSheet1()
-
-                BottomSheetScaffoldDemo()
-//                MultiStateBottomSheetDemo()
-
-//                UsingLibraryBottomSheet()
-//                DynamicHeaderLayout()
-//                FlowLayout {
-//                    repeat(10) {
-//                        Box(
-//                            modifier = Modifier
-//                                .width(Random.nextInt(50, 200).dp)
-//                                .height(100.dp)
-//                                .background(Color(Random.nextLong(0xFFFFFFFF)))
-//                        )
-//                    }
-//                }
+                Surface {
+                    Navigation()
+                }
             }
         }
     }
