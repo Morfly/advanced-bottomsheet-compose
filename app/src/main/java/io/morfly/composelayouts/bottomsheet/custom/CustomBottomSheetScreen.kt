@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 
-package io.morfly.composelayouts.ui.bottomsheet
+package io.morfly.composelayouts.bottomsheet.custom
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -14,8 +14,8 @@ import androidx.compose.ui.unit.dp
 import io.morfly.compose.bottomsheet.material3.BottomSheetScaffold
 import io.morfly.compose.bottomsheet.material3.rememberBottomSheetState
 import io.morfly.composelayouts.DragValue
-import io.morfly.composelayouts.ui.BottomSheetContent
-import io.morfly.composelayouts.ui.BottomSheetScreenBody
+import io.morfly.composelayouts.bottomsheet.BottomSheetContent
+import io.morfly.composelayouts.bottomsheet.BottomSheetScreenBody
 
 @Composable
 fun CustomBottomSheetScreen() {
@@ -39,18 +39,18 @@ fun CustomBottomSheetScreen() {
         }
     )
 
-    var padding by remember { mutableStateOf(56.dp) }
+    var bottomPadding by remember { mutableStateOf(56.dp) }
 
     BottomSheetScaffold(
         sheetState = state,
         onSheetMoved = { sheetHeight ->
-            padding = sheetHeight
+            bottomPadding = sheetHeight
         },
         sheetContent = {
             BottomSheetContent()
         },
         content = {
-            BottomSheetScreenBody(padding)
+            BottomSheetScreenBody(bottomPadding)
         }
     )
 }
