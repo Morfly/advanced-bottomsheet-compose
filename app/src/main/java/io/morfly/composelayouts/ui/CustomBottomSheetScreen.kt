@@ -1,4 +1,4 @@
-package io.morfly.composelayouts.custom
+package io.morfly.composelayouts.ui
 
 import androidx.compose.runtime.Composable
 

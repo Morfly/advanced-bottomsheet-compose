@@ -4,9 +4,9 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import io.morfly.composelayouts.custom.CustomBottomSheetScreen
-import io.morfly.composelayouts.material3.Material3BottomSheetDemo
-import io.morfly.composelayouts.simplified.CustomSimplifiedBottomSheetDemo
+import io.morfly.composelayouts.ui.CustomBottomSheetScreen
+import io.morfly.composelayouts.ui.Material3BottomSheetDemo
+import io.morfly.composelayouts.ui.CustomSimplifiedBottomSheetDemo
 
 enum class Destination {
     Menu, Material3Demo, CustomSimplifiedDemo, CustomDemo;

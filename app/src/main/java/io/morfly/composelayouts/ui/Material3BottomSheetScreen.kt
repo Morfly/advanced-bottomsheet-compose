@@ -1,4 +1,4 @@
-package io.morfly.composelayouts.material3
+package io.morfly.composelayouts.ui
 
 import androidx.compose.runtime.Composable
 
