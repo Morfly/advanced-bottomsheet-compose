@@ -13,7 +13,7 @@ import io.morfly.composelayouts.bottomsheet.BottomSheetContent
 import io.morfly.composelayouts.bottomsheet.BottomSheetScreenBody
 
 @Composable
-fun Material3BottomSheetDemo() {
+fun Material3BottomSheetScreen() {
     val sheetState = rememberStandardBottomSheetState(
         initialValue = SheetValue.PartiallyExpanded
     )

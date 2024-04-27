@@ -5,8 +5,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import io.morfly.composelayouts.bottomsheet.custom.CustomBottomSheetScreen
-import io.morfly.composelayouts.bottomsheet.material3.Material3BottomSheetDemo
-import io.morfly.composelayouts.bottomsheet.simplified.CustomSimplifiedBottomSheetDemo
+import io.morfly.composelayouts.bottomsheet.material3.Material3BottomSheetScreen
+import io.morfly.composelayouts.bottomsheet.simplified.CustomSimplifiedBottomSheetScreen
 
 enum class Destination {
     Menu, Material3Demo, CustomSimplifiedDemo, CustomDemo;
@@ -21,10 +21,10 @@ fun Navigation() {
             MenuScreen(onClick = { destination -> navController.navigate(destination.name) })
         }
         composable(Destination.Material3Demo.name) {
-            Material3BottomSheetDemo()
+            Material3BottomSheetScreen()
         }
         composable(Destination.CustomSimplifiedDemo.name) {
-            CustomSimplifiedBottomSheetDemo()
+            CustomSimplifiedBottomSheetScreen()
         }
         composable(Destination.CustomDemo.name) {
             CustomBottomSheetScreen()

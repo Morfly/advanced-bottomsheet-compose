@@ -32,7 +32,7 @@ import kotlin.math.roundToInt
 private enum class SheetValue { Peek, PartiallyExpanded, Expanded }
 
 @Composable
-fun CustomSimplifiedBottomSheetDemo() {
+fun CustomSimplifiedBottomSheetScreen() {
     val state = remember {
         AnchoredDraggableState(
             initialValue = SheetValue.Peek,
