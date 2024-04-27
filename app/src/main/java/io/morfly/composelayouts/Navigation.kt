@@ -7,7 +7,6 @@ import androidx.navigation.compose.rememberNavController
 import io.morfly.composelayouts.bottomsheet.custom.CustomBottomSheetScreen
 import io.morfly.composelayouts.bottomsheet.material3.Material3BottomSheetDemo
 import io.morfly.composelayouts.bottomsheet.simplified.CustomSimplifiedBottomSheetDemo
-import io.morfly.composelayouts.ui.MenuScreen
 
 enum class Destination {
     Menu, Material3Demo, CustomSimplifiedDemo, CustomDemo;
