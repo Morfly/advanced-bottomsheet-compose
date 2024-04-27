@@ -23,6 +23,6 @@ fun Material3BottomSheetScreen() {
         sheetPeekHeight = 56.dp,
         scaffoldState = scaffoldState,
         sheetContent = { BottomSheetContent() },
-        content = { BottomSheetScreenBody() },
+        content = { BottomSheetScreenBody(mapUiBottomPadding = 0.dp) },
     )
 }

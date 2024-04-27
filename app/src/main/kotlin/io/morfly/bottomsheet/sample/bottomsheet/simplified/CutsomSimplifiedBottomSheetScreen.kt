@@ -44,7 +44,7 @@ fun CustomSimplifiedBottomSheetScreen() {
     BottomSheetScaffold(
         state = state,
         sheetContent = { BottomSheetContent() },
-        content = { BottomSheetScreenBody() }
+        content = { BottomSheetScreenBody(mapUiBottomPadding = 0.dp) }
     )
 }
 

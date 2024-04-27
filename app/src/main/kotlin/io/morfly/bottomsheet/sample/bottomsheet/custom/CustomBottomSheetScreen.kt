@@ -10,6 +10,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.morfly.compose.bottomsheet.material3.BottomSheetScaffold
 import io.morfly.compose.bottomsheet.material3.rememberBottomSheetState
@@ -40,7 +41,7 @@ fun CustomBottomSheetScreen() {
         }
     )
 
-    var bottomPadding by remember { mutableStateOf(56.dp) }
+    var bottomPadding by remember { mutableStateOf(Dp.Unspecified) }
 
     BottomSheetScaffold(
         sheetState = state,
