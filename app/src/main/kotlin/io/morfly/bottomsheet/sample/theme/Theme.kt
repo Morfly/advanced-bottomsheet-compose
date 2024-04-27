@@ -1,4 +1,4 @@
-package io.morfly.composelayouts.theme
+package io.morfly.bottomsheet.sample.theme
 
 import android.app.Activity
 import android.os.Build

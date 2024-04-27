@@ -1,4 +1,4 @@
-package io.morfly.composelayouts
+package io.morfly.bottomsheet.sample
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

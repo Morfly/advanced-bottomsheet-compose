@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalFoundationApi::class)
 
-package io.morfly.composelayouts.bottomsheet.simplified
+package io.morfly.bottomsheet.sample.bottomsheet.simplified
 
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
@@ -20,8 +20,8 @@ import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import io.morfly.composelayouts.bottomsheet.BottomSheetContent
-import io.morfly.composelayouts.bottomsheet.BottomSheetScreenBody
+import io.morfly.bottomsheet.sample.bottomsheet.BottomSheetContent
+import io.morfly.bottomsheet.sample.bottomsheet.BottomSheetScreenBody
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 

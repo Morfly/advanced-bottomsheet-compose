@@ -1,4 +1,4 @@
-package io.morfly.composelayouts.theme
+package io.morfly.bottomsheet.sample.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

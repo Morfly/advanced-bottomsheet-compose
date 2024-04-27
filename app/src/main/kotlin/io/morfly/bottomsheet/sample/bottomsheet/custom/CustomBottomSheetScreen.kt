@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 
-package io.morfly.composelayouts.bottomsheet.custom
+package io.morfly.bottomsheet.sample.bottomsheet.custom
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -13,8 +13,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.dp
 import io.morfly.compose.bottomsheet.material3.BottomSheetScaffold
 import io.morfly.compose.bottomsheet.material3.rememberBottomSheetState
-import io.morfly.composelayouts.bottomsheet.BottomSheetContent
-import io.morfly.composelayouts.bottomsheet.BottomSheetScreenBody
+import io.morfly.bottomsheet.sample.bottomsheet.BottomSheetContent
+import io.morfly.bottomsheet.sample.bottomsheet.BottomSheetScreenBody
 
 enum class SheetValue { Peek, PartiallyExpanded, Expanded }
 

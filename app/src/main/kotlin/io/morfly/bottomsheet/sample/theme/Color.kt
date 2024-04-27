@@ -1,4 +1,4 @@
-package io.morfly.composelayouts.theme
+package io.morfly.bottomsheet.sample.theme
 
 import androidx.compose.ui.graphics.Color
 

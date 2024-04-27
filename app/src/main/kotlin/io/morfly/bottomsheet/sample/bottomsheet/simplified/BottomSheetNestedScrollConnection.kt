@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalFoundationApi::class)
 
-package io.morfly.composelayouts.bottomsheet.simplified
+package io.morfly.bottomsheet.sample.bottomsheet.simplified
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.AnchoredDraggableState

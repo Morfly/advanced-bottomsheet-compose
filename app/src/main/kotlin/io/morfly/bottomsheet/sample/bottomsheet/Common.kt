@@ -1,4 +1,4 @@
-package io.morfly.composelayouts.bottomsheet
+package io.morfly.bottomsheet.sample.bottomsheet
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,8 +13,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.morfly.composelayouts.bottomsheet.BottomSheetContentHeight.ExceedsScreen
-import io.morfly.composelayouts.bottomsheet.BottomSheetContentHeight.FitsScreen
+import io.morfly.bottomsheet.sample.bottomsheet.BottomSheetContentHeight.ExceedsScreen
+import io.morfly.bottomsheet.sample.bottomsheet.BottomSheetContentHeight.FitsScreen
 
 enum class BottomSheetContentHeight {
     FitsScreen, ExceedsScreen,
