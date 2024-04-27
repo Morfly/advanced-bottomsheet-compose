@@ -1,4 +1,4 @@
-package io.morfly.composelayouts
+package io.morfly.composelayouts.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -8,6 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import io.morfly.composelayouts.Destination
 
 @Composable
 fun MenuScreen(onClick: (Destination) -> Unit) {
@@ -28,9 +29,9 @@ fun MenuScreen(onClick: (Destination) -> Unit) {
             onClick = { onClick(Destination.CustomSimplifiedDemo) }
         )
         Item(
-            title = "Custom Simplified Bottom Sheet",
+            title = "Custom Bottom Sheet",
             description = "Custom implementation of a bottom sheet that extends the functionality of a Material3 variant.",
-            onClick = { onClick(Destination.CustomSimplifiedDemo) }
+            onClick = { onClick(Destination.CustomDemo) }
         )
     }
 }
