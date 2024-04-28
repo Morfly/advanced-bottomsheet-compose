@@ -41,7 +41,7 @@ fun CustomBottomSheetScreen() {
         }
     )
 
-    var bottomPadding by remember { mutableStateOf(Dp.Unspecified) }
+    var bottomPadding by remember { mutableStateOf(0.dp) }
 
     BottomSheetScaffold(
         sheetState = state,
