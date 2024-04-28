@@ -51,7 +51,7 @@ fun BottomSheetScreenBody(mapUiBottomPadding: Dp) {
         position = CameraPosition.fromLatLngZoom(SanFranciscoLocation, 13f)
     }
 
-    CameraPositionEffect(
+    AdjustedCameraPositionEffect(
         cameraPositionState = cameraPositionState,
         mapUiBottomPadding = mapUiBottomPadding
     )
@@ -79,7 +79,7 @@ fun BottomSheetScreenBody(mapUiBottomPadding: Dp) {
 
 @OptIn(FlowPreview::class)
 @Composable
-private fun CameraPositionEffect(
+private fun AdjustedCameraPositionEffect(
     cameraPositionState: CameraPositionState,
     mapUiBottomPadding: Dp,
 ) {
