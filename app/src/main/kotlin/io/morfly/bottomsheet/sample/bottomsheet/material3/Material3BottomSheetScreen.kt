@@ -8,6 +8,14 @@ import androidx.compose.material3.SheetValue
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInParent
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import io.morfly.bottomsheet.sample.bottomsheet.BottomSheetContent
 import io.morfly.bottomsheet.sample.bottomsheet.BottomSheetScreenBody
@@ -19,10 +27,30 @@ fun Material3BottomSheetScreen() {
     )
     val scaffoldState = rememberBottomSheetScaffoldState(sheetState)
 
+    var bottomPadding by remember { mutableStateOf(0.dp) }
+
     BottomSheetScaffold(
         sheetPeekHeight = 56.dp,
         scaffoldState = scaffoldState,
-        sheetContent = { BottomSheetContent() },
-        content = { BottomSheetScreenBody(mapUiBottomPadding = 0.dp) },
+        sheetContent = {
+            val density = LocalDensity.current
+
+            BottomSheetContent(
+                modifier = Modifier.onGloballyPositioned { coordinates ->
+                    val parentCoordinates = coordinates
+                        .parentCoordinates?.parentCoordinates?.parentCoordinates
+                    if (parentCoordinates != null) {
+                        val offsetPx = parentCoordinates.positionInParent()
+                        val layoutHeightPx = parentCoordinates.parentLayoutCoordinates!!.size.height
+
+                        val paddingPx = layoutHeightPx - offsetPx.y
+                        bottomPadding = with(density) { paddingPx.toDp() }
+                    }
+                },
+            )
+        },
+        content = {
+            BottomSheetScreenBody(bottomPadding)
+        },
     )
 }

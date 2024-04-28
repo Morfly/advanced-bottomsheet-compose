@@ -43,7 +43,10 @@ import kotlinx.coroutines.launch
 val SanFranciscoLocation = LatLng(37.773972, -122.431297)
 
 @Composable
-fun BottomSheetScreenBody(mapUiBottomPadding: Dp) {
+fun BottomSheetScreenBody(
+    mapUiBottomPadding: Dp,
+    modifier: Modifier = Modifier,
+) {
     val configuration = LocalConfiguration.current
     val isPortrait = configuration.orientation == Configuration.ORIENTATION_PORTRAIT
 
@@ -57,7 +60,7 @@ fun BottomSheetScreenBody(mapUiBottomPadding: Dp) {
     )
 
     GoogleMap(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         cameraPositionState = cameraPositionState
     ) {
         Marker(
@@ -113,12 +116,15 @@ private fun AdjustedCameraPositionEffect(
 enum class BottomSheetContentHeight { FitsScreen, ExceedsScreen, }
 
 @Composable
-fun BottomSheetContent(height: BottomSheetContentHeight = FitsScreen) {
+fun BottomSheetContent(
+    modifier: Modifier = Modifier,
+    height: BottomSheetContentHeight = FitsScreen
+) {
     val numberOfItems = when (height) {
         FitsScreen -> 27
         ExceedsScreen -> 100
     }
-    LazyColumn(modifier = Modifier.fillMaxWidth()) {
+    LazyColumn(modifier = modifier.fillMaxWidth()) {
         for (i in 0..numberOfItems) {
             item {
                 Text(text = "Test_$i")
