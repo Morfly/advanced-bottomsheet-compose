@@ -37,11 +37,10 @@ fun Material3BottomSheetScreen() {
 
             BottomSheetContent(
                 modifier = Modifier.onGloballyPositioned { coordinates ->
-                    val parentCoordinates = coordinates
-                        .parentCoordinates?.parentCoordinates?.parentCoordinates
-                    if (parentCoordinates != null) {
-                        val offsetPx = parentCoordinates.positionInParent()
-                        val layoutHeightPx = parentCoordinates.parentLayoutCoordinates!!.size.height
+                    val sheetLayout = coordinates.parentLayoutCoordinates?.parentLayoutCoordinates
+                    if (sheetLayout != null) {
+                        val offsetPx = sheetLayout.positionInParent()
+                        val layoutHeightPx = sheetLayout.parentLayoutCoordinates!!.size.height
 
                         val paddingPx = layoutHeightPx - offsetPx.y
                         bottomPadding = with(density) { paddingPx.toDp() }
