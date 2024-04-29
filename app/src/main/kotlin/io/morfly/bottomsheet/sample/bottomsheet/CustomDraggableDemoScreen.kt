@@ -9,6 +9,7 @@ import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -43,6 +44,7 @@ fun CustomDraggableDemoScreen() {
             shadowElevation = 1.dp,
             tonalElevation = 1.dp,
             modifier = Modifier
+                .fillMaxWidth()
                 .offset {
                     val sheetOffsetY = state.requireOffset()
                     IntOffset(x = 0, y = sheetOffsetY.toInt())
