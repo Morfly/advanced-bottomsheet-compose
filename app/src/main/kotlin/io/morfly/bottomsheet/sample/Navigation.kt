@@ -5,7 +5,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import io.morfly.bottomsheet.sample.bottomsheet.custom.CustomBottomSheetScreen
-import io.morfly.bottomsheet.sample.bottomsheet.draggable.BottomSheet
 import io.morfly.bottomsheet.sample.bottomsheet.draggable.CustomDraggableScreen
 import io.morfly.bottomsheet.sample.bottomsheet.material3.Material3BottomSheetScreen
 import io.morfly.bottomsheet.sample.bottomsheet.simplified.CustomSimplifiedBottomSheetScreen
@@ -26,7 +25,6 @@ fun Navigation() {
             Material3BottomSheetScreen()
         }
         composable(Destination.DraggableDemo.name) {
-//            BottomSheet()
             CustomDraggableScreen()
         }
         composable(Destination.CustomSimplifiedDemo.name) {

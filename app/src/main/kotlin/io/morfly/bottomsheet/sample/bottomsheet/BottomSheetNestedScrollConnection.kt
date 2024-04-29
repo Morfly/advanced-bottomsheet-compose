@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalFoundationApi::class)
 
-package io.morfly.bottomsheet.sample.bottomsheet.simplified
+package io.morfly.bottomsheet.sample.bottomsheet
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.AnchoredDraggableState
@@ -14,8 +14,8 @@ import androidx.compose.ui.unit.Velocity
  * Copy of [androidx.compose.material3.ConsumeSwipeWithinBottomSheetBoundsNestedScrollConnection]
  */
 @Suppress("FunctionName", "SameParameterValue")
-fun BottomSheetNestedScrollConnection(
-    anchoredDraggableState: AnchoredDraggableState<SheetValue>,
+fun <T> BottomSheetNestedScrollConnection(
+    anchoredDraggableState: AnchoredDraggableState<T>,
     orientation: Orientation,
     onFling: (velocity: Float) -> Unit,
 ): NestedScrollConnection = object : NestedScrollConnection {
