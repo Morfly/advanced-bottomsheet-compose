@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.Saver
@@ -43,14 +44,21 @@ class BottomSheetState<T : Any>(
 ) {
     internal val onValuesRequested = mutableSetOf<(sheetSize: IntSize) -> Unit>()
 
-    var sheetSize: IntSize? = null // TODO make mutableState
+    // TODO rename to size
+    var sheetSize: IntSize? by mutableStateOf(null)
         internal set
-    var sheetOffset: Offset? = null
+    var sheetOffset: Offset? by mutableStateOf(null)
         internal set
 
-    fun requireSheetSize() = sheetSize!!
+    fun requireSheetSize() = requireNotNull(sheetSize) {
+        "The sheetSize was read before being initialized. Did you access the sheetSize in a " +
+                "phase before layout, like effects or composition?"
+    }
 
-    fun requireSheetOffset() = sheetOffset!!
+    fun requireSheetOffset() = requireNotNull(sheetOffset) {
+        "The sheetOffset was read before being initialized. Did you access the sheetOffset in a " +
+                "phase before layout, like effects or composition?"
+    }
 
     fun redefineValues() {
         val size = sheetSize ?: return

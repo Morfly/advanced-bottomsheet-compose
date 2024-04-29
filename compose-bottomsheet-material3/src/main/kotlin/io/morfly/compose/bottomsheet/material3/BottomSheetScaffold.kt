@@ -244,6 +244,7 @@ internal fun <T : Any> BottomSheet(
             )
             .onGloballyPositioned { coordinates ->
                 if (onMoved != null) {
+                    // TODO use offset from draggable
                     val offset = coordinates.positionInParent()
                     if (offset != state.sheetOffset) {
                         state.sheetOffset = offset

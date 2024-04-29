@@ -37,6 +37,7 @@ fun OfficialMaterial3DemoScreen() {
 
             BottomSheetContent(
                 modifier = Modifier.onGloballyPositioned { coordinates ->
+                    // TODO use offset from state
                     val sheetLayout = coordinates.parentLayoutCoordinates?.parentLayoutCoordinates
                     val parentLayout = sheetLayout?.parentLayoutCoordinates
                     if (sheetLayout != null && parentLayout != null) {
