@@ -42,8 +42,8 @@ fun OfficialMaterial3DemoScreen() {
                     if (sheetLayout != null && parentLayout != null) {
                         val offsetPx = sheetLayout.positionInParent()
                         val layoutHeightPx = parentLayout.size.height
-                        val paddingPx = layoutHeightPx - offsetPx.y
-                        bottomPadding = with(density) { paddingPx.toDp() }
+                        val sheetHeightPx = layoutHeightPx - offsetPx.y
+                        bottomPadding = with(density) { sheetHeightPx.toDp() }
                     }
                 },
             )
