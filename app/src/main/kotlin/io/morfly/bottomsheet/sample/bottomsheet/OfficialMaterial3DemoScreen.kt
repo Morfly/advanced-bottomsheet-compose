@@ -2,6 +2,7 @@
 
 package io.morfly.bottomsheet.sample.bottomsheet
 
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetValue
@@ -14,11 +15,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import io.morfly.bottomsheet.sample.bottomsheet.common.BottomSheetContent
 import io.morfly.bottomsheet.sample.bottomsheet.common.MapScreenContent
+import kotlin.math.roundToInt
 
 @Composable
 fun OfficialMaterial3DemoScreen() {
@@ -29,28 +30,26 @@ fun OfficialMaterial3DemoScreen() {
 
     var bottomPadding by remember { mutableStateOf(0.dp) }
 
-    BottomSheetScaffold(
-        sheetPeekHeight = 56.dp,
-        scaffoldState = scaffoldState,
-        sheetContent = {
-            val density = LocalDensity.current
+    BoxWithConstraints {
+        val layoutHeightPx = constraints.maxHeight
 
-            BottomSheetContent(
-                modifier = Modifier.onGloballyPositioned { coordinates ->
-                    // TODO use offset from state
-                    val sheetLayout = coordinates.parentLayoutCoordinates?.parentLayoutCoordinates
-                    val parentLayout = sheetLayout?.parentLayoutCoordinates
-                    if (sheetLayout != null && parentLayout != null) {
-                        val offsetPx = sheetLayout.positionInParent()
-                        val layoutHeightPx = parentLayout.size.height
-                        val sheetHeightPx = layoutHeightPx - offsetPx.y
-                        bottomPadding = with(density) { sheetHeightPx.toDp() }
+        BottomSheetScaffold(
+            sheetPeekHeight = 56.dp,
+            scaffoldState = scaffoldState,
+            sheetContent = {
+                val density = LocalDensity.current
+
+                BottomSheetContent(
+                    modifier = Modifier.onGloballyPositioned {
+                        val sheetOffsetPx = scaffoldState.bottomSheetState.requireOffset()
+                        val sheetHeightPx = layoutHeightPx - sheetOffsetPx
+                        bottomPadding = with(density) { sheetHeightPx.roundToInt().toDp() }
                     }
-                },
-            )
-        },
-        content = {
-            MapScreenContent(bottomPadding)
-        },
-    )
+                )
+            },
+            content = {
+                MapScreenContent(bottomPadding)
+            },
+        )
+    }
 }
