@@ -38,14 +38,12 @@ fun OfficialMaterial3DemoScreen() {
             BottomSheetContent(
                 modifier = Modifier.onGloballyPositioned { coordinates ->
                     val sheetLayout = coordinates.parentLayoutCoordinates?.parentLayoutCoordinates
-                    if (sheetLayout != null) {
+                    val parentLayout = sheetLayout?.parentLayoutCoordinates
+                    if (sheetLayout != null && parentLayout != null) {
                         val offsetPx = sheetLayout.positionInParent()
-                        val parentLayout = sheetLayout.parentLayoutCoordinates
-                        if (parentLayout != null) {
-                            val layoutHeightPx = parentLayout.size.height
-                            val paddingPx = layoutHeightPx - offsetPx.y
-                            bottomPadding = with(density) { paddingPx.toDp() }
-                        }
+                        val layoutHeightPx = parentLayout.size.height
+                        val paddingPx = layoutHeightPx - offsetPx.y
+                        bottomPadding = with(density) { paddingPx.toDp() }
                     }
                 },
             )
