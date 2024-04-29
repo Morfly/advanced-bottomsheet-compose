@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalFoundationApi::class)
 
-package io.morfly.bottomsheet.sample.bottomsheet.draggable
+package io.morfly.bottomsheet.sample.bottomsheet
 
 import androidx.compose.animation.core.SpringSpec
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -18,10 +18,8 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import io.morfly.bottomsheet.sample.bottomsheet.BottomSheetContent
-import io.morfly.bottomsheet.sample.bottomsheet.MapScreenContent
-
-enum class SheetValue { Peek, PartiallyExpanded, Expanded }
+import io.morfly.bottomsheet.sample.bottomsheet.common.BottomSheetContent
+import io.morfly.bottomsheet.sample.bottomsheet.common.MapScreenContent
 
 @Composable
 fun CustomDraggableDemoScreen() {

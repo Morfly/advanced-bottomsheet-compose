@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package io.morfly.bottomsheet.sample.bottomsheet.material3
+package io.morfly.bottomsheet.sample.bottomsheet
 
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -17,8 +17,8 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import io.morfly.bottomsheet.sample.bottomsheet.BottomSheetContent
-import io.morfly.bottomsheet.sample.bottomsheet.MapScreenContent
+import io.morfly.bottomsheet.sample.bottomsheet.common.BottomSheetContent
+import io.morfly.bottomsheet.sample.bottomsheet.common.MapScreenContent
 
 @Composable
 fun OfficialMaterial3DemoScreen() {

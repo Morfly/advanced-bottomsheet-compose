@@ -1,12 +1,12 @@
-package io.morfly.bottomsheet.sample.bottomsheet
+package io.morfly.bottomsheet.sample.bottomsheet.common
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import io.morfly.bottomsheet.sample.bottomsheet.BottomSheetContentHeight.ExceedsScreen
-import io.morfly.bottomsheet.sample.bottomsheet.BottomSheetContentHeight.FitsScreen
+import io.morfly.bottomsheet.sample.bottomsheet.common.BottomSheetContentHeight.ExceedsScreen
+import io.morfly.bottomsheet.sample.bottomsheet.common.BottomSheetContentHeight.FitsScreen
 
 enum class BottomSheetContentHeight { FitsScreen, ExceedsScreen, }
 

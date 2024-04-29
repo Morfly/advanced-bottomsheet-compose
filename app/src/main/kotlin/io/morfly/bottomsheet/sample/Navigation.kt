@@ -4,10 +4,10 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import io.morfly.bottomsheet.sample.bottomsheet.custom.CustomFinalizedDemoScreen
-import io.morfly.bottomsheet.sample.bottomsheet.draggable.CustomDraggableDemoScreen
-import io.morfly.bottomsheet.sample.bottomsheet.material3.OfficialMaterial3DemoScreen
-import io.morfly.bottomsheet.sample.bottomsheet.simplified.CustomDraggableSubcomposeDemoScreen
+import io.morfly.bottomsheet.sample.bottomsheet.CustomFinalizedDemoScreen
+import io.morfly.bottomsheet.sample.bottomsheet.CustomDraggableDemoScreen
+import io.morfly.bottomsheet.sample.bottomsheet.OfficialMaterial3DemoScreen
+import io.morfly.bottomsheet.sample.bottomsheet.CustomDraggableSubcomposeDemoScreen
 
 enum class Destination {
     Menu, Material3Demo, CustomDraggableDemo, CustomDraggableSubcomposeDemo, CustomFinalizedDemo;

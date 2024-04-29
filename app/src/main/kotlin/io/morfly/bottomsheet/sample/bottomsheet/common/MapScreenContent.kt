@@ -1,6 +1,6 @@
 @file:OptIn(MapsComposeExperimentalApi::class)
 
-package io.morfly.bottomsheet.sample.bottomsheet
+package io.morfly.bottomsheet.sample.bottomsheet.common
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.fillMaxSize

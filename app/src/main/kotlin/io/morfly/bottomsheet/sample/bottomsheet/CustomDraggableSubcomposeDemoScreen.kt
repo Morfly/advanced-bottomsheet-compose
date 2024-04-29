@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalFoundationApi::class)
 
-package io.morfly.bottomsheet.sample.bottomsheet.simplified
+package io.morfly.bottomsheet.sample.bottomsheet
 
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
@@ -20,13 +20,11 @@ import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import io.morfly.bottomsheet.sample.bottomsheet.BottomSheetContent
-import io.morfly.bottomsheet.sample.bottomsheet.BottomSheetNestedScrollConnection
-import io.morfly.bottomsheet.sample.bottomsheet.MapScreenContent
+import io.morfly.bottomsheet.sample.bottomsheet.common.BottomSheetContent
+import io.morfly.bottomsheet.sample.bottomsheet.common.BottomSheetNestedScrollConnection
+import io.morfly.bottomsheet.sample.bottomsheet.common.MapScreenContent
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
-
-enum class SheetValue { Peek, PartiallyExpanded, Expanded }
 
 @Composable
 fun CustomDraggableSubcomposeDemoScreen() {
@@ -126,7 +124,6 @@ private fun BottomSheet(
                         // If the height of the content is bigger than the screen - fill the entire screen.
                         SheetValue.Expanded at maxOf(layoutHeight - sheetHeight, 0).toFloat()
                     }
-
                 }
                 state.updateAnchors(newAnchors, state.targetValue)
             },
