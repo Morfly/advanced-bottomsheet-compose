@@ -30,7 +30,7 @@ import kotlin.math.roundToInt
 fun CustomDraggableSubcomposeDemoScreen() {
     val state = remember {
         AnchoredDraggableState(
-            initialValue = SheetValue.Peek,
+            initialValue = SheetValue.PartiallyExpanded,
             positionalThreshold = { 0f },
             velocityThreshold = { 0f },
             animationSpec = spring(
