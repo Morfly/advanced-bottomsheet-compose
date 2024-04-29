@@ -20,6 +20,7 @@ import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
@@ -37,6 +38,7 @@ import kotlinx.coroutines.launch
 @Stable
 class BottomSheetState<T : Any>(
     val draggableState: AnchoredDraggableState<T>,
+    val snackbarHostState: SnackbarHostState,
     val defineValues: BottomSheetValuesConfig<T>.() -> Unit,
 ) {
     internal val onValuesRequested = mutableSetOf<(sheetSize: IntSize) -> Unit>()
@@ -59,10 +61,11 @@ class BottomSheetState<T : Any>(
 
         fun <T : Any> Saver(
             defineValues: BottomSheetValuesConfig<T>.() -> Unit,
+            snackbarHostState: SnackbarHostState,
         ) = Saver<BottomSheetState<T>, AnchoredDraggableState<T>>(
             save = { it.draggableState },
             restore = { draggableState ->
-                BottomSheetState(draggableState, defineValues)
+                BottomSheetState(draggableState, snackbarHostState, defineValues)
             }
         )
     }
@@ -100,8 +103,9 @@ fun <T : Any> rememberAnchoredDraggableState(
 fun <T : Any> rememberBottomSheetState(
     draggableState: AnchoredDraggableState<T>,
     defineValues: BottomSheetValuesConfig<T>.() -> Unit,
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
 ) = remember(draggableState, defineValues) {
-    BottomSheetState(draggableState, defineValues)
+    BottomSheetState(draggableState, snackbarHostState, defineValues)
 }
 
 @ExperimentalMaterial3Api
@@ -110,6 +114,7 @@ fun <T : Any> rememberBottomSheetState(
 fun <T : Any> rememberBottomSheetState(
     initialValue: T,
     defineValues: BottomSheetValuesConfig<T>.() -> Unit,
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
     positionalThreshold: (totalDistance: Float) -> Float = BottomSheetDefaults.PositionalThreshold,
     velocityThreshold: () -> Float = BottomSheetDefaults.VelocityThreshold,
     animationSpec: AnimationSpec<Float> = BottomSheetDefaults.AnimationSpec,
@@ -151,6 +156,6 @@ fun <T : Any> rememberBottomSheetState(
         }
     )
 
-    state = rememberBottomSheetState(draggableState, defineValues)
+    state = rememberBottomSheetState(draggableState, defineValues, snackbarHostState)
     return state
 }

@@ -29,6 +29,8 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
@@ -59,7 +61,7 @@ import kotlin.math.roundToInt
 @ExperimentalFoundationApi
 @Composable
 fun <T : Any> BottomSheetScaffold(
-    sheetState: BottomSheetState<T>,
+    sheetState: BottomSheetState<T>, // TODO rename to scaffold state
     sheetContent: @Composable ColumnScope.() -> Unit,
     modifier: Modifier = Modifier,
     sheetMaxWidth: Dp = BottomSheetDefaults.SheetMaxWidth,
@@ -70,6 +72,8 @@ fun <T : Any> BottomSheetScaffold(
     sheetShadowElevation: Dp = BottomSheetDefaults.Elevation,
     sheetDragHandle: @Composable (() -> Unit)? = { BottomSheetDefaults.DragHandle() },
     sheetSwipeEnabled: Boolean = true,
+    topBar: @Composable (() -> Unit)? = null,
+    snackbarHost: @Composable (SnackbarHostState) -> Unit = { SnackbarHost(it) },
     containerColor: Color = MaterialTheme.colorScheme.surface,
     contentColor: Color = contentColorFor(containerColor),
     onSheetMoved: ((sheetHeight: Dp) -> Unit)? = null,
@@ -79,7 +83,11 @@ fun <T : Any> BottomSheetScaffold(
 
     BottomSheetScaffoldLayout(
         modifier = modifier,
+        topBar = topBar,
         body = content,
+        snackbarHost = {
+            snackbarHost(sheetState.snackbarHostState)
+        },
         sheetOffset = { sheetState.draggableState.requireOffset() },
         containerColor = containerColor,
         contentColor = contentColor,
@@ -125,8 +133,10 @@ fun <T : Any> BottomSheetScaffold(
 @Composable
 internal fun BottomSheetScaffoldLayout(
     modifier: Modifier,
+    topBar: @Composable (() -> Unit)?,
     body: @Composable (innerPadding: PaddingValues) -> Unit,
     bottomSheet: @Composable (layoutHeight: Int) -> Unit,
+    snackbarHost: @Composable () -> Unit,
     sheetOffset: () -> Float,
     containerColor: Color,
     contentColor: Color,
@@ -134,30 +144,48 @@ internal fun BottomSheetScaffoldLayout(
     SubcomposeLayout { constraints ->
         val layoutWidth = constraints.maxWidth
         val layoutHeight = constraints.maxHeight
+        val looseConstraints = constraints.copy(minWidth = 0, minHeight = 0)
 
         val sheetPlaceable = subcompose(BottomSheetScaffoldLayoutSlot.Sheet) {
             bottomSheet(layoutHeight)
-        }[0].measure(constraints)
+        }[0].measure(looseConstraints)
 
+        val topBarPlaceable = topBar?.let {
+            subcompose(BottomSheetScaffoldLayoutSlot.TopBar, topBar)[0]
+                .measure(looseConstraints)
+        }
+        val topBarHeight = topBarPlaceable?.height ?: 0
+
+        val bodyConstraints = looseConstraints.copy(maxHeight = layoutHeight - topBarHeight)
         val bodyPlaceable = subcompose(BottomSheetScaffoldLayoutSlot.Body) {
             Surface(
                 modifier = modifier,
                 color = containerColor,
                 contentColor = contentColor,
             ) { body(PaddingValues()) }
-        }[0].measure(constraints)
+        }[0].measure(bodyConstraints)
+
+        val snackbarPlaceable = subcompose(BottomSheetScaffoldLayoutSlot.Snackbar, snackbarHost)[0]
+            .measure(looseConstraints)
 
         layout(width = layoutWidth, height = layoutHeight) {
             val sheetOffsetY = sheetOffset().roundToInt()
             val sheetOffsetX = Integer.max(0, (layoutWidth - sheetPlaceable.width) / 2)
 
-            bodyPlaceable.placeRelative(x = 0, y = 0)
+            val snackbarOffsetX = (layoutWidth - snackbarPlaceable.width) / 2
+            val snackbarOffsetY =
+                layoutHeight - snackbarPlaceable.height // TODO check different values
+
+            // Placement order is important for elevation
+            bodyPlaceable.placeRelative(0, topBarHeight)
+            topBarPlaceable?.placeRelative(0, 0)
             sheetPlaceable.placeRelative(sheetOffsetX, sheetOffsetY)
+            snackbarPlaceable.placeRelative(snackbarOffsetX, snackbarOffsetY)
         }
     }
 }
 
-private enum class BottomSheetScaffoldLayoutSlot { Body, Sheet }
+private enum class BottomSheetScaffoldLayoutSlot { TopBar, Body, Sheet, Snackbar }
 
 @ExperimentalFoundationApi
 @Composable
