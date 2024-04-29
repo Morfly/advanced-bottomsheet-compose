@@ -18,7 +18,7 @@ import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import io.morfly.bottomsheet.sample.bottomsheet.BottomSheetContent
-import io.morfly.bottomsheet.sample.bottomsheet.BottomSheetScreenBody
+import io.morfly.bottomsheet.sample.bottomsheet.MapScreenContent
 
 @Composable
 fun Material3BottomSheetScreen() {
@@ -49,7 +49,7 @@ fun Material3BottomSheetScreen() {
             )
         },
         content = {
-            BottomSheetScreenBody(bottomPadding)
+            MapScreenContent(bottomPadding)
         },
     )
 }

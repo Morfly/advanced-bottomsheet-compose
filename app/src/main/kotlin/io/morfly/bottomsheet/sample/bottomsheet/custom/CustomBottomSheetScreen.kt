@@ -10,10 +10,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.morfly.bottomsheet.sample.bottomsheet.BottomSheetContent
-import io.morfly.bottomsheet.sample.bottomsheet.BottomSheetScreenBody
+import io.morfly.bottomsheet.sample.bottomsheet.MapScreenContent
 import io.morfly.compose.bottomsheet.material3.BottomSheetScaffold
 import io.morfly.compose.bottomsheet.material3.rememberBottomSheetState
 
@@ -52,7 +51,7 @@ fun CustomBottomSheetScreen() {
             BottomSheetContent()
         },
         content = {
-            BottomSheetScreenBody(bottomPadding)
+            MapScreenContent(bottomPadding)
         }
     )
 }

@@ -23,6 +23,11 @@ fun MenuScreen(onClick: (Destination) -> Unit) {
             onClick = { onClick(Destination.Material3Demo) }
         )
         Item(
+            title = "Draggable",
+            description = "Draggable.",
+            onClick = { onClick(Destination.DraggableDemo) }
+        )
+        Item(
             title = "Custom Simplified Bottom Sheet",
             description = "Simplified implementation of a custom bottom sheet.",
             onClick = { onClick(Destination.CustomSimplifiedDemo) }

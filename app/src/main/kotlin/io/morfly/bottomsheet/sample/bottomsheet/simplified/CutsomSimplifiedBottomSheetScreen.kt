@@ -21,7 +21,7 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import io.morfly.bottomsheet.sample.bottomsheet.BottomSheetContent
-import io.morfly.bottomsheet.sample.bottomsheet.BottomSheetScreenBody
+import io.morfly.bottomsheet.sample.bottomsheet.MapScreenContent
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -44,7 +44,7 @@ fun CustomSimplifiedBottomSheetScreen() {
     BottomSheetScaffold(
         state = state,
         sheetContent = { BottomSheetContent() },
-        content = { BottomSheetScreenBody(mapUiBottomPadding = 0.dp) }
+        content = { MapScreenContent(mapUiBottomPadding = 0.dp) }
     )
 }
 

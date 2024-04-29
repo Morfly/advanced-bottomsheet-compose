@@ -43,7 +43,7 @@ import kotlinx.coroutines.launch
 val SanFranciscoLocation = LatLng(37.773972, -122.431297)
 
 @Composable
-fun BottomSheetScreenBody(
+fun MapScreenContent(
     mapUiBottomPadding: Dp,
     modifier: Modifier = Modifier,
 ) {
@@ -65,8 +65,8 @@ fun BottomSheetScreenBody(
     ) {
         Marker(
             state = MarkerState(position = SanFranciscoLocation),
-            title = "Singapore",
-            snippet = "Marker in Singapore"
+            title = "San Francisco",
+            snippet = "Marker in San Francisco"
         )
 
         if (isPortrait) {
