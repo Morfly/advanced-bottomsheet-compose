@@ -180,8 +180,8 @@ internal fun <T : Any> BottomSheet(
     val orientation = Orientation.Vertical
 
     DisposableEffect(state) {
-        val onValuesRequested = fun(layoutSize: IntSize) {
-            val newAnchors = calculateAnchors(layoutSize)
+        val onValuesRequested = fun(sheetSize: IntSize) {
+            val newAnchors = calculateAnchors(sheetSize)
             if (draggableState.offset.isNaN()) {
                 draggableState.updateAnchors(newAnchors, draggableState.targetValue)
             } else scope.launch {
@@ -223,9 +223,9 @@ internal fun <T : Any> BottomSheet(
                     }
                 }
             }
-            .onSizeChanged { layoutSize ->
-                state.layoutSize = layoutSize
-                val newAnchors = calculateAnchors(layoutSize)
+            .onSizeChanged { sheetSize ->
+                state.sheetSize = sheetSize
+                val newAnchors = calculateAnchors(sheetSize)
                 draggableState.updateAnchors(newAnchors, draggableState.targetValue)
             },
         shape = shape,

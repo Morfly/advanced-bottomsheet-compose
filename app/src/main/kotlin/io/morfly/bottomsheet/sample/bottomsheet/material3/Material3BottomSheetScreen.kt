@@ -40,10 +40,12 @@ fun Material3BottomSheetScreen() {
                     val sheetLayout = coordinates.parentLayoutCoordinates?.parentLayoutCoordinates
                     if (sheetLayout != null) {
                         val offsetPx = sheetLayout.positionInParent()
-                        val layoutHeightPx = sheetLayout.parentLayoutCoordinates!!.size.height
-
-                        val paddingPx = layoutHeightPx - offsetPx.y
-                        bottomPadding = with(density) { paddingPx.toDp() }
+                        val parentLayout = sheetLayout.parentLayoutCoordinates
+                        if (parentLayout != null) {
+                            val layoutHeightPx = parentLayout.size.height
+                            val paddingPx = layoutHeightPx - offsetPx.y
+                            bottomPadding = with(density) { paddingPx.toDp() }
+                        }
                     }
                 },
             )

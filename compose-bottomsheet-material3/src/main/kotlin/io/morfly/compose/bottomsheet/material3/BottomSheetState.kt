@@ -39,19 +39,19 @@ class BottomSheetState<T : Any>(
     val draggableState: AnchoredDraggableState<T>,
     val defineValues: BottomSheetValuesConfig<T>.() -> Unit,
 ) {
-    internal val onValuesRequested = mutableSetOf<(layoutSize: IntSize) -> Unit>()
+    internal val onValuesRequested = mutableSetOf<(sheetSize: IntSize) -> Unit>()
 
-    var layoutSize: IntSize? = null
+    var sheetSize: IntSize? = null // TODO make mutableState
         internal set
     var sheetOffset: Offset? = null
         internal set
 
-    fun requireLayoutSize() = layoutSize!!
+    fun requireSheetSize() = sheetSize!!
 
-    fun requireSheetOffse() = sheetOffset!!
+    fun requireSheetOffset() = sheetOffset!!
 
     fun redefineValues() {
-        val size = layoutSize ?: return
+        val size = sheetSize ?: return
         onValuesRequested.forEach { call -> call(size) }
     }
 

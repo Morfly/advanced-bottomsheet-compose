@@ -113,8 +113,8 @@ private fun BottomSheet(
                 state = state,
                 orientation = Orientation.Vertical
             )
-            .onSizeChanged { layoutSize ->
-                val sheetHeight = layoutSize.height
+            .onSizeChanged { sheetSize ->
+                val sheetHeight = sheetSize.height
                 val newAnchors = DraggableAnchors {
                     with(density) {
                         // Bottom sheet height is 56 dp.
