@@ -9,12 +9,9 @@ import androidx.compose.material3.SheetValue
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import io.morfly.bottomsheet.sample.bottomsheet.common.BottomSheetContent
@@ -28,24 +25,23 @@ fun OfficialMaterial3DemoScreen() {
     )
     val scaffoldState = rememberBottomSheetScaffoldState(sheetState)
 
-    var bottomPadding by remember { mutableStateOf(0.dp) }
-
     BoxWithConstraints {
         val layoutHeightPx = constraints.maxHeight
+
+        val density = LocalDensity.current
+        val bottomPadding by remember(layoutHeightPx) { // TODO check if layoutHeightPx should be key
+            derivedStateOf {
+                val sheetOffsetPx = sheetState.requireOffset()
+                val sheetVisibleHeightPx = layoutHeightPx - sheetOffsetPx
+                with(density) { sheetVisibleHeightPx.roundToInt().toDp() }
+            }
+        }
 
         BottomSheetScaffold(
             sheetPeekHeight = 56.dp,
             scaffoldState = scaffoldState,
             sheetContent = {
-                val density = LocalDensity.current
-
-                BottomSheetContent(
-                    modifier = Modifier.onGloballyPositioned {
-                        val sheetOffsetPx = scaffoldState.bottomSheetState.requireOffset()
-                        val sheetHeightPx = layoutHeightPx - sheetOffsetPx
-                        bottomPadding = with(density) { sheetHeightPx.roundToInt().toDp() }
-                    }
-                )
+                BottomSheetContent()
             },
             content = {
                 MapScreenContent(bottomPadding)
