@@ -19,7 +19,7 @@ import io.morfly.compose.bottomsheet.material3.rememberBottomSheetState
 enum class SheetValue { Peek, PartiallyExpanded, Expanded }
 
 @Composable
-fun CustomBottomSheetScreen() {
+fun CustomFinalizedDemoScreen() {
     var isInitialState by rememberSaveable { mutableStateOf(true) }
 
     val state = rememberBottomSheetState(

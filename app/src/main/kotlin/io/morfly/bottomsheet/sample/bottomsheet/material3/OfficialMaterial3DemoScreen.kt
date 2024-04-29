@@ -21,7 +21,7 @@ import io.morfly.bottomsheet.sample.bottomsheet.BottomSheetContent
 import io.morfly.bottomsheet.sample.bottomsheet.MapScreenContent
 
 @Composable
-fun Material3BottomSheetScreen() {
+fun OfficialMaterial3DemoScreen() {
     val sheetState = rememberStandardBottomSheetState(
         initialValue = SheetValue.PartiallyExpanded
     )

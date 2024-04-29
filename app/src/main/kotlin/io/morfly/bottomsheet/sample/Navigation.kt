@@ -4,13 +4,13 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import io.morfly.bottomsheet.sample.bottomsheet.custom.CustomBottomSheetScreen
-import io.morfly.bottomsheet.sample.bottomsheet.draggable.CustomDraggableScreen
-import io.morfly.bottomsheet.sample.bottomsheet.material3.Material3BottomSheetScreen
-import io.morfly.bottomsheet.sample.bottomsheet.simplified.CustomSimplifiedBottomSheetScreen
+import io.morfly.bottomsheet.sample.bottomsheet.custom.CustomFinalizedDemoScreen
+import io.morfly.bottomsheet.sample.bottomsheet.draggable.CustomDraggableDemoScreen
+import io.morfly.bottomsheet.sample.bottomsheet.material3.OfficialMaterial3DemoScreen
+import io.morfly.bottomsheet.sample.bottomsheet.simplified.CustomDraggableSubcomposeDemoScreen
 
 enum class Destination {
-    Menu, Material3Demo, DraggableDemo, CustomSimplifiedDemo, CustomDemo;
+    Menu, Material3Demo, CustomDraggableDemo, CustomDraggableSubcomposeDemo, CustomFinalizedDemo;
 }
 
 @Composable
@@ -22,16 +22,16 @@ fun Navigation() {
             MenuScreen(onClick = { destination -> navController.navigate(destination.name) })
         }
         composable(Destination.Material3Demo.name) {
-            Material3BottomSheetScreen()
+            OfficialMaterial3DemoScreen()
         }
-        composable(Destination.DraggableDemo.name) {
-            CustomDraggableScreen()
+        composable(Destination.CustomDraggableDemo.name) {
+            CustomDraggableDemoScreen()
         }
-        composable(Destination.CustomSimplifiedDemo.name) {
-            CustomSimplifiedBottomSheetScreen()
+        composable(Destination.CustomDraggableSubcomposeDemo.name) {
+            CustomDraggableSubcomposeDemoScreen()
         }
-        composable(Destination.CustomDemo.name) {
-            CustomBottomSheetScreen()
+        composable(Destination.CustomFinalizedDemo.name) {
+            CustomFinalizedDemoScreen()
         }
     }
 }

@@ -25,17 +25,17 @@ fun MenuScreen(onClick: (Destination) -> Unit) {
         Item(
             title = "Draggable",
             description = "Draggable.",
-            onClick = { onClick(Destination.DraggableDemo) }
+            onClick = { onClick(Destination.CustomDraggableDemo) }
         )
         Item(
             title = "Custom Simplified Bottom Sheet",
             description = "Simplified implementation of a custom bottom sheet.",
-            onClick = { onClick(Destination.CustomSimplifiedDemo) }
+            onClick = { onClick(Destination.CustomDraggableSubcomposeDemo) }
         )
         Item(
             title = "Custom Bottom Sheet",
             description = "Custom implementation of a bottom sheet that extends the functionality of a Material3 variant.",
-            onClick = { onClick(Destination.CustomDemo) }
+            onClick = { onClick(Destination.CustomFinalizedDemo) }
         )
     }
 }

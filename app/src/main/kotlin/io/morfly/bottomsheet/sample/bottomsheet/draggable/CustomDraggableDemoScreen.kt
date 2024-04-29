@@ -24,7 +24,7 @@ import io.morfly.bottomsheet.sample.bottomsheet.MapScreenContent
 enum class SheetValue { Peek, PartiallyExpanded, Expanded }
 
 @Composable
-fun CustomDraggableScreen() {
+fun CustomDraggableDemoScreen() {
     val density = LocalDensity.current
 
     val state = remember {
