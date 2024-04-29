@@ -40,6 +40,8 @@ fun CustomDraggableDemoScreen() {
         MapScreenContent(mapUiBottomPadding = 0.dp)
 
         Surface(
+            shadowElevation = 1.dp,
+            tonalElevation = 1.dp,
             modifier = Modifier
                 .offset {
                     val sheetOffsetY = state.requireOffset()
