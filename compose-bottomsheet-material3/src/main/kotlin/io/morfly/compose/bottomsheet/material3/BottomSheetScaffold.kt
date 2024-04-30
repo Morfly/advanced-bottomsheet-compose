@@ -47,7 +47,6 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.SubcomposeLayout
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
@@ -235,16 +234,6 @@ internal fun <T : Any> BottomSheet(
                 orientation = orientation,
                 enabled = sheetSwipeEnabled,
             )
-            .onGloballyPositioned { coordinates ->
-//                if (onMoved != null) {
-//                    // TODO use offset from draggable
-//                    val offset = coordinates.positionInParent()
-//                    if (offset != state.sheetOffset) {
-//                        state.sheetOffset = offset
-//                        onMoved(offset)
-//                    }
-//                }
-            }
             .onSizeChanged { sheetFullSize ->
                 state.sheetFullHeight = sheetFullSize.height
                 val newAnchors = calculateAnchors(sheetFullSize.height)
