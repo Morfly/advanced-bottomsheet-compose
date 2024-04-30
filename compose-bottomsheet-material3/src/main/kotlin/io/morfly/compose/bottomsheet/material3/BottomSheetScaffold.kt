@@ -35,6 +35,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -48,11 +49,9 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.Velocity
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -76,7 +75,6 @@ fun <T : Any> BottomSheetScaffold(
     snackbarHost: @Composable (SnackbarHostState) -> Unit = { SnackbarHost(it) },
     containerColor: Color = MaterialTheme.colorScheme.surface,
     contentColor: Color = contentColorFor(containerColor),
-    onSheetMoved: ((sheetHeight: Dp) -> Unit)? = null,
     content: @Composable (PaddingValues) -> Unit
 ) {
     val density = LocalDensity.current
@@ -92,14 +90,17 @@ fun <T : Any> BottomSheetScaffold(
         containerColor = containerColor,
         contentColor = contentColor,
         bottomSheet = { layoutHeight ->
+            SideEffect {
+                sheetState.layoutHeight = layoutHeight
+            }
             BottomSheet(
                 state = sheetState,
                 sheetMaxWidth = sheetMaxWidth,
                 sheetSwipeEnabled = sheetSwipeEnabled,
-                calculateAnchors = { sheetSize ->
+                calculateAnchors = { sheetFullHeight ->
                     val config = BottomSheetValuesConfig<T>(
                         layoutHeight = layoutHeight,
-                        sheetHeight = sheetSize.height,
+                        sheetFullHeight = sheetFullHeight,
                         density = density,
                     )
                     sheetState.defineValues(config)
@@ -110,13 +111,6 @@ fun <T : Any> BottomSheetScaffold(
                             state at value
                         }
                     }
-                },
-                onMoved = if (onSheetMoved != null) { offset ->
-                    val padding = layoutHeight - offset.y
-                    val paddingDp = with(density) { padding.toDp() }
-                    onSheetMoved(paddingDp)
-                } else {
-                    null
                 },
                 shape = sheetShape,
                 containerColor = sheetContainerColor,
@@ -191,8 +185,7 @@ private enum class BottomSheetScaffoldLayoutSlot { TopBar, Body, Sheet, Snackbar
 @Composable
 internal fun <T : Any> BottomSheet(
     state: BottomSheetState<T>,
-    calculateAnchors: (sheetSize: IntSize) -> DraggableAnchors<T>,
-    onMoved: ((sheetOffset: Offset) -> Unit)?,
+    calculateAnchors: (sheetFullHeight: Int) -> DraggableAnchors<T>,
     sheetMaxWidth: Dp,
     sheetSwipeEnabled: Boolean,
     shape: Shape,
@@ -208,8 +201,8 @@ internal fun <T : Any> BottomSheet(
     val orientation = Orientation.Vertical
 
     DisposableEffect(state) {
-        val onValuesRequested = fun(sheetSize: IntSize) {
-            val newAnchors = calculateAnchors(sheetSize)
+        val onValuesRequested = fun(sheetFullHeight: Int) {
+            val newAnchors = calculateAnchors(sheetFullHeight)
             if (draggableState.offset.isNaN()) {
                 draggableState.updateAnchors(newAnchors, draggableState.targetValue)
             } else scope.launch {
@@ -243,18 +236,18 @@ internal fun <T : Any> BottomSheet(
                 enabled = sheetSwipeEnabled,
             )
             .onGloballyPositioned { coordinates ->
-                if (onMoved != null) {
-                    // TODO use offset from draggable
-                    val offset = coordinates.positionInParent()
-                    if (offset != state.sheetOffset) {
-                        state.sheetOffset = offset
-                        onMoved(offset)
-                    }
-                }
+//                if (onMoved != null) {
+//                    // TODO use offset from draggable
+//                    val offset = coordinates.positionInParent()
+//                    if (offset != state.sheetOffset) {
+//                        state.sheetOffset = offset
+//                        onMoved(offset)
+//                    }
+//                }
             }
-            .onSizeChanged { sheetSize ->
-                state.sheetSize = sheetSize
-                val newAnchors = calculateAnchors(sheetSize)
+            .onSizeChanged { sheetFullSize ->
+                state.sheetFullHeight = sheetFullSize.height
+                val newAnchors = calculateAnchors(sheetFullSize.height)
                 draggableState.updateAnchors(newAnchors, draggableState.targetValue)
             },
         shape = shape,
@@ -334,10 +327,10 @@ internal fun <T> BottomSheetNestedScrollConnection(
 
 class BottomSheetValuesConfig<T : Any>(
     val layoutHeight: Int,
-    val sheetHeight: Int,
+    val sheetFullHeight: Int,
     val density: Density,
 ) {
-    val contentHeight = Value((layoutHeight - sheetHeight).toFloat())
+    val contentHeight = Value((layoutHeight - sheetFullHeight).toFloat())
 
     val values = mutableMapOf<T, Float>()
 

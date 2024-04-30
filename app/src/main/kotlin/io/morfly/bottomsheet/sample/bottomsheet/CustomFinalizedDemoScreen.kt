@@ -5,6 +5,7 @@ package io.morfly.bottomsheet.sample.bottomsheet
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -15,6 +16,7 @@ import io.morfly.bottomsheet.sample.bottomsheet.common.BottomSheetContent
 import io.morfly.bottomsheet.sample.bottomsheet.common.MapScreenContent
 import io.morfly.compose.bottomsheet.material3.BottomSheetScaffold
 import io.morfly.compose.bottomsheet.material3.rememberBottomSheetState
+import io.morfly.compose.bottomsheet.material3.sheetVisibleHeightDp
 
 @Composable
 fun CustomFinalizedDemoScreen() {
@@ -38,13 +40,12 @@ fun CustomFinalizedDemoScreen() {
         }
     )
 
-    var bottomPadding by remember { mutableStateOf(0.dp) }
+    val bottomPadding by remember {
+        derivedStateOf { state.sheetVisibleHeightDp }
+    }
 
     BottomSheetScaffold(
         sheetState = state,
-        onSheetMoved = { sheetHeight ->
-            bottomPadding = sheetHeight
-        },
         sheetContent = {
             BottomSheetContent()
         },

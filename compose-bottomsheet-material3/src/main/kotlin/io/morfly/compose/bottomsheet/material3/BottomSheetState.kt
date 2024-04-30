@@ -23,16 +23,18 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
 import kotlinx.coroutines.launch
 
 @ExperimentalFoundationApi
@@ -41,28 +43,51 @@ class BottomSheetState<T : Any>(
     val draggableState: AnchoredDraggableState<T>,
     val snackbarHostState: SnackbarHostState,
     val defineValues: BottomSheetValuesConfig<T>.() -> Unit,
+    val density: Density
 ) {
-    internal val onValuesRequested = mutableSetOf<(sheetSize: IntSize) -> Unit>()
+    internal val onValuesRequested = mutableSetOf<(sheetFullHeight: Int) -> Unit>()
 
-    // TODO rename to size
-    var sheetSize: IntSize? by mutableStateOf(null)
-        internal set
-    var sheetOffset: Offset? by mutableStateOf(null)
+    var layoutHeight: Int by mutableIntStateOf(Int.MAX_VALUE)
         internal set
 
-    fun requireSheetSize() = requireNotNull(sheetSize) {
-        "The sheetSize was read before being initialized. Did you access the sheetSize in a " +
-                "phase before layout, like effects or composition?"
+    var sheetFullHeight: Int by mutableIntStateOf(Int.MAX_VALUE)
+        internal set
+
+    val sheetVisibleHeight: Float by derivedStateOf {
+        layoutHeight - offset
     }
 
-    fun requireSheetOffset() = requireNotNull(sheetOffset) {
-        "The sheetOffset was read before being initialized. Did you access the sheetOffset in a " +
-                "phase before layout, like effects or composition?"
+    val offset: Float get() = draggableState.offset
+
+    fun requireLayoutHeight(): Int {
+        check(layoutHeight != Int.MAX_VALUE) {
+            "The layoutHeight was read before being initialized. Did you access the " +
+                    "layoutHeight in a phase before layout, like effects or composition?"
+        }
+        return layoutHeight
     }
+
+    fun requireSheetFullHeight(): Int {
+        check(sheetFullHeight != Int.MAX_VALUE) {
+            "The sheetFullHeight was read before being initialized. Did you access the " +
+                    "sheetFullHeight in a phase before layout, like effects or composition?"
+        }
+        return sheetFullHeight
+    }
+
+    fun requireSheetVisibleHeight(): Float {
+        check(!sheetVisibleHeight.isNaN()) {
+            "The sheetVisibleHeight was read before being initialized. Did you access the " +
+                    "sheetVisibleHeight in a phase before layout, like effects or composition?"
+        }
+        return sheetVisibleHeight
+    }
+
+    fun requireOffset() = draggableState.requireOffset()
 
     fun redefineValues() {
-        val size = sheetSize ?: return
-        onValuesRequested.forEach { call -> call(size) }
+        if (sheetFullHeight == Int.MAX_VALUE) return
+        onValuesRequested.forEach { call -> call(sheetFullHeight) }
     }
 
     companion object {
@@ -70,13 +95,23 @@ class BottomSheetState<T : Any>(
         fun <T : Any> Saver(
             defineValues: BottomSheetValuesConfig<T>.() -> Unit,
             snackbarHostState: SnackbarHostState,
+            density: Density
         ) = Saver<BottomSheetState<T>, AnchoredDraggableState<T>>(
             save = { it.draggableState },
             restore = { draggableState ->
-                BottomSheetState(draggableState, snackbarHostState, defineValues)
+                BottomSheetState(draggableState, snackbarHostState, defineValues, density)
             }
         )
     }
+}
+
+@ExperimentalFoundationApi
+val <T : Any> BottomSheetState<T>.sheetVisibleHeightDp: Dp
+    get() = with(density) { sheetVisibleHeight.toDp() }
+
+@ExperimentalFoundationApi
+fun <T : Any> BottomSheetState<T>.requireSheetVisibleHeightDp(): Dp {
+    return with(density) { requireSheetVisibleHeight().toDp() }
 }
 
 @ExperimentalMaterial3Api
@@ -112,8 +147,12 @@ fun <T : Any> rememberBottomSheetState(
     draggableState: AnchoredDraggableState<T>,
     defineValues: BottomSheetValuesConfig<T>.() -> Unit,
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
-) = remember(draggableState, defineValues) {
-    BottomSheetState(draggableState, snackbarHostState, defineValues)
+): BottomSheetState<T> {
+    val density = LocalDensity.current
+
+    return remember(draggableState, defineValues) {
+        BottomSheetState(draggableState, snackbarHostState, defineValues, density)
+    }
 }
 
 @ExperimentalMaterial3Api
