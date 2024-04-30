@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import io.morfly.bottomsheet.sample.bottomsheet.common.BottomSheetContent
 import io.morfly.bottomsheet.sample.bottomsheet.common.MapScreenContent
 import io.morfly.compose.bottomsheet.material3.BottomSheetScaffold
+import io.morfly.compose.bottomsheet.material3.rememberBottomSheetScaffoldState
 import io.morfly.compose.bottomsheet.material3.rememberBottomSheetState
 import io.morfly.compose.bottomsheet.material3.sheetVisibleHeightDp
 
@@ -22,7 +23,7 @@ import io.morfly.compose.bottomsheet.material3.sheetVisibleHeightDp
 fun CustomFinalizedDemoScreen() {
     var isInitialState by rememberSaveable { mutableStateOf(true) }
 
-    val state = rememberBottomSheetState(
+    val sheetState = rememberBottomSheetState(
         initialValue = SheetValue.PartiallyExpanded,
         defineValues = {
             SheetValue.Peek at height(56.dp)
@@ -39,17 +40,17 @@ fun CustomFinalizedDemoScreen() {
             true
         }
     )
-
-    val bottomPadding by remember {
-        derivedStateOf { state.sheetVisibleHeightDp }
-    }
+    val scaffoldState = rememberBottomSheetScaffoldState(sheetState)
 
     BottomSheetScaffold(
-        sheetState = state,
+        scaffoldState = scaffoldState,
         sheetContent = {
             BottomSheetContent()
         },
         content = {
+            val bottomPadding by remember {
+                derivedStateOf { sheetState.sheetVisibleHeightDp }
+            }
             MapScreenContent(bottomPadding)
         }
     )

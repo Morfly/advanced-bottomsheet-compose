@@ -36,6 +36,7 @@ import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -55,11 +56,32 @@ import androidx.compose.ui.unit.Velocity
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
+@ExperimentalFoundationApi
+@Stable
+class BottomSheetScaffoldState<T : Any>(
+    val sheetState: BottomSheetState<T>,
+    val snackbarHostState: SnackbarHostState,
+)
+
+@ExperimentalFoundationApi
+@Composable
+fun <T : Any> rememberBottomSheetScaffoldState(
+    sheetState: BottomSheetState<T>,
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
+): BottomSheetScaffoldState<T> {
+    return remember(sheetState, snackbarHostState) {
+        BottomSheetScaffoldState(
+            sheetState = sheetState,
+            snackbarHostState = snackbarHostState
+        )
+    }
+}
+
 @ExperimentalMaterial3Api
 @ExperimentalFoundationApi
 @Composable
 fun <T : Any> BottomSheetScaffold(
-    sheetState: BottomSheetState<T>, // TODO rename to scaffold state
+    scaffoldState: BottomSheetScaffoldState<T>,
     sheetContent: @Composable ColumnScope.() -> Unit,
     modifier: Modifier = Modifier,
     sheetMaxWidth: Dp = BottomSheetDefaults.SheetMaxWidth,
@@ -83,17 +105,17 @@ fun <T : Any> BottomSheetScaffold(
         topBar = topBar,
         body = content,
         snackbarHost = {
-            snackbarHost(sheetState.snackbarHostState)
+            snackbarHost(scaffoldState.snackbarHostState)
         },
-        sheetOffset = { sheetState.draggableState.requireOffset() },
+        sheetOffset = { scaffoldState.sheetState.draggableState.requireOffset() },
         containerColor = containerColor,
         contentColor = contentColor,
         bottomSheet = { layoutHeight ->
             SideEffect {
-                sheetState.layoutHeight = layoutHeight
+                scaffoldState.sheetState.layoutHeight = layoutHeight
             }
             BottomSheet(
-                state = sheetState,
+                state = scaffoldState.sheetState,
                 sheetMaxWidth = sheetMaxWidth,
                 sheetSwipeEnabled = sheetSwipeEnabled,
                 calculateAnchors = { sheetFullHeight ->
@@ -102,7 +124,7 @@ fun <T : Any> BottomSheetScaffold(
                         sheetFullHeight = sheetFullHeight,
                         density = density,
                     )
-                    sheetState.defineValues(config)
+                    scaffoldState.sheetState.defineValues(config)
                     require(config.values.isNotEmpty()) { "No bottom sheet values provided!" }
 
                     DraggableAnchors {

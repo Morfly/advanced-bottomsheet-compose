@@ -20,7 +20,6 @@ import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
@@ -30,7 +29,6 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.Saver
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
@@ -41,7 +39,6 @@ import kotlinx.coroutines.launch
 @Stable
 class BottomSheetState<T : Any>(
     val draggableState: AnchoredDraggableState<T>,
-    val snackbarHostState: SnackbarHostState,
     val defineValues: BottomSheetValuesConfig<T>.() -> Unit,
     val density: Density
 ) {
@@ -94,12 +91,11 @@ class BottomSheetState<T : Any>(
 
         fun <T : Any> Saver(
             defineValues: BottomSheetValuesConfig<T>.() -> Unit,
-            snackbarHostState: SnackbarHostState,
             density: Density
         ) = Saver<BottomSheetState<T>, AnchoredDraggableState<T>>(
             save = { it.draggableState },
             restore = { draggableState ->
-                BottomSheetState(draggableState, snackbarHostState, defineValues, density)
+                BottomSheetState(draggableState, defineValues, density)
             }
         )
     }
@@ -117,51 +113,9 @@ fun <T : Any> BottomSheetState<T>.requireSheetVisibleHeightDp(): Dp {
 @ExperimentalMaterial3Api
 @ExperimentalFoundationApi
 @Composable
-fun <T : Any> rememberAnchoredDraggableState(
-    initialValue: T,
-    positionalThreshold: (totalDistance: Float) -> Float = BottomSheetDefaults.PositionalThreshold,
-    velocityThreshold: () -> Float = BottomSheetDefaults.VelocityThreshold,
-    animationSpec: AnimationSpec<Float> = BottomSheetDefaults.AnimationSpec,
-    confirmValueChange: (newValue: T) -> Boolean = { true }
-) = rememberSaveable(
-    positionalThreshold, velocityThreshold, animationSpec, confirmValueChange,
-    saver = AnchoredDraggableState.Saver(
-        animationSpec = animationSpec,
-        positionalThreshold = positionalThreshold,
-        velocityThreshold = velocityThreshold,
-        confirmValueChange = confirmValueChange
-    )
-) {
-    AnchoredDraggableState(
-        initialValue = initialValue,
-        positionalThreshold = positionalThreshold,
-        velocityThreshold = velocityThreshold,
-        animationSpec = animationSpec,
-        confirmValueChange = confirmValueChange
-    )
-}
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun <T : Any> rememberBottomSheetState(
-    draggableState: AnchoredDraggableState<T>,
-    defineValues: BottomSheetValuesConfig<T>.() -> Unit,
-    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
-): BottomSheetState<T> {
-    val density = LocalDensity.current
-
-    return remember(draggableState, defineValues) {
-        BottomSheetState(draggableState, snackbarHostState, defineValues, density)
-    }
-}
-
-@ExperimentalMaterial3Api
-@ExperimentalFoundationApi
-@Composable
 fun <T : Any> rememberBottomSheetState(
     initialValue: T,
     defineValues: BottomSheetValuesConfig<T>.() -> Unit,
-    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
     positionalThreshold: (totalDistance: Float) -> Float = BottomSheetDefaults.PositionalThreshold,
     velocityThreshold: () -> Float = BottomSheetDefaults.VelocityThreshold,
     animationSpec: AnimationSpec<Float> = BottomSheetDefaults.AnimationSpec,
@@ -203,6 +157,19 @@ fun <T : Any> rememberBottomSheetState(
         }
     )
 
-    state = rememberBottomSheetState(draggableState, defineValues, snackbarHostState)
+    state = rememberBottomSheetState(draggableState, defineValues)
     return state
+}
+
+@ExperimentalFoundationApi
+@Composable
+internal fun <T : Any> rememberBottomSheetState(
+    draggableState: AnchoredDraggableState<T>,
+    defineValues: BottomSheetValuesConfig<T>.() -> Unit,
+): BottomSheetState<T> {
+    val density = LocalDensity.current
+
+    return remember(draggableState, defineValues) {
+        BottomSheetState(draggableState, defineValues, density)
+    }
 }

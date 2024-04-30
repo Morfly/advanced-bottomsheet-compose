@@ -16,7 +16,12 @@
 
 package io.morfly.compose.bottomsheet.material3
 
+import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.material3.BottomSheetDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.saveable.rememberSaveable
 
 @ExperimentalFoundationApi
 suspend fun <T> AnchoredDraggableState<T>.updateAnchorsAnimated(
@@ -30,4 +35,31 @@ suspend fun <T> AnchoredDraggableState<T>.updateAnchorsAnimated(
 
         animateTo(newTarget)
     }
+}
+
+@ExperimentalMaterial3Api
+@ExperimentalFoundationApi
+@Composable
+fun <T : Any> rememberAnchoredDraggableState(
+    initialValue: T,
+    positionalThreshold: (totalDistance: Float) -> Float = BottomSheetDefaults.PositionalThreshold,
+    velocityThreshold: () -> Float = BottomSheetDefaults.VelocityThreshold,
+    animationSpec: AnimationSpec<Float> = BottomSheetDefaults.AnimationSpec,
+    confirmValueChange: (newValue: T) -> Boolean = { true }
+) = rememberSaveable(
+    positionalThreshold, velocityThreshold, animationSpec, confirmValueChange,
+    saver = AnchoredDraggableState.Saver(
+        animationSpec = animationSpec,
+        positionalThreshold = positionalThreshold,
+        velocityThreshold = velocityThreshold,
+        confirmValueChange = confirmValueChange
+    )
+) {
+    AnchoredDraggableState(
+        initialValue = initialValue,
+        positionalThreshold = positionalThreshold,
+        velocityThreshold = velocityThreshold,
+        animationSpec = animationSpec,
+        confirmValueChange = confirmValueChange
+    )
 }
