@@ -3,6 +3,7 @@
 package io.morfly.bottomsheet.sample.bottomsheet.common
 
 import android.content.res.Configuration
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -54,9 +55,15 @@ fun MapScreenContent(
         mapUiBottomPadding = mapUiBottomPadding
     )
 
+    val portraitPadding = remember(mapUiBottomPadding) {
+        PaddingValues(start = 16.dp, bottom = mapUiBottomPadding)
+    }
+    val landscapePadding = remember { PaddingValues() }
+
     GoogleMap(
         modifier = modifier.fillMaxSize(),
-        cameraPositionState = cameraPositionState
+        cameraPositionState = cameraPositionState,
+        contentPadding = if (isPortrait) portraitPadding else landscapePadding,
     ) {
         Marker(
             state = MarkerState(position = SanFranciscoLocation),

@@ -58,6 +58,10 @@ class BottomSheetState<T : Any>(
 
     val offset: Float get() = draggableState.offset
 
+    val currentValue: T get() = draggableState.currentValue
+
+    val targetValue: T get() = draggableState.targetValue
+
     fun requireLayoutHeight(): Int {
         check(layoutHeight != Int.MAX_VALUE) {
             "The layoutHeight was read before being initialized. Did you access the " +
@@ -88,6 +92,15 @@ class BottomSheetState<T : Any>(
         if (sheetFullHeight == Int.MAX_VALUE) return
         onValuesRequested.forEach { call -> call(sheetFullHeight) }
     }
+
+    suspend fun animateTo(
+        targetValue: T,
+        velocity: Float = draggableState.lastVelocity,
+    ) = draggableState.animateTo(targetValue, velocity)
+
+    suspend fun snapTo(
+        targetValue: T
+    ) = draggableState.snapTo(targetValue)
 
     companion object {
 
