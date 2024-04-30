@@ -20,6 +20,7 @@ import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SheetValue
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
@@ -33,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 
 @ExperimentalFoundationApi
@@ -159,6 +161,43 @@ fun <T : Any> rememberBottomSheetState(
 
     state = rememberBottomSheetState(draggableState, defineValues)
     return state
+}
+
+@ExperimentalFoundationApi
+@ExperimentalMaterial3Api
+@Composable
+fun rememberStandardBottomSheetState(
+    initialValue: SheetValue = SheetValue.PartiallyExpanded,
+    skipPartiallyExpandedState: Boolean = false,
+    peekHeight: Dp = BottomSheetDefaults.SheetPeekHeight,
+    skipHiddenState: Boolean = true,
+    confirmValueChange: BottomSheetState<SheetValue>.(newValue: SheetValue) -> Boolean = { true },
+): BottomSheetState<SheetValue> {
+    return rememberBottomSheetState(
+        initialValue = initialValue,
+        defineValues = {
+            if (skipPartiallyExpandedState) {
+                require(initialValue != SheetValue.PartiallyExpanded) {
+                    "The initial value must not be set to PartiallyExpanded if skipPartiallyExpanded " +
+                            "is set to true."
+                }
+            }
+            if (skipHiddenState) {
+                require(initialValue != SheetValue.Hidden) {
+                    "The initial value must not be set to Hidden if skipHiddenState is set to true."
+                }
+            }
+
+            if (!skipPartiallyExpandedState) {
+                SheetValue.PartiallyExpanded at height(peekHeight)
+            }
+            if (!skipHiddenState) {
+                SheetValue.Hidden at height(0.dp)
+            }
+            SheetValue.Expanded at contentHeight
+        },
+        confirmValueChange = confirmValueChange
+    )
 }
 
 @ExperimentalFoundationApi
