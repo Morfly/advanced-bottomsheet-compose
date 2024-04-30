@@ -146,7 +146,7 @@ fun <T : Any> BottomSheetScaffold(
 }
 
 @Composable
-private fun BottomSheetScaffoldLayout(
+internal fun BottomSheetScaffoldLayout(
     modifier: Modifier,
     topBar: @Composable (() -> Unit)?,
     body: @Composable (innerPadding: PaddingValues) -> Unit,
