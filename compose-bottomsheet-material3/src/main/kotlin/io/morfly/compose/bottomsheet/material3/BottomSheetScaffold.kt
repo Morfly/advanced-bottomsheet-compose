@@ -35,6 +35,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
@@ -119,7 +120,9 @@ fun <T : Any> BottomSheetScaffold(
                 sheetMaxWidth = sheetMaxWidth,
                 sheetSwipeEnabled = sheetSwipeEnabled,
                 calculateAnchors = { sheetFullHeight ->
-                    val config = BottomSheetValuesConfig<T>(
+                    val config = BottomSheetValuesConfig(
+                        targetValue = scaffoldState.sheetState.targetValue,
+                        animate = true,
                         layoutHeight = layoutHeight,
                         sheetFullHeight = sheetFullHeight,
                         density = density,
@@ -127,11 +130,7 @@ fun <T : Any> BottomSheetScaffold(
                     scaffoldState.sheetState.defineValues(config)
                     require(config.values.isNotEmpty()) { "No bottom sheet values provided!" }
 
-                    DraggableAnchors {
-                        for ((state, value) in config.values) {
-                            state at value
-                        }
-                    }
+                    config
                 },
                 shape = sheetShape,
                 containerColor = sheetContainerColor,
@@ -206,7 +205,7 @@ private enum class BottomSheetScaffoldLayoutSlot { TopBar, Body, Sheet, Snackbar
 @Composable
 internal fun <T : Any> BottomSheet(
     state: BottomSheetState<T>,
-    calculateAnchors: (sheetFullHeight: Int) -> DraggableAnchors<T>,
+    calculateAnchors: (sheetFullHeight: Int) -> BottomSheetValuesConfig<T>,
     sheetMaxWidth: Dp,
     sheetSwipeEnabled: Boolean,
     shape: Shape,
@@ -221,18 +220,15 @@ internal fun <T : Any> BottomSheet(
     val scope = rememberCoroutineScope()
     val orientation = Orientation.Vertical
 
-    DisposableEffect(state) {
-        val onValuesRequested = fun(sheetFullHeight: Int) {
-            val newAnchors = calculateAnchors(sheetFullHeight)
-            if (draggableState.offset.isNaN()) {
-                draggableState.updateAnchors(newAnchors, draggableState.targetValue)
-            } else scope.launch {
-                draggableState.updateAnchorsAnimated(newAnchors, draggableState.targetValue)
-            }
-        }
-        state.onValuesRequested += onValuesRequested
-        onDispose {
-            state.onValuesRequested -= onValuesRequested
+    LaunchedEffect(state.defineValues) {
+        if (state.sheetFullHeight == Int.MAX_VALUE) return@LaunchedEffect
+
+        val config = calculateAnchors(state.requireSheetFullHeight())
+        val newAnchors = config.asDraggableAnchors()
+        if (draggableState.offset.isNaN() || !config.animate) {
+            draggableState.updateAnchors(newAnchors, config.targetValue)
+        } else scope.launch {
+            draggableState.updateAnchorsAnimated(newAnchors, config.targetValue)
         }
     }
 
@@ -258,7 +254,7 @@ internal fun <T : Any> BottomSheet(
             )
             .onSizeChanged { sheetFullSize ->
                 state.sheetFullHeight = sheetFullSize.height
-                val newAnchors = calculateAnchors(sheetFullSize.height)
+                val newAnchors = calculateAnchors(sheetFullSize.height).asDraggableAnchors()
                 draggableState.updateAnchors(newAnchors, draggableState.targetValue)
             },
         shape = shape,
@@ -337,6 +333,8 @@ internal fun <T> BottomSheetNestedScrollConnection(
 }
 
 class BottomSheetValuesConfig<T : Any>(
+    var targetValue: T,
+    var animate: Boolean,
     val layoutHeight: Int,
     val sheetFullHeight: Int,
     val density: Density,
@@ -375,4 +373,13 @@ class BottomSheetValuesConfig<T : Any>(
 
     @JvmInline
     value class Value internal constructor(val offsetPx: Float)
+}
+
+@ExperimentalFoundationApi
+fun <T : Any> BottomSheetValuesConfig<T>.asDraggableAnchors(): DraggableAnchors<T> {
+    return DraggableAnchors {
+        for ((state, value) in values) {
+            state at value
+        }
+    }
 }

@@ -25,17 +25,20 @@ fun CustomFinalizedDemoScreen() {
 
     val sheetState = rememberBottomSheetState(
         initialValue = SheetValue.PartiallyExpanded,
-        defineValues = {
-            SheetValue.Peek at height(56.dp)
-            if (isInitialState) {
-                SheetValue.PartiallyExpanded at height(percent = 40)
+        defineValues =
+        remember(isInitialState) {
+            {
+                SheetValue.Peek at height(56.dp)
+                if (isInitialState) {
+                    SheetValue.PartiallyExpanded at height(percent = 40)
+                }
+                SheetValue.Expanded at contentHeight
             }
-            SheetValue.Expanded at contentHeight
         },
         confirmValueChange = {
             if (isInitialState) {
                 isInitialState = false
-                redefineValues()
+//                redefineValues()
             }
             true
         }

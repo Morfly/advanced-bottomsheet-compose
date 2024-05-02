@@ -22,11 +22,13 @@ import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetValue
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.Saver
@@ -35,16 +37,20 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @ExperimentalFoundationApi
 @Stable
 class BottomSheetState<T : Any>(
     val draggableState: AnchoredDraggableState<T>,
-    val defineValues: BottomSheetValuesConfig<T>.() -> Unit,
+    defineValues: BottomSheetValuesConfig<T>.() -> Unit,
     val density: Density
 ) {
-    internal val onValuesRequested = mutableSetOf<(sheetFullHeight: Int) -> Unit>()
+//    internal val onValuesRequested = mutableSetOf<(sheetFullHeight: Int) -> Unit>()
+
+    var defineValues by mutableStateOf(defineValues)
+        internal set
 
     var layoutHeight: Int by mutableIntStateOf(Int.MAX_VALUE)
         internal set
@@ -88,10 +94,10 @@ class BottomSheetState<T : Any>(
 
     fun requireOffset() = draggableState.requireOffset()
 
-    fun redefineValues() {
-        if (sheetFullHeight == Int.MAX_VALUE) return
-        onValuesRequested.forEach { call -> call(sheetFullHeight) }
-    }
+//    fun redefineValues() {
+//        if (sheetFullHeight == Int.MAX_VALUE) return
+//        onValuesRequested.forEach { call -> call(sheetFullHeight) }
+//    }
 
     suspend fun animateTo(
         targetValue: T,
@@ -200,6 +206,10 @@ fun <T : Any> rememberBottomSheetState(
     )
 
     state = rememberBottomSheetState(draggableState, defineValues)
+
+    LaunchedEffect(defineValues) {
+        state.defineValues = defineValues
+    }
     return state
 }
 
@@ -248,7 +258,7 @@ internal fun <T : Any> rememberBottomSheetState(
 ): BottomSheetState<T> {
     val density = LocalDensity.current
 
-    return remember(draggableState, defineValues) {
+    return remember(draggableState) {
         BottomSheetState(draggableState, defineValues, density)
     }
 }
