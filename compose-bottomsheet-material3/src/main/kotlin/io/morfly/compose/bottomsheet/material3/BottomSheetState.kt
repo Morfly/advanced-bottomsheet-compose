@@ -117,12 +117,39 @@ class BottomSheetState<T : Any>(
 }
 
 @ExperimentalFoundationApi
+val <T : Any> BottomSheetState<T>.layoutHeightDp: Dp
+    get() = with(density) { layoutHeight.toDp() }
+
+@ExperimentalFoundationApi
+val <T : Any> BottomSheetState<T>.sheetFullHeightDp: Dp
+    get() = with(density) { sheetFullHeight.toDp() }
+
+@ExperimentalFoundationApi
 val <T : Any> BottomSheetState<T>.sheetVisibleHeightDp: Dp
     get() = with(density) { sheetVisibleHeight.toDp() }
 
 @ExperimentalFoundationApi
+val <T : Any> BottomSheetState<T>.offsetDp: Dp
+    get() = with(density) { offset.toDp() }
+
+@ExperimentalFoundationApi
+fun <T : Any> BottomSheetState<T>.requireLayoutHeightDp(): Dp {
+    return with(density) { requireLayoutHeight().toDp() }
+}
+
+@ExperimentalFoundationApi
+fun <T : Any> BottomSheetState<T>.requireSheetFullHeightDp(): Dp {
+    return with(density) { requireSheetFullHeight().toDp() }
+}
+
+@ExperimentalFoundationApi
 fun <T : Any> BottomSheetState<T>.requireSheetVisibleHeightDp(): Dp {
     return with(density) { requireSheetVisibleHeight().toDp() }
+}
+
+@ExperimentalFoundationApi
+fun <T : Any> BottomSheetState<T>.requireOffsetDp(): Dp {
+    return with(density) { requireOffset().toDp() }
 }
 
 @ExperimentalMaterial3Api
