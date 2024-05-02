@@ -353,8 +353,8 @@ class BottomSheetValuesConfig<T : Any>(
         return Value(px)
     }
 
-    fun offset(offset: Dp): Value {
-        return Value(with(density) { offset.toPx() })
+    fun offset(dp: Dp): Value {
+        return Value(with(density) { dp.toPx() })
     }
 
     fun offset(@IntRange(from = 0, to = 100) percent: Int): Value {
@@ -365,8 +365,8 @@ class BottomSheetValuesConfig<T : Any>(
         return Value(layoutHeight - offset(px).offsetPx)
     }
 
-    fun height(height: Dp): Value {
-        return Value(layoutHeight - offset(height).offsetPx)
+    fun height(dp: Dp): Value {
+        return Value(layoutHeight - offset(dp).offsetPx)
     }
 
     fun height(@IntRange(from = 0, to = 100) percent: Int): Value {
