@@ -9,11 +9,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
@@ -29,19 +27,15 @@ import com.google.maps.android.compose.MapsComposeExperimentalApi
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 
 val SanFranciscoLocation = LatLng(37.773972, -122.431297)
 
 @Composable
 fun MapScreenContent(
-    mapUiBottomPadding: Dp,
     modifier: Modifier = Modifier,
+    isBottomSheetMoving: Boolean = false,
+    mapUiBottomPadding: Dp = 0.dp,
 ) {
     val configuration = LocalConfiguration.current
     val isPortrait = configuration.orientation == Configuration.ORIENTATION_PORTRAIT
@@ -52,6 +46,7 @@ fun MapScreenContent(
 
     AdjustedCameraPositionEffect(
         cameraPositionState = cameraPositionState,
+        isBottomSheetMoving = isBottomSheetMoving,
         mapUiBottomPadding = mapUiBottomPadding
     )
 
@@ -82,35 +77,30 @@ fun MapScreenContent(
     }
 }
 
-@OptIn(FlowPreview::class)
 @Composable
 private fun AdjustedCameraPositionEffect(
     cameraPositionState: CameraPositionState,
+    isBottomSheetMoving: Boolean,
     mapUiBottomPadding: Dp,
 ) {
-    val density = LocalDensity.current
-
     var lastCameraPosition by remember { mutableFloatStateOf(0f) }
 
     val cameraAnimationScope = rememberCoroutineScope()
-    var cameraAnimationJob by remember { mutableStateOf<Job?>(null) }
-    LaunchedEffect(mapUiBottomPadding) {
-        snapshotFlow { mapUiBottomPadding }
-            .debounce(timeoutMillis = 100)
-            .filter { !cameraPositionState.isMoving }
-            .collectLatest { bottomPadding ->
-                val bottomPaddingPx = with(density) { bottomPadding.toPx() }
 
-                val diffPx = bottomPaddingPx - lastCameraPosition
-                if (diffPx == 0f) return@collectLatest
+    val density = LocalDensity.current
+    LaunchedEffect(isBottomSheetMoving) {
+        if (isBottomSheetMoving) return@LaunchedEffect
 
-                val update = CameraUpdateFactory.scrollBy(0f, diffPx / 2)
+        val bottomPaddingPx = with(density) { mapUiBottomPadding.toPx() }
 
-                cameraAnimationJob?.cancel()
-                cameraAnimationJob = cameraAnimationScope.launch {
-                    cameraPositionState.animate(update)
-                    lastCameraPosition = bottomPaddingPx
-                }
-            }
+        val diffPx = bottomPaddingPx - lastCameraPosition
+        if (diffPx == 0f) return@LaunchedEffect
+
+        val update = CameraUpdateFactory.scrollBy(0f, diffPx / 2)
+
+        cameraAnimationScope.launch {
+            cameraPositionState.animate(update)
+            lastCameraPosition = bottomPaddingPx
+        }
     }
 }

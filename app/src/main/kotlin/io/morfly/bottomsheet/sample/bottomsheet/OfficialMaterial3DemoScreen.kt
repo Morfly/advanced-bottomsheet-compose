@@ -44,7 +44,10 @@ fun OfficialMaterial3DemoScreen() {
                 BottomSheetContent()
             },
             content = {
-                MapScreenContent(bottomPadding)
+                val isMoving by remember {
+                    derivedStateOf { sheetState.currentValue != sheetState.targetValue }
+                }
+                MapScreenContent(isBottomSheetMoving = isMoving, mapUiBottomPadding = bottomPadding)
             },
         )
     }

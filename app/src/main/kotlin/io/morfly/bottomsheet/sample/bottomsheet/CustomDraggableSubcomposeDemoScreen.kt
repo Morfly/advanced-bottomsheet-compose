@@ -42,8 +42,12 @@ fun CustomDraggableSubcomposeDemoScreen() {
 
     BottomSheetScaffold(
         state = state,
-        sheetContent = { BottomSheetContent() },
-        content = { MapScreenContent(mapUiBottomPadding = 0.dp) }
+        sheetContent = {
+            BottomSheetContent()
+        },
+        content = {
+            MapScreenContent()
+        }
     )
 }
 

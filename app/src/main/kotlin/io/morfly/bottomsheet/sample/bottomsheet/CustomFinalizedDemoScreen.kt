@@ -51,7 +51,10 @@ fun CustomFinalizedDemoScreen() {
             val bottomPadding by remember {
                 derivedStateOf { sheetState.sheetVisibleHeightDp }
             }
-            MapScreenContent(bottomPadding)
+            val isMoving by remember {
+                derivedStateOf { sheetState.currentValue != sheetState.targetValue }
+            }
+            MapScreenContent(isBottomSheetMoving = isMoving, mapUiBottomPadding = bottomPadding)
         }
     )
 }

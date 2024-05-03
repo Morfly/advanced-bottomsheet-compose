@@ -38,7 +38,7 @@ fun CustomDraggableDemoScreen() {
     BoxWithConstraints {
         val layoutHeight = constraints.maxHeight
 
-        MapScreenContent(mapUiBottomPadding = 0.dp)
+        MapScreenContent()
 
         Surface(
             shadowElevation = 1.dp,
