@@ -45,9 +45,8 @@ fun <T : Any> rememberAnchoredDraggableState(
     positionalThreshold: (totalDistance: Float) -> Float = BottomSheetDefaults.PositionalThreshold,
     velocityThreshold: () -> Float = BottomSheetDefaults.VelocityThreshold,
     animationSpec: AnimationSpec<Float> = BottomSheetDefaults.AnimationSpec,
-    confirmValueChange: (newValue: T) -> Boolean = { true }
+    confirmValueChange: (T) -> Boolean = { true }
 ) = rememberSaveable(
-//    confirmValueChange, // TODO revisit
     saver = AnchoredDraggableState.Saver(
         animationSpec = animationSpec,
         positionalThreshold = positionalThreshold,

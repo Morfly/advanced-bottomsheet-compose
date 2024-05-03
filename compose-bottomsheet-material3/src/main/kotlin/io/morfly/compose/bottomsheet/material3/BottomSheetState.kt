@@ -170,7 +170,7 @@ fun <T : Any> rememberBottomSheetState(
     positionalThreshold: (totalDistance: Float) -> Float = BottomSheetDefaults.PositionalThreshold,
     velocityThreshold: () -> Float = BottomSheetDefaults.VelocityThreshold,
     animationSpec: AnimationSpec<Float> = BottomSheetDefaults.AnimationSpec,
-    confirmValueChange: BottomSheetState<T>.(newValue: T) -> Boolean = { true } // TODO check
+    confirmValueChange: BottomSheetState<T>.(T) -> Boolean = { true }
 ) = rememberBottomSheetState(
     initialValue = initialValue,
     defineValues = rememberBottomSheetValues(defineValues = defineValues),
@@ -189,7 +189,7 @@ fun <T : Any> rememberBottomSheetState(
     positionalThreshold: (totalDistance: Float) -> Float = BottomSheetDefaults.PositionalThreshold,
     velocityThreshold: () -> Float = BottomSheetDefaults.VelocityThreshold,
     animationSpec: AnimationSpec<Float> = BottomSheetDefaults.AnimationSpec,
-    confirmValueChange: BottomSheetState<T>.(newValue: T) -> Boolean = { true }
+    confirmValueChange: BottomSheetState<T>.(T) -> Boolean = { true }
 ): BottomSheetState<T> {
     lateinit var state: BottomSheetState<T>
     lateinit var draggableState: AnchoredDraggableState<T>
@@ -256,7 +256,7 @@ fun rememberStandardBottomSheetState(
     skipPartiallyExpandedState: Boolean = false,
     peekHeight: Dp = BottomSheetDefaults.SheetPeekHeight,
     skipHiddenState: Boolean = true,
-    confirmValueChange: BottomSheetState<SheetValue>.(newValue: SheetValue) -> Boolean = { true },
+    confirmValueChange: BottomSheetState<SheetValue>.(SheetValue) -> Boolean = { true },
 ): BottomSheetState<SheetValue> {
     return rememberBottomSheetState(
         initialValue = initialValue,
