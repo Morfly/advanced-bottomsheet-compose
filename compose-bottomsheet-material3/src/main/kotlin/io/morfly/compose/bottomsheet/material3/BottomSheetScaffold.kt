@@ -342,7 +342,7 @@ class BottomSheetValuesConfig<T : Any>(
     internal val values = mutableMapOf<T, Float>()
 
     infix fun T.at(value: Value) {
-        values[this] = maxOf(value.offsetPx, 0f)
+        values[this] = maxOf(value.offsetPx, contentHeight.offsetPx)
     }
 
     fun offset(px: Float): Value {
