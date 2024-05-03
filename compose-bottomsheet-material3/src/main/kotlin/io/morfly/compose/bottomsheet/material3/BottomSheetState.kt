@@ -248,7 +248,7 @@ internal fun <T : Any> rememberBottomSheetState(
 ): BottomSheetState<T> {
     val density = LocalDensity.current
 
-    return remember(draggableState, defineValues) {
+    return remember(draggableState) { // TODO revisit remember
         BottomSheetState(draggableState, defineValues, density)
     }
 }
