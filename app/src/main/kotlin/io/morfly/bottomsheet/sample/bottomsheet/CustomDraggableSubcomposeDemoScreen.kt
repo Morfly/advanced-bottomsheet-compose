@@ -51,7 +51,6 @@ fun CustomDraggableSubcomposeDemoScreen() {
     )
 }
 
-
 @Composable
 private fun BottomSheetScaffold(
     state: AnchoredDraggableState<SheetValue>,
