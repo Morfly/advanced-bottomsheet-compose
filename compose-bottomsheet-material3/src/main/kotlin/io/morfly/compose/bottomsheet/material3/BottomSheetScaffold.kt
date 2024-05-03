@@ -34,7 +34,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
@@ -124,7 +124,7 @@ fun <T : Any> BottomSheetScaffold(
                         sheetFullHeight = sheetFullHeight,
                         density = density,
                     )
-                    scaffoldState.sheetState.defineValues(config)
+                    scaffoldState.sheetState.defineValues.body(config)
                     require(config.values.isNotEmpty()) { "No bottom sheet values provided!" }
 
                     DraggableAnchors {
@@ -221,18 +221,14 @@ internal fun <T : Any> BottomSheet(
     val scope = rememberCoroutineScope()
     val orientation = Orientation.Vertical
 
-    DisposableEffect(state) {
-        val onValuesRequested = fun(sheetFullHeight: Int) {
-            val newAnchors = calculateAnchors(sheetFullHeight)
-            if (draggableState.offset.isNaN()) {
-                draggableState.updateAnchors(newAnchors, draggableState.targetValue)
-            } else scope.launch {
-                draggableState.updateAnchorsAnimated(newAnchors, draggableState.targetValue)
-            }
-        }
-        state.onValuesRequested += onValuesRequested
-        onDispose {
-            state.onValuesRequested -= onValuesRequested
+    LaunchedEffect(state.defineValues) {
+        if (state.sheetFullHeight == Int.MAX_VALUE) return@LaunchedEffect
+
+        val newAnchors = calculateAnchors(state.sheetFullHeight)
+        if (draggableState.offset.isNaN()) {
+            draggableState.updateAnchors(newAnchors, draggableState.targetValue)
+        } else scope.launch {
+            draggableState.updateAnchorsAnimated(newAnchors, draggableState.targetValue)
         }
     }
 

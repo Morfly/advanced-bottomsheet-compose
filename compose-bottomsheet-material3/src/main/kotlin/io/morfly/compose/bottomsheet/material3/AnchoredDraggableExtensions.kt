@@ -47,7 +47,7 @@ fun <T : Any> rememberAnchoredDraggableState(
     animationSpec: AnimationSpec<Float> = BottomSheetDefaults.AnimationSpec,
     confirmValueChange: (newValue: T) -> Boolean = { true }
 ) = rememberSaveable(
-    confirmValueChange, // TODO revisit
+//    confirmValueChange, // TODO revisit
     saver = AnchoredDraggableState.Saver(
         animationSpec = animationSpec,
         positionalThreshold = positionalThreshold,
