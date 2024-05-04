@@ -92,7 +92,7 @@ class BottomSheetState<T : Any>(
 
     fun refreshValues(targetValue: T = this.targetValue) {
         if (sheetFullHeight != Int.MAX_VALUE) {
-            onRefreshValues.forEach { call -> call(sheetFullHeight, targetValue) }
+            onRefreshValues.forEach { call -> call(requireSheetFullHeight(), targetValue) }
         }
     }
 
