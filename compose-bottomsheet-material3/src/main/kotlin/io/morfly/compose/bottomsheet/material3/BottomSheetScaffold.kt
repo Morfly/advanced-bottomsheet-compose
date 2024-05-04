@@ -34,7 +34,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
@@ -124,7 +124,7 @@ fun <T : Any> BottomSheetScaffold(
                         sheetFullHeight = sheetFullHeight,
                         density = density,
                     )
-                    scaffoldState.sheetState.defineValues.body(config)
+                    scaffoldState.sheetState.defineValues(config)
                     require(config.values.isNotEmpty()) { "No bottom sheet values provided!" }
 
                     DraggableAnchors {
@@ -217,18 +217,21 @@ internal fun <T : Any> BottomSheet(
     dragHandle: @Composable (() -> Unit)?,
     content: @Composable ColumnScope.() -> Unit
 ) {
-    val draggableState = state.draggableState
     val scope = rememberCoroutineScope()
     val orientation = Orientation.Vertical
 
-    LaunchedEffect(state.defineValues) {
-        if (state.sheetFullHeight == Int.MAX_VALUE) return@LaunchedEffect
+    DisposableEffect(state) {
+        val onRefreshValues = fun(sheetFullHeight: Int, targetValue: T) {
+            if (state.offset.isNaN()) return
 
-        val newAnchors = calculateAnchors(state.sheetFullHeight)
-        if (draggableState.offset.isNaN()) {
-            draggableState.updateAnchors(newAnchors, draggableState.targetValue)
-        } else scope.launch {
-            draggableState.updateAnchorsAnimated(newAnchors, draggableState.targetValue)
+            val newAnchors = calculateAnchors(sheetFullHeight)
+            scope.launch { // TODO scope
+                state.draggableState.updateAnchorsAnimated(newAnchors, targetValue)
+            }
+        }
+        state.onRefreshValues += onRefreshValues
+        onDispose {
+            state.onRefreshValues -= onRefreshValues
         }
     }
 
@@ -239,23 +242,23 @@ internal fun <T : Any> BottomSheet(
             .nestedScroll(
                 remember(state) {
                     BottomSheetNestedScrollConnection(
-                        anchoredDraggableState = draggableState,
+                        anchoredDraggableState = state.draggableState,
                         orientation = orientation,
                         onFling = { velocity ->
-                            scope.launch { draggableState.settle(velocity) }
+                            scope.launch { state.draggableState.settle(velocity) }
                         }
                     )
                 },
             )
             .anchoredDraggable(
-                state = draggableState,
+                state = state.draggableState,
                 orientation = orientation,
                 enabled = sheetSwipeEnabled,
             )
             .onSizeChanged { sheetFullSize ->
                 state.sheetFullHeight = sheetFullSize.height
                 val newAnchors = calculateAnchors(sheetFullSize.height)
-                draggableState.updateAnchors(newAnchors, draggableState.targetValue)
+                state.draggableState.updateAnchors(newAnchors, state.targetValue)
             },
         shape = shape,
         color = containerColor,

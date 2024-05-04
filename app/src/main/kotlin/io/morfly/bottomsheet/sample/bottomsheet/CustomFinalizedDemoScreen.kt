@@ -17,7 +17,6 @@ import io.morfly.bottomsheet.sample.bottomsheet.common.MapScreenContent
 import io.morfly.compose.bottomsheet.material3.BottomSheetScaffold
 import io.morfly.compose.bottomsheet.material3.rememberBottomSheetScaffoldState
 import io.morfly.compose.bottomsheet.material3.rememberBottomSheetState
-import io.morfly.compose.bottomsheet.material3.rememberBottomSheetValues
 import io.morfly.compose.bottomsheet.material3.sheetVisibleHeightDp
 
 @Composable
@@ -26,7 +25,7 @@ fun CustomFinalizedDemoScreen() {
 
     val sheetState = rememberBottomSheetState(
         initialValue = SheetValue.PartiallyExpanded,
-        defineValues = rememberBottomSheetValues(isInitialState) {
+        defineValues = {
             SheetValue.Peek at height(56.dp)
             if (isInitialState) {
                 SheetValue.PartiallyExpanded at height(percent = 40)
@@ -36,6 +35,7 @@ fun CustomFinalizedDemoScreen() {
         confirmValueChange = {
             if (isInitialState) {
                 isInitialState = false
+                refreshValues()
             }
             true
         }
