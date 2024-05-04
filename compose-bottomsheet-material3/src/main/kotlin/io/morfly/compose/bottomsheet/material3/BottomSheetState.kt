@@ -91,7 +91,6 @@ class BottomSheetState<T : Any>(
     fun requireOffset() = draggableState.requireOffset()
 
     fun refreshValues(targetValue: T = this.targetValue) {
-        if (sheetFullHeight == Int.MAX_VALUE) return // TODO
         onRefreshValues.forEach { call -> call(sheetFullHeight, targetValue) }
     }
 
@@ -213,7 +212,7 @@ internal fun <T : Any> rememberBottomSheetState(
 ): BottomSheetState<T> {
     val density = LocalDensity.current
 
-    return remember(draggableState) { // TODO revisit remember
+    return remember(draggableState) {
         BottomSheetState(draggableState, defineValues, density)
     }
 }

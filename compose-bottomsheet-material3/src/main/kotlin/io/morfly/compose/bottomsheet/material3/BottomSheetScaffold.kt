@@ -225,7 +225,7 @@ internal fun <T : Any> BottomSheet(
             if (state.offset.isNaN()) return
 
             val newAnchors = calculateAnchors(sheetFullHeight)
-            scope.launch { // TODO scope
+            scope.launch {
                 state.draggableState.updateAnchorsAnimated(newAnchors, targetValue)
             }
         }
