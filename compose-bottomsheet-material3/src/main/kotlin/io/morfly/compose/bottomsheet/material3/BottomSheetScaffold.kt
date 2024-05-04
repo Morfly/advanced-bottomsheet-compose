@@ -339,7 +339,7 @@ class BottomSheetValuesConfig<T : Any>(
 ) {
     val contentHeight = Value((layoutHeight - sheetFullHeight).toFloat())
 
-    internal val values = mutableMapOf<T, Float>()
+    val values = mutableMapOf<T, Float>()
 
     infix fun T.at(value: Value) {
         values[this] = maxOf(value.offsetPx, contentHeight.offsetPx)
