@@ -29,7 +29,7 @@ fun OfficialMaterial3DemoScreen() {
         val layoutHeightPx = constraints.maxHeight
 
         val density = LocalDensity.current
-        val bottomPadding by remember(layoutHeightPx) { // TODO check if layoutHeightPx should be key
+        val bottomPadding by remember(layoutHeightPx) {
             derivedStateOf {
                 val sheetOffsetPx = sheetState.requireOffset()
                 val sheetVisibleHeightPx = layoutHeightPx - sheetOffsetPx
