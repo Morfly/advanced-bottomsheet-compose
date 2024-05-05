@@ -188,8 +188,13 @@ internal fun BottomSheetScaffoldLayout(
             val sheetOffsetX = Integer.max(0, (layoutWidth - sheetPlaceable.width) / 2)
 
             val snackbarOffsetX = (layoutWidth - snackbarPlaceable.width) / 2
-            val snackbarOffsetY =
-                layoutHeight - snackbarPlaceable.height // TODO check different values
+
+            val snackbarThreshold = minOf(snackbarPlaceable.height * 2f, layoutHeight * 0.3f)
+            val snackbarOffsetY = if (layoutHeight - sheetOffsetY < snackbarThreshold) {
+                sheetOffsetY - snackbarPlaceable.height
+            } else {
+                layoutHeight - snackbarPlaceable.height
+            }
 
             // Placement order is important for elevation
             bodyPlaceable.placeRelative(0, topBarHeight)
