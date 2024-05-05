@@ -222,13 +222,10 @@ internal fun <T : Any> BottomSheet(
 
     DisposableEffect(state) {
         val onRefreshValues = fun(sheetFullHeight: Int, targetValue: T) {
-            if (state.offset.isNaN()) return
-
             val newAnchors = calculateAnchors(sheetFullHeight)
-            scope.launch {
-                state.draggableState.updateAnchorsAnimated(newAnchors, targetValue)
-            }
+            state.draggableState.updateAnchorsAnimated(scope, newAnchors, targetValue)
         }
+
         state.onRefreshValues += onRefreshValues
         onDispose {
             state.onRefreshValues -= onRefreshValues

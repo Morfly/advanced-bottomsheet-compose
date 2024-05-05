@@ -91,7 +91,7 @@ class BottomSheetState<T : Any>(
     fun requireOffset() = draggableState.requireOffset()
 
     fun refreshValues(targetValue: T = this.targetValue) {
-        if (sheetFullHeight != Int.MAX_VALUE) {
+        if (sheetFullHeight != Int.MAX_VALUE && !offset.isNaN()) {
             onRefreshValues.forEach { call -> call(requireSheetFullHeight(), targetValue) }
         }
     }

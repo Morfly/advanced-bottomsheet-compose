@@ -22,9 +22,12 @@ import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.saveable.rememberSaveable
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @ExperimentalFoundationApi
-suspend fun <T> AnchoredDraggableState<T>.updateAnchorsAnimated(
+fun <T> AnchoredDraggableState<T>.updateAnchorsAnimated(
+    scope: CoroutineScope,
     newAnchors: DraggableAnchors<T>,
     newTarget: T = if (!offset.isNaN()) {
         newAnchors.closestAnchor(offset) ?: targetValue
@@ -33,7 +36,7 @@ suspend fun <T> AnchoredDraggableState<T>.updateAnchorsAnimated(
     if (anchors != newAnchors) {
         anchors = newAnchors
 
-        animateTo(newTarget)
+        scope.launch { animateTo(newTarget) }
     }
 }
 
