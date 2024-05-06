@@ -44,7 +44,7 @@ class BottomSheetState<T : Any>(
     internal val defineValues: BottomSheetValuesConfig<T>.() -> Unit,
     internal val density: Density
 ) {
-    internal val onRefreshValues = mutableSetOf<(sheetFullHeight: Int, targetValue: T) -> Unit>()
+    internal val onRefreshValues = mutableSetOf<(Int, T, Boolean) -> Unit>()
 
     val values: DraggableAnchors<T> get() = draggableState.anchors
 
@@ -90,9 +90,12 @@ class BottomSheetState<T : Any>(
 
     fun requireOffset() = draggableState.requireOffset()
 
-    fun refreshValues(targetValue: T = this.targetValue) {
+    fun refreshValues(
+        targetValue: T = this.targetValue,
+        animate: Boolean = true
+    ) {
         if (sheetFullHeight != Int.MAX_VALUE && !offset.isNaN()) {
-            onRefreshValues.forEach { call -> call(requireSheetFullHeight(), targetValue) }
+            onRefreshValues.forEach { call -> call(requireSheetFullHeight(), targetValue, animate) }
         }
     }
 

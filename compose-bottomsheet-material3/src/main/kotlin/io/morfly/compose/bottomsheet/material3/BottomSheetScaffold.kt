@@ -226,9 +226,13 @@ internal fun <T : Any> BottomSheet(
     val orientation = Orientation.Vertical
 
     DisposableEffect(state) {
-        val onRefreshValues = fun(sheetFullHeight: Int, targetValue: T) {
+        val onRefreshValues = fun(sheetFullHeight: Int, targetValue: T, animate: Boolean) {
             val newAnchors = calculateAnchors(sheetFullHeight)
-            state.draggableState.updateAnchorsAnimated(scope, newAnchors, targetValue)
+            if (animate) {
+                state.draggableState.updateAnchorsAnimated(scope, newAnchors, targetValue)
+            } else {
+                state.draggableState.updateAnchors(newAnchors, targetValue)
+            }
         }
 
         state.onRefreshValues += onRefreshValues
