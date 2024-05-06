@@ -274,6 +274,7 @@ internal fun <T : Any> BottomSheet(
     ) {
         Column(Modifier.fillMaxWidth()) {
             if (dragHandle != null) {
+                // TODO semantics
                 Box(modifier = Modifier.align(Alignment.CenterHorizontally)) {
                     dragHandle()
                 }
