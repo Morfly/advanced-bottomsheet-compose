@@ -65,15 +65,6 @@ fun MapScreenContent(
             title = "San Francisco",
             snippet = "Marker in San Francisco"
         )
-
-        if (isPortrait) {
-            val density = LocalDensity.current
-            val bottomPaddingPx = with(density) { mapUiBottomPadding.roundToPx() }
-            val startPaddingPx = with(density) { 16.dp.roundToPx() }
-            MapEffect(mapUiBottomPadding) { map ->
-                map.setPadding(startPaddingPx, 0, 0, bottomPaddingPx)
-            }
-        }
     }
 }
 
