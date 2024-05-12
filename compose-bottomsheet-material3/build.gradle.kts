@@ -12,6 +12,9 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
+                implementation(libs.androidx.material3)
+                implementation(libs.androidx.ui)
+                implementation(libs.androidx.ui.graphics)
             }
         }
 
@@ -19,10 +22,6 @@ kotlin {
             dependencies {
                 implementation(libs.androidx.core.ktx)
                 implementation(libs.androidx.appcompat)
-                implementation(libs.material)
-                implementation(libs.androidx.material3)
-                implementation(libs.androidx.ui)
-                implementation(libs.androidx.ui.graphics)
             }
         }
     }
@@ -59,6 +58,9 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
     }
+    dependencies {
+        implementation(platform(libs.androidx.compose.bom))
+    }
 }
 
 tasks.withType<KotlinCompile> {
@@ -66,17 +68,3 @@ tasks.withType<KotlinCompile> {
         jvmTarget = "1.8"
     }
 }
-
-dependencies {
-    implementation(platform(libs.androidx.compose.bom))
-}
-
-//dependencies {
-//    implementation(platform(libs.androidx.compose.bom))
-//    implementation(libs.androidx.core.ktx)
-//    implementation(libs.androidx.appcompat)
-//    implementation(libs.material)
-//    implementation(libs.androidx.material3)
-//    implementation(libs.androidx.ui)
-//    implementation(libs.androidx.ui.graphics)
-//}
