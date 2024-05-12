@@ -8,7 +8,7 @@ navigationCompose = "2.7.7"
 mapsCompose = "4.4.1"
 mapsSecrets = "2.0.1"
 composeBom = "2024.04.01"
-composeCompiler = "1.5.1"
+composeCompiler = "1.5.2"
 appcompat = "1.6.1"
 material = "1.11.0"
 
@@ -30,7 +30,9 @@ material = { group = "com.google.android.material", name = "material", version.r
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
-kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
+kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+jetbrainsCompose = { id = "org.jetbrains.compose", version = "1.6.2" }
 androidMapsSecrets = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "mapsSecrets" }
 

@@ -1,6 +1,31 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     alias(libs.plugins.androidLibrary)
-    alias(libs.plugins.kotlinAndroid)
+    alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.jetbrainsCompose)
+}
+
+kotlin {
+    androidTarget()
+
+    sourceSets {
+        val commonMain by getting {
+            dependencies {
+            }
+        }
+
+        val androidMain by getting {
+            dependencies {
+                implementation(libs.androidx.core.ktx)
+                implementation(libs.androidx.appcompat)
+                implementation(libs.material)
+                implementation(libs.androidx.material3)
+                implementation(libs.androidx.ui)
+                implementation(libs.androidx.ui.graphics)
+            }
+        }
+    }
 }
 
 android {
@@ -27,23 +52,31 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
     buildFeatures {
         compose = true
+        buildConfig = false
     }
     composeOptions {
         kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
     }
 }
 
+tasks.withType<KotlinCompile> {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
 dependencies {
     implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
-    implementation(libs.androidx.material3)
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
 }
+
+//dependencies {
+//    implementation(platform(libs.androidx.compose.bom))
+//    implementation(libs.androidx.core.ktx)
+//    implementation(libs.androidx.appcompat)
+//    implementation(libs.material)
+//    implementation(libs.androidx.material3)
+//    implementation(libs.androidx.ui)
+//    implementation(libs.androidx.ui.graphics)
+//}

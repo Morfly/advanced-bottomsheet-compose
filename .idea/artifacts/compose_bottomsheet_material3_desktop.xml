@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="compose-bottomsheet-material3-desktop">
+    <output-path>$PROJECT_DIR$/compose-bottomsheet-material3/build/libs</output-path>
+    <root id="archive" name="compose-bottomsheet-material3-desktop.jar">
+      <element id="module-output" name="MultiState-BottomSheet.compose-bottomsheet-material3.desktopMain" />
+    </root>
+  </artifact>
+</component>
