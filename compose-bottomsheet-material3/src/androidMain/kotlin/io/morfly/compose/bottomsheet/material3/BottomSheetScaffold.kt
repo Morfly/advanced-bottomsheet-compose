@@ -156,6 +156,7 @@ internal fun BottomSheetScaffoldLayout(
     containerColor: Color,
     contentColor: Color,
 ) {
+    val density = LocalDensity.current
     SubcomposeLayout { constraints ->
         val layoutWidth = constraints.maxWidth
         val layoutHeight = constraints.maxHeight
@@ -171,13 +172,13 @@ internal fun BottomSheetScaffoldLayout(
         }
         val topBarHeight = topBarPlaceable?.height ?: 0
 
-        val bodyConstraints = looseConstraints.copy(maxHeight = layoutHeight - topBarHeight)
+        val bodyConstraints = looseConstraints.copy(maxHeight = layoutHeight)
         val bodyPlaceable = subcompose(BottomSheetScaffoldLayoutSlot.Body) {
             Surface(
                 modifier = modifier,
                 color = containerColor,
                 contentColor = contentColor,
-            ) { body(PaddingValues()) }
+            ) { body(PaddingValues(top = with(density) { topBarHeight.toDp() })) }
         }[0].measure(bodyConstraints)
 
         val snackbarPlaceable = subcompose(BottomSheetScaffoldLayoutSlot.Snackbar, snackbarHost)[0]
@@ -197,7 +198,7 @@ internal fun BottomSheetScaffoldLayout(
             }
 
             // Placement order is important for elevation
-            bodyPlaceable.placeRelative(0, topBarHeight)
+            bodyPlaceable.placeRelative(0, 0)
             topBarPlaceable?.placeRelative(0, 0)
             sheetPlaceable.placeRelative(sheetOffsetX, sheetOffsetY)
             snackbarPlaceable.placeRelative(snackbarOffsetX, snackbarOffsetY)
