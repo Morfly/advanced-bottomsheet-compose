@@ -11,7 +11,7 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.unit.Velocity
 
 /**
- * Copy of [androidx.compose.material3.ConsumeSwipeWithinBottomSheetBoundsNestedScrollConnection]
+ * Slightly modified version of [androidx.compose.material3.ConsumeSwipeWithinBottomSheetBoundsNestedScrollConnection]
  */
 @Suppress("FunctionName", "SameParameterValue")
 fun <T> BottomSheetNestedScrollConnection(

@@ -1,8 +1,8 @@
-@file:OptIn(MapsComposeExperimentalApi::class)
-
 package io.morfly.bottomsheet.sample.bottomsheet.common
 
+import android.content.Context
 import android.content.res.Configuration
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -14,19 +14,22 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.MapEffect
-import com.google.maps.android.compose.MapsComposeExperimentalApi
+import com.google.maps.android.compose.MapProperties
+import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
+import io.morfly.bottomsheet.sample.R
 import kotlinx.coroutines.launch
 
 val SanFranciscoLocation = LatLng(37.773972, -122.431297)
@@ -51,20 +54,18 @@ fun MapScreenContent(
     )
 
     val portraitPadding = remember(mapUiBottomPadding) {
-        PaddingValues(start = 16.dp, bottom = mapUiBottomPadding)
+        PaddingValues(start = 16.dp, end = 16.dp, bottom = mapUiBottomPadding)
     }
     val landscapePadding = remember { PaddingValues() }
 
     GoogleMap(
         modifier = modifier.fillMaxSize(),
         cameraPositionState = cameraPositionState,
+        uiSettings = rememberMapUiSettings(),
+        properties = rememberMapProperties(),
         contentPadding = if (isPortrait) portraitPadding else landscapePadding,
     ) {
-        Marker(
-            state = MarkerState(position = SanFranciscoLocation),
-            title = "San Francisco",
-            snippet = "Marker in San Francisco"
-        )
+        Marker(state = MarkerState(position = SanFranciscoLocation))
     }
 }
 
@@ -94,4 +95,44 @@ private fun AdjustedCameraPositionEffect(
             lastCameraPosition = bottomPaddingPx
         }
     }
+}
+
+@Composable
+private fun rememberMapUiSettings(): MapUiSettings {
+    return remember {
+        MapUiSettings(
+            compassEnabled = true,
+            indoorLevelPickerEnabled = true,
+            mapToolbarEnabled = false,
+            myLocationButtonEnabled = false,
+            rotationGesturesEnabled = false,
+            scrollGesturesEnabled = true,
+            scrollGesturesEnabledDuringRotateOrZoom = false,
+            tiltGesturesEnabled = false,
+            zoomControlsEnabled = false,
+            zoomGesturesEnabled = true,
+        )
+    }
+}
+
+@Composable
+private fun rememberMapProperties(): MapProperties {
+    val context = LocalContext.current
+    val isDarkTheme = isSystemInDarkTheme()
+    return remember(isDarkTheme) {
+        val mapStyleOptions = if (isDarkTheme) {
+            mapStyleDarkOptions(context)
+        } else {
+            mapStyleOptions(context)
+        }
+        MapProperties(mapStyleOptions = mapStyleOptions)
+    }
+}
+
+fun mapStyleOptions(context: Context): MapStyleOptions {
+    return MapStyleOptions.loadRawResourceStyle(context, R.raw.map_style)
+}
+
+fun mapStyleDarkOptions(context: Context): MapStyleOptions {
+    return MapStyleOptions.loadRawResourceStyle(context, R.raw.map_style_dark)
 }
