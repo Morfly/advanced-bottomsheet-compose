@@ -1,1 +1,1 @@
-# Configurable Bottom Sheet for Jetpack Compose & Material 3
+# Configurable Bottom Sheet for Compose
