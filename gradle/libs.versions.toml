@@ -10,6 +10,7 @@ mapsSecrets = "2.0.1"
 composeBom = "2024.04.01"
 composeCompiler = "1.5.2"
 appcompat = "1.6.1"
+coil = "2.6.0"
 mavenPublish = "0.27.0"
 dokka = "1.9.0"
 conventionPlugin = "ignored"
@@ -28,6 +29,7 @@ compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling
 compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 compose-navigation = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+compose-coil = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 # ===== Gradle plugins =====
 gradlePlugin-mavenPublish = { module = "com.vanniktech:gradle-maven-publish-plugin", version.ref = "mavenPublish" }
 

@@ -71,6 +71,7 @@ dependencies {
     implementation(libs.compose.ui.tooling.preview)
     implementation(libs.compose.material3)
     implementation(libs.compose.navigation)
+    implementation(libs.compose.coil)
     implementation(libs.android.maps.compose)
 
     debugImplementation(libs.compose.ui.tooling)

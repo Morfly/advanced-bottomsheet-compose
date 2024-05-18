@@ -23,7 +23,7 @@ kotlin {
         val androidMain by getting {
             dependencies {
                 implementation(libs.androidx.core.ktx)
-                implementation(libs.androidx.appcompat)
+                implementation(libs.androidx.appcompat) // TODO consider removing
             }
         }
     }
