@@ -25,7 +25,7 @@ enum class BottomSheetContentSize { Small, Medium, Large }
 fun BottomSheetContent(
     modifier: Modifier = Modifier,
     userScrollEnabled: Boolean = true,
-    size: BottomSheetContentSize = Large
+    size: BottomSheetContentSize = Medium
 ) {
     val itemCount = remember(size) {
         when (size) {
