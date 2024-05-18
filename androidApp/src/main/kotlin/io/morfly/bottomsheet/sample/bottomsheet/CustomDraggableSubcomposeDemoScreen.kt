@@ -10,6 +10,7 @@ import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -43,7 +44,7 @@ fun CustomDraggableSubcomposeDemoScreen() {
     BottomSheetScaffold(
         state = state,
         sheetContent = {
-            BottomSheetContent()
+            BottomSheetContent(modifier = Modifier.padding(top = 16.dp))
         },
         content = {
             MapScreenContent()

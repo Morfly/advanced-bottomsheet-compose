@@ -11,6 +11,7 @@ import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -69,7 +70,10 @@ fun CustomDraggableDemoScreen() {
                     state.updateAnchors(newAnchors, state.targetValue)
                 }
         ) {
-            BottomSheetContent(userScrollEnabled = false)
+            BottomSheetContent(
+                modifier = Modifier.padding(top = 16.dp),
+                userScrollEnabled = false,
+            )
         }
     }
 }
