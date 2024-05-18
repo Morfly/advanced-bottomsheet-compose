@@ -8,14 +8,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -30,7 +28,7 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import io.morfly.bottomsheet.sample.R
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
 
 val SanFranciscoLocation = LatLng(37.773972, -122.431297)
 
@@ -50,7 +48,6 @@ fun MapScreenContent(
     AdjustedCameraPositionEffect(
         cameraPositionState = cameraPositionState,
         isBottomSheetMoving = isBottomSheetMoving,
-        mapUiBottomPadding = mapUiBottomPadding
     )
 
     val portraitPadding = remember(mapUiBottomPadding) {
@@ -73,26 +70,21 @@ fun MapScreenContent(
 private fun AdjustedCameraPositionEffect(
     cameraPositionState: CameraPositionState,
     isBottomSheetMoving: Boolean,
-    mapUiBottomPadding: Dp,
 ) {
-    var lastCameraPosition by remember { mutableFloatStateOf(0f) }
+    var firstCameraMove by remember { mutableStateOf(true) }
 
-    val cameraAnimationScope = rememberCoroutineScope()
-
-    val density = LocalDensity.current
     LaunchedEffect(isBottomSheetMoving) {
         if (isBottomSheetMoving) return@LaunchedEffect
 
-        val bottomPaddingPx = with(density) { mapUiBottomPadding.toPx() }
+        val location = cameraPositionState.position.target
+        val update = CameraUpdateFactory.newLatLng(location)
 
-        val diffPx = bottomPaddingPx - lastCameraPosition
-        if (diffPx == 0f) return@LaunchedEffect
-
-        val update = CameraUpdateFactory.scrollBy(0f, diffPx / 2)
-
-        cameraAnimationScope.launch {
+        if (firstCameraMove) {
+            firstCameraMove = false
+            delay(300)
+            cameraPositionState.animate(update, durationMs = 200)
+        } else {
             cameraPositionState.animate(update)
-            lastCameraPosition = bottomPaddingPx
         }
     }
 }
