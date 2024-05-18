@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -25,7 +24,9 @@ fun MenuScreen(
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier.padding(top = 32.dp)
+        modifier = modifier
+            .background(MaterialTheme.colorScheme.surface)
+            .padding(top = 32.dp)
     ) {
         Text(text = "Bottom Sheet Samples", style = MaterialTheme.typography.headlineSmall)
 
@@ -36,25 +37,21 @@ fun MenuScreen(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         ) {
-            Divider()
             Item(
                 title = "Official Material3 Bottom Sheet",
                 description = "Sample using official bottom sheet from material 3 library.",
                 onClick = { onClick(Destination.Material3Demo) }
             )
-            Divider()
             Item(
                 title = "Anchored Draggable",
                 description = "Custom basic bottom sheet implementation using anchored draggable.",
                 onClick = { onClick(Destination.CustomDraggableDemo) }
             )
-            Divider()
             Item(
                 title = "Anchored Draggable + Subcompose Layout",
                 description = "Custom bottom sheet implementation using anchored draggable and subcompose layout.",
                 onClick = { onClick(Destination.CustomDraggableSubcomposeDemo) }
             )
-            Divider()
             Item(
                 title = "Finalized Custom Bottom Sheet",
                 description = "Finalized customizable bottom sheet implementation using anchored draggable and subcompose layout. It is available as a library in this repository.",
@@ -73,7 +70,9 @@ private fun Item(
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier.padding(horizontal = 16.dp)
+        modifier = modifier
+            .background(MaterialTheme.colorScheme.surfaceContainerLow)
+            .padding(16.dp)
     ) {
         OutlinedButton(onClick = onClick) {
             Text(title)
@@ -81,14 +80,4 @@ private fun Item(
         Spacer(Modifier.height(16.dp))
         Text(text = description, style = MaterialTheme.typography.bodyLarge)
     }
-}
-
-@Composable
-private fun Divider(modifier: Modifier = Modifier) {
-    Spacer(
-        modifier = modifier
-            .height(4.dp)
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.onSurface)
-    )
 }
