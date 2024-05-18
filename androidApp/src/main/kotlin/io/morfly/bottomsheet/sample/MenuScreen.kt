@@ -26,7 +26,7 @@ fun MenuScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
             .background(MaterialTheme.colorScheme.surface)
-            .padding(top = 32.dp)
+            .padding(top = 32.dp, bottom = 16.dp)
     ) {
         Text(text = "Bottom Sheet Samples", style = MaterialTheme.typography.headlineSmall)
 
