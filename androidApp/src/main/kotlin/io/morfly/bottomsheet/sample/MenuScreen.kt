@@ -3,43 +3,64 @@ package io.morfly.bottomsheet.sample
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Button
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 
 @Composable
-fun MenuScreen(onClick: (Destination) -> Unit) {
+fun MenuScreen(
+    onClick: (Destination) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Column(
-        verticalArrangement = Arrangement.SpaceEvenly,
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.padding(top = 32.dp)
     ) {
-        Text("Title")
-        Item(
-            title = "Material3 Bottom Sheet",
-            description = "Bottom Sheet provided by the official Material3 library.",
-            modifier = Modifier.background(Color.LightGray),
-            onClick = { onClick(Destination.Material3Demo) }
-        )
-        Item(
-            title = "Anchored Draggable",
-            description = "Draggable.",
-            onClick = { onClick(Destination.CustomDraggableDemo) }
-        )
-        Item(
-            title = "Anchored Draggable + Subcompose Layout",
-            description = "Simplified implementation of a custom bottom sheet.",
-            onClick = { onClick(Destination.CustomDraggableSubcomposeDemo) }
-        )
-        Item(
-            title = "Custom Bottom Sheet Finalized",
-            description = "Custom implementation of a bottom sheet that extends the functionality of a Material3 variant.",
-            onClick = { onClick(Destination.CustomFinalizedDemo) }
-        )
+        Text(text = "Bottom Sheet Samples", style = MaterialTheme.typography.headlineSmall)
+
+        Column(
+            verticalArrangement = Arrangement.SpaceEvenly,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+        ) {
+            Divider()
+            Item(
+                title = "Official Material3 Bottom Sheet",
+                description = "Sample using official bottom sheet from material 3 library.",
+                onClick = { onClick(Destination.Material3Demo) }
+            )
+            Divider()
+            Item(
+                title = "Anchored Draggable",
+                description = "Custom basic bottom sheet implementation using anchored draggable.",
+                onClick = { onClick(Destination.CustomDraggableDemo) }
+            )
+            Divider()
+            Item(
+                title = "Anchored Draggable + Subcompose Layout",
+                description = "Custom bottom sheet implementation using anchored draggable and subcompose layout.",
+                onClick = { onClick(Destination.CustomDraggableSubcomposeDemo) }
+            )
+            Divider()
+            Item(
+                title = "Finalized Custom Bottom Sheet",
+                description = "Finalized customizable bottom sheet implementation using anchored draggable and subcompose layout. It is available as a library in this repository.",
+                onClick = { onClick(Destination.CustomFinalizedDemo) }
+            )
+        }
     }
 }
 
@@ -52,11 +73,22 @@ private fun Item(
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
+        modifier = modifier.padding(horizontal = 16.dp)
     ) {
-        Button(onClick = onClick) {
+        OutlinedButton(onClick = onClick) {
             Text(title)
         }
-        Text(description)
+        Spacer(Modifier.height(16.dp))
+        Text(text = description, style = MaterialTheme.typography.bodyLarge)
     }
+}
+
+@Composable
+private fun Divider(modifier: Modifier = Modifier) {
+    Spacer(
+        modifier = modifier
+            .height(4.dp)
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.onSurface)
+    )
 }
