@@ -14,6 +14,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -28,7 +29,6 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import io.morfly.bottomsheet.sample.R
-import kotlinx.coroutines.delay
 
 val SanFranciscoLocation = LatLng(37.773972, -122.431297)
 
@@ -38,29 +38,24 @@ fun MapScreenContent(
     isBottomSheetMoving: Boolean = false,
     mapUiBottomPadding: Dp = 0.dp,
 ) {
-    val configuration = LocalConfiguration.current
-    val isPortrait = configuration.orientation == Configuration.ORIENTATION_PORTRAIT
-
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(SanFranciscoLocation, 13f)
     }
 
+    val mapPadding = rememberMapPadding(mapUiBottomPadding)
+
     AdjustedCameraPositionEffect(
         cameraPositionState = cameraPositionState,
         isBottomSheetMoving = isBottomSheetMoving,
+        mapUiBottomPadding = mapPadding.calculateBottomPadding(),
     )
-
-    val portraitPadding = remember(mapUiBottomPadding) {
-        PaddingValues(start = 16.dp, end = 16.dp, bottom = mapUiBottomPadding)
-    }
-    val landscapePadding = remember { PaddingValues() }
 
     GoogleMap(
         modifier = modifier.fillMaxSize(),
         cameraPositionState = cameraPositionState,
         uiSettings = rememberMapUiSettings(),
         properties = rememberMapProperties(),
-        contentPadding = if (isPortrait) portraitPadding else landscapePadding,
+        contentPadding = mapPadding
     ) {
         Marker(state = MarkerState(position = SanFranciscoLocation))
     }
@@ -70,22 +65,42 @@ fun MapScreenContent(
 private fun AdjustedCameraPositionEffect(
     cameraPositionState: CameraPositionState,
     isBottomSheetMoving: Boolean,
+    mapUiBottomPadding: Dp,
 ) {
     var firstCameraMove by remember { mutableStateOf(true) }
 
+    val density = LocalDensity.current
     LaunchedEffect(isBottomSheetMoving) {
         if (isBottomSheetMoving) return@LaunchedEffect
 
-        val location = cameraPositionState.position.target
-        val update = CameraUpdateFactory.newLatLng(location)
-
         if (firstCameraMove) {
             firstCameraMove = false
-            delay(300)
-            cameraPositionState.animate(update, durationMs = 200)
+            val paddingPx = with(density) { mapUiBottomPadding.toPx() / 2 }
+            val update = CameraUpdateFactory.scrollBy(0f, paddingPx)
+            cameraPositionState.animate(update)
         } else {
+            val location = cameraPositionState.position.target
+            val update = CameraUpdateFactory.newLatLng(location)
             cameraPositionState.animate(update)
         }
+    }
+}
+
+@Composable
+private fun rememberMapPadding(mapUiBottomPadding: Dp): PaddingValues {
+    val configuration = LocalConfiguration.current
+    val isPortrait = configuration.orientation == Configuration.ORIENTATION_PORTRAIT
+    return if (isPortrait) {
+        rememberPortraitMapPadding(mapUiBottomPadding)
+    } else {
+        remember { PaddingValues() }
+    }
+}
+
+@Composable
+private fun rememberPortraitMapPadding(mapUiBottomPadding: Dp): PaddingValues {
+    return remember(mapUiBottomPadding) {
+        PaddingValues(start = 16.dp, end = 16.dp, bottom = mapUiBottomPadding)
     }
 }
 
