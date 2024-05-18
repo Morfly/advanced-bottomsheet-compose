@@ -1,1 +1,1 @@
-# Multistate Bottom Sheet
+# Configurable Bottom Sheet for Jetpack Compose & Material 3
