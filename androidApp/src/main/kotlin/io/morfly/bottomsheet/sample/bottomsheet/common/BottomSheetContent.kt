@@ -49,20 +49,6 @@ fun BottomSheetContent(
             )
         }
     }
-//    val numberOfItems = when (height) {
-//        FitsScreen -> 27
-//        ExceedsScreen -> 100
-//    }
-//    LazyColumn(
-//        userScrollEnabled = userScrollEnabled,
-//        modifier = modifier.fillMaxWidth()
-//    ) {
-//        for (i in 0..numberOfItems) {
-//            item {
-//                Text(text = "Test_$i")
-//            }
-//        }
-//    }
 }
 
 @Composable
