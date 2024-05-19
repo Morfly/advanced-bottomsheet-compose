@@ -33,8 +33,7 @@ fun OfficialMaterial3DemoScreen() {
         val density = LocalDensity.current
         val bottomPadding by remember(layoutHeightPx) {
             derivedStateOf {
-                val sheetOffsetPx = sheetState.requireOffset()
-                val sheetVisibleHeightPx = layoutHeightPx - sheetOffsetPx
+                val sheetVisibleHeightPx = layoutHeightPx - sheetState.requireOffset()
                 with(density) { sheetVisibleHeightPx.roundToInt().toDp() }
             }
         }
