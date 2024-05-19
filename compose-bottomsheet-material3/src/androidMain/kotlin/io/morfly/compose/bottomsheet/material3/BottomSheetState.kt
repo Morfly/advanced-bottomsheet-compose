@@ -37,6 +37,15 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 
+/**
+ * State of a [BottomSheetScaffold] composable.
+ *
+ * Contains states relating to its swipe position as well as animations between state values.
+ *
+ * @param draggableState the [AnchoredDraggableState] that controls the bottom sheet values and drag
+ * animations
+ * @param defineValues a lambda that defines the values of the bottom sheet
+ */
 @ExperimentalFoundationApi
 @Stable
 class BottomSheetState<T : Any>(
@@ -48,20 +57,37 @@ class BottomSheetState<T : Any>(
 
     val values: DraggableAnchors<T> get() = draggableState.anchors
 
+    /**
+     * Height of a layout containing a bottom sheet scaffold in pixels.
+     */
     var layoutHeight: Int by mutableIntStateOf(Int.MAX_VALUE)
         internal set
 
+    /**
+     * Full height of a bottom sheet content including an offscreen part in pixels.
+     */
     var sheetFullHeight: Int by mutableIntStateOf(Int.MAX_VALUE)
         internal set
 
+    /**
+     * Height of the visible part of a bottom sheet content in pixels.
+     */
     val sheetVisibleHeight: Float by derivedStateOf {
         layoutHeight - offset
     }
 
     val offset: Float get() = draggableState.offset
 
+    /**
+     * The current value of the bottom sheet.
+     */
     val currentValue: T get() = draggableState.currentValue
 
+    /**
+     * The target value. This is the closest value to the current offset, taking into account
+     * positional thresholds. If no interactions like animations or drags are in progress, this
+     * will be the current value.
+     */
     val targetValue: T get() = draggableState.targetValue
 
     fun requireLayoutHeight(): Int {
@@ -110,6 +136,9 @@ class BottomSheetState<T : Any>(
 
     companion object {
 
+        /**
+         * The default [Saver] implementation for [BottomSheetState].
+         */
         fun <T : Any> Saver(
             defineValues: BottomSheetValuesConfig<T>.() -> Unit,
             density: Density
@@ -158,6 +187,21 @@ fun <T : Any> BottomSheetState<T>.requireOffsetDp(): Dp {
     return with(density) { requireOffset().toDp() }
 }
 
+/**
+ * Creates and [remember] a [BottomSheetState].
+ *
+ * @param initialValue the initial value of the state
+ * @param defineValues a lambda that defines the values of the bottom sheet
+ * @param positionalThreshold the positional threshold, in px, to be used when calculating the
+ * target state while a drag is in progress and when settling after the drag ends. This is the
+ * distance from the start of a transition. It will be, depending on the direction of the
+ * interaction, added or subtracted from/to the origin offset. It should always be a positive value
+ * @param velocityThreshold the velocity threshold (in px per second) that the end velocity has to
+ * exceed in order to animate to the next state, even if the [positionalThreshold] has not been
+ * reached
+ * @param animationSpec the default animation that will be used to animate to a new state
+ * @param confirmValueChange optional callback invoked to confirm or veto a pending state change
+ */
 @ExperimentalMaterial3Api
 @ExperimentalFoundationApi
 @Composable
@@ -181,6 +225,7 @@ fun <T : Any> rememberBottomSheetState(
         velocityThreshold = velocityThreshold,
         animationSpec = animationSpec,
         confirmValueChange = { value ->
+            // TODO comment bug workaround
             with(draggableState) {
                 val currentOffset = requireOffset()
                 val searchUpwards =
@@ -222,6 +267,13 @@ internal fun <T : Any> rememberBottomSheetState(
     }
 }
 
+/**
+ * @param initialValue the initial value of the state
+ * @param skipPartiallyExpandedState
+ * @param peekHeight the height of the bottom sheet when it is collapsed
+ * @param skipHiddenState whether [SheetValue.Hidden] state is skipped for [BottomSheetScaffold]
+ * @param confirmValueChange optional callback invoked to confirm or veto a pending state change
+ */
 @ExperimentalFoundationApi
 @ExperimentalMaterial3Api
 @Composable

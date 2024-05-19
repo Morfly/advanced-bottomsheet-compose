@@ -52,16 +52,16 @@ fun <T> AnchoredDraggableState<T>.updateAnchorsAnimated(
 /**
  * Create and [rememberSaveable] an [AnchoredDraggableState].
  *
- * @param initialValue The initial value of the state.
- * @param positionalThreshold The positional threshold, in px, to be used when calculating the
+ * @param initialValue the initial value of the state
+ * @param positionalThreshold the positional threshold, in px, to be used when calculating the
  * target state while a drag is in progress and when settling after the drag ends. This is the
  * distance from the start of a transition. It will be, depending on the direction of the
- * interaction, added or subtracted from/to the origin offset. It should always be a positive value.
- * @param velocityThreshold The velocity threshold (in px per second) that the end velocity has to
+ * interaction, added or subtracted from/to the origin offset. It should always be a positive value
+ * @param velocityThreshold the velocity threshold (in px per second) that the end velocity has to
  * exceed in order to animate to the next state, even if the [positionalThreshold] has not been
- * reached.
- * @param animationSpec The default animation that will be used to animate to a new state.
- * @param confirmValueChange Optional callback invoked to confirm or veto a pending state change.
+ * reached
+ * @param animationSpec the default animation that will be used to animate to a new state
+ * @param confirmValueChange optional callback invoked to confirm or veto a pending state change
  */
 @ExperimentalMaterial3Api
 @ExperimentalFoundationApi
