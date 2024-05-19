@@ -73,10 +73,10 @@ private fun AdjustedCameraPositionEffect(
     isBottomSheetMoving: Boolean,
     bottomPadding: Dp,
 ) {
-    var location by remember { mutableStateOf(camera.position.target) }
+    var cameraLocation by remember { mutableStateOf(camera.position.target) }
     LaunchedEffect(camera.isMoving, camera.cameraMoveStartedReason) {
         if (!camera.isMoving && camera.cameraMoveStartedReason == CameraMoveStartedReason.GESTURE) {
-            location = camera.position.target
+            cameraLocation = camera.position.target
         }
     }
 
@@ -85,13 +85,16 @@ private fun AdjustedCameraPositionEffect(
     LaunchedEffect(isBottomSheetMoving) {
         if (isBottomSheetMoving) return@LaunchedEffect
 
+        // The map does not respect the initial bottom padding value. The CameraPositionState in
+        // this case returns the camera location as if the padding was not set. Therefore, the
+        // camera must be manually shifted according to the initial padding value.
         if (!isCameraInitialized) {
             isCameraInitialized = true
             val verticalShiftPx = with(density) { bottomPadding.toPx() / 2 }
             val update = CameraUpdateFactory.scrollBy(0f, verticalShiftPx)
             camera.animate(update)
         } else {
-            val update = CameraUpdateFactory.newLatLng(location)
+            val update = CameraUpdateFactory.newLatLng(cameraLocation)
             camera.animate(update)
         }
     }
