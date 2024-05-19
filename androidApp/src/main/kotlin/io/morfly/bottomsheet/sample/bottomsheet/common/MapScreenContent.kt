@@ -32,19 +32,22 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import io.morfly.bottomsheet.sample.R
 
 private val SanFranciscoLocation = LatLng(37.773972, -122.431297)
+private val MapUiOffsetLimit = 100.dp
+private const val DefaultMapZoom = 13f
 
 @Composable
 fun MapScreenContent(
     modifier: Modifier = Modifier,
+    initialLocation: LatLng = SanFranciscoLocation,
     bottomPadding: Dp = 0.dp,
     isBottomSheetMoving: Boolean = false,
     layoutHeight: Dp = Dp.Unspecified,
 ) {
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(SanFranciscoLocation, 13f)
+        position = CameraPosition.fromLatLngZoom(initialLocation, DefaultMapZoom)
     }
 
-    val maxBottomPadding = remember(layoutHeight) { layoutHeight - 200.dp }
+    val maxBottomPadding = remember(layoutHeight) { layoutHeight - MapUiOffsetLimit }
     val mapPadding = rememberMapPadding(bottomPadding, maxBottomPadding)
 
     AdjustedCameraPositionEffect(
@@ -60,7 +63,7 @@ fun MapScreenContent(
         properties = rememberMapProperties(),
         contentPadding = mapPadding
     ) {
-        Marker(state = MarkerState(position = SanFranciscoLocation))
+        Marker(state = MarkerState(position = initialLocation))
     }
 }
 
@@ -77,13 +80,13 @@ private fun AdjustedCameraPositionEffect(
         }
     }
 
-    var firstCameraMove by remember { mutableStateOf(true) }
+    var isCameraInitialized by remember { mutableStateOf(false) }
     val density = LocalDensity.current
     LaunchedEffect(isBottomSheetMoving) {
         if (isBottomSheetMoving) return@LaunchedEffect
 
-        if (firstCameraMove) {
-            firstCameraMove = false
+        if (!isCameraInitialized) {
+            isCameraInitialized = true
             val verticalShiftPx = with(density) { bottomPadding.toPx() / 2 }
             val update = CameraUpdateFactory.scrollBy(0f, verticalShiftPx)
             camera.animate(update)
