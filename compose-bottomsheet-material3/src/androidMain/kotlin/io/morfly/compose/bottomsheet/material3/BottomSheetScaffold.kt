@@ -402,7 +402,7 @@ internal fun <T> BottomSheetNestedScrollConnection(
 
 /**
  * [BottomSheetValuesConfig] stores mutable configuration values for the bottom sheet comprised of
- * values of [T] and corresponding [Float] positions.
+ * values of [T] and corresponding [Float] positions represented as offset in pixels.
  *
  * @param layoutHeight the height of the scaffold containing the sheet
  * @param sheetFullHeight the full height of the content of the bottom sheet including an offscreen
@@ -414,77 +414,77 @@ class BottomSheetValuesConfig<T : Any>(
     val density: Density,
 ) {
     /**
-     * The height of the bottom sheet content.
+     * The height of the bottom sheet content represented as [Position].
      */
-    val contentHeight = Value((layoutHeight - sheetFullHeight).toFloat())
+    val contentHeight = Position((layoutHeight - sheetFullHeight).toFloat())
 
     /**
-     * Collection of bottom sheet values and corresponding offsets in pixels.
+     * Collection of bottom sheet values and corresponding positions as offsets in pixels.
      */
     val values = mutableMapOf<T, Float>()
 
     /**
-     * Set the bottom sheet value.
-     * @param value the bottom sheet value.
+     * Set the bottom sheet value and its [Position].
+     * @param position the bottom sheet position as offset in pixels.
      */
-    infix fun T.at(value: Value) {
-        values[this] = maxOf(value.offsetPx, contentHeight.offsetPx)
+    infix fun T.at(position: Position) {
+        values[this] = maxOf(position.offsetPx, contentHeight.offsetPx)
     }
 
     /**
-     * Define bottom sheet value using its offset from the top in pixels.
+     * Define bottom sheet position using its offset from the top in pixels.
      * @param px the bottom sheet offset in pixels
      */
-    fun offset(px: Float): Value {
-        return Value(px)
+    fun offset(px: Float): Position {
+        return Position(px)
     }
 
     /**
-     * Define bottom sheet value using its offset from the top in dp.
+     * Define bottom sheet position using its offset from the top in dp.
      * @param dp the bottom sheet offset in pixels
      */
-    fun offset(dp: Dp): Value {
-        return Value(with(density) { dp.toPx() })
+    fun offset(dp: Dp): Position {
+        return Position(with(density) { dp.toPx() })
     }
 
     /**
-     * Define bottom sheet value using its offset from the top as a percentage of the layout's
+     * Define bottom sheet position using its offset from the top as a percentage of the layout's
      * height.
      * @param percent the bottom sheet height in percent
      */
-    fun offset(@IntRange(from = 0, to = 100) percent: Int): Value {
-        return Value(layoutHeight * percent / 100f)
+    fun offset(@IntRange(from = 0, to = 100) percent: Int): Position {
+        return Position(layoutHeight * percent / 100f)
     }
 
     /**
-     * Define bottom sheet value using its height in pixels.
+     * Define bottom sheet position using its height in pixels.
      * @param px the bottom sheet height in pixels
      */
-    fun height(px: Float): Value {
-        return Value(layoutHeight - offset(px).offsetPx)
+    fun height(px: Float): Position {
+        return Position(layoutHeight - offset(px).offsetPx)
     }
 
     /**
-     * Define bottom sheet value using its height in dp.
+     * Define bottom sheet position using its height in dp.
      * @param dp the bottom sheet height in dp
      */
-    fun height(dp: Dp): Value {
-        return Value(layoutHeight - offset(dp).offsetPx)
+    fun height(dp: Dp): Position {
+        return Position(layoutHeight - offset(dp).offsetPx)
     }
 
     /**
-     * Define bottom sheet value using its height as a percentage of the layout's height.
+     * Define bottom sheet position using its height as a percentage of the layout's height.
      * @param percent the bottom sheet height in percent
      */
-    fun height(@IntRange(from = 0, to = 100) percent: Int): Value {
-        return Value(layoutHeight - offset(percent).offsetPx)
+    fun height(@IntRange(from = 0, to = 100) percent: Int): Position {
+        return Position(layoutHeight - offset(percent).offsetPx)
     }
 
     /**
-     * Holder of bottom sheet values. Both [offset] and [height] are represented as offset in
-     * pixels.
-     * @param offsetPx the bottom sheet offset in pixels
+     * Holder of positions of bottom sheet values. Both [offset] and [height] are represented as
+     * offset from the top in pixels.
+     * @param offsetPx the bottom sheet offset from the top in pixels
      */
     @JvmInline
-    value class Value internal constructor(val offsetPx: Float)
+    value class Position internal constructor(val offsetPx: Float)
 }
