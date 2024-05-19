@@ -50,6 +50,8 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.semantics.expand
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.Velocity
@@ -275,7 +277,6 @@ internal fun <T : Any> BottomSheet(
     ) {
         Column(Modifier.fillMaxWidth()) {
             if (dragHandle != null) {
-                // TODO semantics
                 Box(modifier = Modifier.align(Alignment.CenterHorizontally)) {
                     dragHandle()
                 }
