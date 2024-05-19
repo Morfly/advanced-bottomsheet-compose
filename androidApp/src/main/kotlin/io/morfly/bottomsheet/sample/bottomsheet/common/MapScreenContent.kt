@@ -114,7 +114,8 @@ private fun rememberPortraitMapPadding(bottomPadding: Dp, maxBottomPadding: Dp):
         PaddingValues(
             start = 16.dp,
             end = 16.dp,
-            bottom = bottomPadding.takeIf { it < maxBottomPadding } ?: maxBottomPadding)
+            bottom = bottomPadding.takeIf { it < maxBottomPadding } ?: maxBottomPadding
+        )
     }
 }
 
