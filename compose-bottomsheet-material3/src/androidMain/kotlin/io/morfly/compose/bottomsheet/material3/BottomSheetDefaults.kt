@@ -21,14 +21,26 @@ import androidx.compose.animation.core.SpringSpec
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 
+/**
+ * Default value for the [BottomSheetScaffold] positional threshold used by [AnchoredDraggableState]
+ * internally.
+ */
 @ExperimentalMaterial3Api
 val BottomSheetDefaults.PositionalThreshold: (totalDistance: Float) -> Float
     get() = { 0f }
 
+/**
+ * Default value for the [BottomSheetScaffold] velocity threshold used by [AnchoredDraggableState]
+ * internally.
+ */
 @ExperimentalMaterial3Api
 val BottomSheetDefaults.VelocityThreshold: () -> Float
     get() = { 0f }
 
+/**
+ * Default value for the [BottomSheetScaffold] animation spec used by [AnchoredDraggableState]
+ * internally.
+ */
 @ExperimentalMaterial3Api
 val BottomSheetDefaults.AnimationSpec: AnimationSpec<Float>
     get() = SpringSpec()
