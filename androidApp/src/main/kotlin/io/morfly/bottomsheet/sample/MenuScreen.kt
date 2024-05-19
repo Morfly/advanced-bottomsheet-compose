@@ -39,7 +39,7 @@ fun MenuScreen(
         ) {
             Item(
                 title = "Official Material3 Bottom Sheet",
-                description = "Sample using official bottom sheet from material 3 library.",
+                description = "Sample using original bottom sheet from material 3 library.",
                 onClick = { onClick(Destination.Material3Demo) }
             )
             Item(
@@ -54,7 +54,7 @@ fun MenuScreen(
             )
             Item(
                 title = "Finalized Custom Bottom Sheet",
-                description = "Finalized customizable bottom sheet implementation using anchored draggable and subcompose layout. It is available as a library in this repository.",
+                description = "Sample with the finalized bottom sheet implementation using anchored draggable and subcompose layout. Provides customizable API and is available as a library in this repository.",
                 onClick = { onClick(Destination.CustomFinalizedDemo) }
             )
         }

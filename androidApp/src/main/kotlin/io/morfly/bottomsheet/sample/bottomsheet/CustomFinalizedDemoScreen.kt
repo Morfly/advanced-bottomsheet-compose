@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import io.morfly.bottomsheet.sample.bottomsheet.common.BottomSheetContent
 import io.morfly.bottomsheet.sample.bottomsheet.common.MapScreenContent
 import io.morfly.compose.bottomsheet.material3.BottomSheetScaffold
+import io.morfly.compose.bottomsheet.material3.layoutHeightDp
 import io.morfly.compose.bottomsheet.material3.rememberBottomSheetScaffoldState
 import io.morfly.compose.bottomsheet.material3.rememberBottomSheetState
 import io.morfly.compose.bottomsheet.material3.sheetVisibleHeightDp
@@ -57,7 +58,11 @@ fun CustomFinalizedDemoScreen() {
             val isMoving by remember {
                 derivedStateOf { sheetState.currentValue != sheetState.targetValue }
             }
-            MapScreenContent(isBottomSheetMoving = isMoving, mapUiBottomPadding = bottomPadding)
+            MapScreenContent(
+                bottomPadding = bottomPadding,
+                bottomPaddingMoving = isMoving,
+                layoutHeight = sheetState.layoutHeightDp
+            )
         },
         modifier = Modifier.fillMaxSize(),
     )

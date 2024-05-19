@@ -50,7 +50,11 @@ fun OfficialMaterial3DemoScreen() {
                 val isMoving by remember {
                     derivedStateOf { sheetState.currentValue != sheetState.targetValue }
                 }
-                MapScreenContent(isBottomSheetMoving = isMoving, mapUiBottomPadding = bottomPadding)
+                MapScreenContent(
+                    bottomPadding = bottomPadding,
+                    bottomPaddingMoving = isMoving,
+                    layoutHeight = maxHeight
+                )
             },
             modifier = Modifier.fillMaxSize()
         )

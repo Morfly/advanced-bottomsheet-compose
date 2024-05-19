@@ -30,24 +30,26 @@ import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import io.morfly.bottomsheet.sample.R
 
-val SanFranciscoLocation = LatLng(37.773972, -122.431297)
+private val SanFranciscoLocation = LatLng(37.773972, -122.431297)
 
 @Composable
 fun MapScreenContent(
     modifier: Modifier = Modifier,
-    isBottomSheetMoving: Boolean = false,
-    mapUiBottomPadding: Dp = 0.dp,
+    bottomPadding: Dp = 0.dp,
+    bottomPaddingMoving: Boolean = false,
+    layoutHeight: Dp = Dp.Unspecified,
 ) {
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(SanFranciscoLocation, 13f)
     }
 
-    val mapPadding = rememberMapPadding(mapUiBottomPadding)
+    val maxBottomPadding = remember(layoutHeight) { layoutHeight - 200.dp }
+    val mapPadding = rememberMapPadding(bottomPadding, maxBottomPadding)
 
     AdjustedCameraPositionEffect(
         cameraPositionState = cameraPositionState,
-        isBottomSheetMoving = isBottomSheetMoving,
-        mapUiBottomPadding = mapPadding.calculateBottomPadding(),
+        bottomPaddingMoving = bottomPaddingMoving,
+        bottomPadding = mapPadding.calculateBottomPadding(),
     )
 
     GoogleMap(
@@ -64,19 +66,23 @@ fun MapScreenContent(
 @Composable
 private fun AdjustedCameraPositionEffect(
     cameraPositionState: CameraPositionState,
-    isBottomSheetMoving: Boolean,
-    mapUiBottomPadding: Dp,
+    bottomPaddingMoving: Boolean,
+    bottomPadding: Dp,
 ) {
+    LaunchedEffect(cameraPositionState.isMoving) {
+        println("TTAGG state is Moving: ${cameraPositionState.isMoving}")
+    }
+
     var firstCameraMove by remember { mutableStateOf(true) }
 
     val density = LocalDensity.current
-    LaunchedEffect(isBottomSheetMoving) {
-        if (isBottomSheetMoving) return@LaunchedEffect
+    LaunchedEffect(bottomPaddingMoving) {
+        if (bottomPaddingMoving) return@LaunchedEffect
 
         if (firstCameraMove) {
             firstCameraMove = false
-            val paddingPx = with(density) { mapUiBottomPadding.toPx() / 2 }
-            val update = CameraUpdateFactory.scrollBy(0f, paddingPx)
+            val verticalShiftPx = with(density) { bottomPadding.toPx() / 2 }
+            val update = CameraUpdateFactory.scrollBy(0f, verticalShiftPx)
             cameraPositionState.animate(update)
         } else {
             val location = cameraPositionState.position.target
@@ -87,20 +93,23 @@ private fun AdjustedCameraPositionEffect(
 }
 
 @Composable
-private fun rememberMapPadding(mapUiBottomPadding: Dp): PaddingValues {
+private fun rememberMapPadding(bottomPadding: Dp, maxBottomPadding: Dp): PaddingValues {
     val configuration = LocalConfiguration.current
     val isPortrait = configuration.orientation == Configuration.ORIENTATION_PORTRAIT
     return if (isPortrait) {
-        rememberPortraitMapPadding(mapUiBottomPadding)
+        rememberPortraitMapPadding(bottomPadding, maxBottomPadding)
     } else {
         remember { PaddingValues() }
     }
 }
 
 @Composable
-private fun rememberPortraitMapPadding(mapUiBottomPadding: Dp): PaddingValues {
-    return remember(mapUiBottomPadding) {
-        PaddingValues(start = 16.dp, end = 16.dp, bottom = mapUiBottomPadding)
+private fun rememberPortraitMapPadding(bottomPadding: Dp, maxBottomPadding: Dp): PaddingValues {
+    return remember(bottomPadding, maxBottomPadding) {
+        PaddingValues(
+            start = 16.dp,
+            end = 16.dp,
+            bottom = bottomPadding.takeIf { it < maxBottomPadding } ?: maxBottomPadding)
     }
 }
 
