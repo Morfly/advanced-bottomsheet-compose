@@ -24,11 +24,17 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SmallTopAppBar
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
@@ -50,14 +56,18 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.semantics.expand
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.Velocity
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
+/**
+ * State of the [BottomSheetScaffold] composable.
+ *
+ * @param sheetState the state of the persistent bottom sheet
+ * @param snackbarHostState the [SnackbarHostState] used to show snackbars inside the scaffold
+ */
 @ExperimentalFoundationApi
 @Stable
 class BottomSheetScaffoldState<T : Any>(
@@ -65,6 +75,12 @@ class BottomSheetScaffoldState<T : Any>(
     val snackbarHostState: SnackbarHostState,
 )
 
+/**
+ * Create and [remember] a [BottomSheetScaffoldState].
+ *
+ * @param sheetState the state of the standard bottom sheet. See [rememberBottomSheetState]
+ * @param snackbarHostState the [SnackbarHostState] used to show snackbars inside the scaffold
+ */
 @ExperimentalFoundationApi
 @Composable
 fun <T : Any> rememberBottomSheetScaffoldState(
@@ -79,6 +95,46 @@ fun <T : Any> rememberBottomSheetScaffoldState(
     }
 }
 
+/**
+ * <a href="https://m3.material.io/components/bottom-sheets/overview" class="external" target="_blank">Material Design standard bottom sheet scaffold</a>.
+ *
+ * Standard bottom sheets co-exist with the screen’s main UI region and allow for simultaneously
+ * viewing and interacting with both regions. They are commonly used to keep a feature or
+ * secondary content visible on screen when content in main UI region is frequently scrolled or
+ * panned.
+ *
+ * This component provides API to put together several material components to construct your
+ * screen, by ensuring proper layout strategy for them and collecting necessary data so these
+ * components will work together correctly.
+ *
+ * @param scaffoldState the state of the bottom sheet scaffold
+ * @param sheetContent the content of the bottom sheet
+ * @param modifier the [Modifier] to be applied to this scaffold
+ * @param sheetMaxWidth [Dp] that defines what the maximum width the sheet will take.
+ * Pass in [Dp.Unspecified] for a sheet that spans the entire screen width.
+ * @param sheetShape the shape of the bottom sheet
+ * @param sheetContainerColor the background color of the bottom sheet
+ * @param sheetContentColor the preferred content color provided by the bottom sheet to its
+ * children. Defaults to the matching content color for [sheetContainerColor], or if that is
+ * not a color from the theme, this will keep the same content color set above the bottom sheet.
+ * @param sheetTonalElevation the tonal elevation of the bottom sheet
+ * @param sheetShadowElevation the shadow elevation of the bottom sheet
+ * @param sheetDragHandle optional visual marker to pull the scaffold's bottom sheet
+ * @param sheetSwipeEnabled whether the sheet swiping is enabled and should react to the user's
+ * input
+ * @param topBar top app bar of the screen, typically a [SmallTopAppBar]
+ * @param snackbarHost component to host [Snackbar]s that are pushed to be shown via
+ * [SnackbarHostState.showSnackbar], typically a [SnackbarHost]
+ * @param containerColor the color used for the background of this scaffold. Use [Color.Transparent]
+ * to have no color.
+ * @param contentColor the preferred color for content inside this scaffold. Defaults to either the
+ * matching content color for [containerColor], or to the current [LocalContentColor] if
+ * [containerColor] is not a color from the theme.
+ * @param content content of the screen. The lambda receives a [PaddingValues] that should be
+ * applied to the content root via [Modifier.padding] and [Modifier.consumeWindowInsets] to
+ * properly offset top and bottom bars. If using [Modifier.verticalScroll], apply this modifier to
+ * the child of the scroll, and not on the scroll itself.
+ */
 @ExperimentalMaterial3Api
 @ExperimentalFoundationApi
 @Composable
@@ -344,43 +400,91 @@ internal fun <T> BottomSheetNestedScrollConnection(
     private fun Offset.toFloat(): Float = if (orientation == Orientation.Horizontal) x else y
 }
 
+/**
+ * [BottomSheetValuesConfig] stores mutable configuration values for the bottom sheet comprised of
+ * values of [T] and corresponding [Float] positions.
+ *
+ * @param layoutHeight the height of the scaffold containing the sheet
+ * @param sheetFullHeight the full height of the content of the bottom sheet including an offscreen
+ * part
+ */
 class BottomSheetValuesConfig<T : Any>(
     val layoutHeight: Int,
     val sheetFullHeight: Int,
     val density: Density,
 ) {
+    /**
+     * The height of the bottom sheet content.
+     */
     val contentHeight = Value((layoutHeight - sheetFullHeight).toFloat())
 
+    /**
+     * Collection of bottom sheet values and corresponding offsets in pixels.
+     */
     val values = mutableMapOf<T, Float>()
 
+    /**
+     * Set the bottom sheet value.
+     * @param value the bottom sheet value.
+     */
     infix fun T.at(value: Value) {
         values[this] = maxOf(value.offsetPx, contentHeight.offsetPx)
     }
 
+    /**
+     * Define bottom sheet value using its offset from the top in pixels.
+     * @param px the bottom sheet offset in pixels
+     */
     fun offset(px: Float): Value {
         return Value(px)
     }
 
+    /**
+     * Define bottom sheet value using its offset from the top in dp.
+     * @param dp the bottom sheet offset in pixels
+     */
     fun offset(dp: Dp): Value {
         return Value(with(density) { dp.toPx() })
     }
 
+    /**
+     * Define bottom sheet value using its offset from the top as a percentage of the layout's
+     * height.
+     * @param percent the bottom sheet height in percent
+     */
     fun offset(@IntRange(from = 0, to = 100) percent: Int): Value {
         return Value(layoutHeight * percent / 100f)
     }
 
+    /**
+     * Define bottom sheet value using its height in pixels.
+     * @param px the bottom sheet height in pixels
+     */
     fun height(px: Float): Value {
         return Value(layoutHeight - offset(px).offsetPx)
     }
 
+    /**
+     * Define bottom sheet value using its height in dp.
+     * @param dp the bottom sheet height in dp
+     */
     fun height(dp: Dp): Value {
         return Value(layoutHeight - offset(dp).offsetPx)
     }
 
+    /**
+     * Define bottom sheet value using its height as a percentage of the layout's height.
+     * @param percent the bottom sheet height in percent
+     */
     fun height(@IntRange(from = 0, to = 100) percent: Int): Value {
         return Value(layoutHeight - offset(percent).offsetPx)
     }
 
+    /**
+     * Holder of bottom sheet values. Both [offset] and [height] are represented as offset in
+     * pixels.
+     * @param offsetPx the bottom sheet offset in pixels
+     */
     @JvmInline
     value class Value internal constructor(val offsetPx: Float)
 }
