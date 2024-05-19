@@ -29,10 +29,14 @@ fun CustomFinalizedDemoScreen() {
     val sheetState = rememberBottomSheetState(
         initialValue = SheetValue.PartiallyExpanded,
         defineValues = {
+            // Bottom sheet height is 56 dp.
             SheetValue.Peek at height(56.dp)
             if (isInitialState) {
-                SheetValue.PartiallyExpanded at height(percent = 40)
+                // Offset is 60% which means the bottom sheet takes 40% of the screen.
+                SheetValue.PartiallyExpanded at offset(percent = 60)
             }
+            // Bottom sheet height is equal to the height of its content.
+            // If the height of the content is bigger than the screen - fill the entire screen.
             SheetValue.Expanded at contentHeight
         },
         confirmValueChange = {
