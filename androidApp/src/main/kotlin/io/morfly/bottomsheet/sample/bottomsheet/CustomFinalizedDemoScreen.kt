@@ -36,7 +36,6 @@ fun CustomFinalizedDemoScreen() {
                 SheetValue.PartiallyExpanded at offset(percent = 60)
             }
             // Bottom sheet height is equal to the height of its content.
-            // If the height of the content is bigger than the screen - fill the entire screen.
             SheetValue.Expanded at contentHeight
         },
         confirmValueChange = {

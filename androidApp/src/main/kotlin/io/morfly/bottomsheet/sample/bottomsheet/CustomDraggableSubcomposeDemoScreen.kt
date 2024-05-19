@@ -125,7 +125,6 @@ private fun BottomSheet(
                         // Offset is 60% which means the bottom sheet takes 40% of the screen.
                         SheetValue.PartiallyExpanded at (layoutHeight * 0.6f)
                         // Bottom sheet height is equal to the height of its content.
-                        // If the height of the content is bigger than the screen - fill the entire screen.
                         SheetValue.Expanded at maxOf(layoutHeight - sheetHeight, 0).toFloat()
                     }
                 }
