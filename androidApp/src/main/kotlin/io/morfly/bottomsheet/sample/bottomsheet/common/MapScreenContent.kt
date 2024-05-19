@@ -75,7 +75,7 @@ private fun AdjustedCameraPositionEffect(
 ) {
     var location by remember { mutableStateOf(camera.position.target) }
     LaunchedEffect(camera.isMoving, camera.cameraMoveStartedReason) {
-        if (camera.isMoving && camera.cameraMoveStartedReason == CameraMoveStartedReason.GESTURE) {
+        if (!camera.isMoving && camera.cameraMoveStartedReason == CameraMoveStartedReason.GESTURE) {
             location = camera.position.target
         }
     }
