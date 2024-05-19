@@ -21,6 +21,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
+import com.google.maps.android.compose.CameraMoveStartedReason
 import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
@@ -36,7 +37,7 @@ private val SanFranciscoLocation = LatLng(37.773972, -122.431297)
 fun MapScreenContent(
     modifier: Modifier = Modifier,
     bottomPadding: Dp = 0.dp,
-    bottomPaddingMoving: Boolean = false,
+    isBottomSheetMoving: Boolean = false,
     layoutHeight: Dp = Dp.Unspecified,
 ) {
     val cameraPositionState = rememberCameraPositionState {
@@ -47,8 +48,8 @@ fun MapScreenContent(
     val mapPadding = rememberMapPadding(bottomPadding, maxBottomPadding)
 
     AdjustedCameraPositionEffect(
-        cameraPositionState = cameraPositionState,
-        bottomPaddingMoving = bottomPaddingMoving,
+        camera = cameraPositionState,
+        isBottomSheetMoving = isBottomSheetMoving,
         bottomPadding = mapPadding.calculateBottomPadding(),
     )
 
@@ -65,29 +66,30 @@ fun MapScreenContent(
 
 @Composable
 private fun AdjustedCameraPositionEffect(
-    cameraPositionState: CameraPositionState,
-    bottomPaddingMoving: Boolean,
+    camera: CameraPositionState,
+    isBottomSheetMoving: Boolean,
     bottomPadding: Dp,
 ) {
-    LaunchedEffect(cameraPositionState.isMoving) {
-        println("TTAGG state is Moving: ${cameraPositionState.isMoving}")
+    var location by remember { mutableStateOf(camera.position.target) }
+    LaunchedEffect(camera.isMoving, camera.cameraMoveStartedReason) {
+        if (camera.isMoving && camera.cameraMoveStartedReason == CameraMoveStartedReason.GESTURE) {
+            location = camera.position.target
+        }
     }
 
     var firstCameraMove by remember { mutableStateOf(true) }
-
     val density = LocalDensity.current
-    LaunchedEffect(bottomPaddingMoving) {
-        if (bottomPaddingMoving) return@LaunchedEffect
+    LaunchedEffect(isBottomSheetMoving) {
+        if (isBottomSheetMoving) return@LaunchedEffect
 
         if (firstCameraMove) {
             firstCameraMove = false
             val verticalShiftPx = with(density) { bottomPadding.toPx() / 2 }
             val update = CameraUpdateFactory.scrollBy(0f, verticalShiftPx)
-            cameraPositionState.animate(update)
+            camera.animate(update)
         } else {
-            val location = cameraPositionState.position.target
             val update = CameraUpdateFactory.newLatLng(location)
-            cameraPositionState.animate(update)
+            camera.animate(update)
         }
     }
 }
