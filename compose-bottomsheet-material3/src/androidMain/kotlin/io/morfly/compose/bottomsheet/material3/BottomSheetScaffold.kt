@@ -307,7 +307,7 @@ internal fun <T : Any> BottomSheet(
             .nestedScroll(
                 remember(state) {
                     BottomSheetNestedScrollConnection(
-                        anchoredDraggableState = state.draggableState,
+                        draggableState = state.draggableState,
                         orientation = orientation,
                         onFling = { velocity ->
                             scope.launch { state.draggableState.settle(velocity) }
@@ -345,14 +345,14 @@ internal fun <T : Any> BottomSheet(
 @ExperimentalFoundationApi
 @Suppress("FunctionName")
 internal fun <T> BottomSheetNestedScrollConnection(
-    anchoredDraggableState: AnchoredDraggableState<T>,
+    draggableState: AnchoredDraggableState<T>,
     orientation: Orientation,
     onFling: (velocity: Float) -> Unit,
 ): NestedScrollConnection = object : NestedScrollConnection {
     override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
         val delta = available.toFloat()
         return if (delta < 0 && source == NestedScrollSource.Drag) {
-            anchoredDraggableState.dispatchRawDelta(delta).toOffset()
+            draggableState.dispatchRawDelta(delta).toOffset()
         } else {
             Offset.Zero
         }
@@ -364,7 +364,7 @@ internal fun <T> BottomSheetNestedScrollConnection(
         source: NestedScrollSource,
     ): Offset {
         return if (source == NestedScrollSource.Drag) {
-            anchoredDraggableState.dispatchRawDelta(available.toFloat()).toOffset()
+            draggableState.dispatchRawDelta(available.toFloat()).toOffset()
         } else {
             Offset.Zero
         }
@@ -372,8 +372,8 @@ internal fun <T> BottomSheetNestedScrollConnection(
 
     override suspend fun onPreFling(available: Velocity): Velocity {
         val toFling = available.toFloat()
-        val currentOffset = anchoredDraggableState.requireOffset()
-        val minAnchor = anchoredDraggableState.anchors.minAnchor()
+        val currentOffset = draggableState.requireOffset()
+        val minAnchor = draggableState.anchors.minAnchor()
         return if (toFling < 0 && currentOffset > minAnchor) {
             onFling(toFling)
             // since we go to the anchor with tween settling, consume all for the best UX
