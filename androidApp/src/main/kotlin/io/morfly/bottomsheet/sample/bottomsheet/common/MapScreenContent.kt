@@ -26,14 +26,12 @@ import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapUiSettings
-import com.google.maps.android.compose.Marker
-import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import io.morfly.bottomsheet.sample.R
 
-private val SanFranciscoLocation = LatLng(37.773972, -122.431297)
-private val MapUiOffsetLimit = 100.dp
 private const val DefaultMapZoom = 13f
+private val SanFranciscoLocation = LatLng(37.77446, -122.42064)
+private val MapUiOffsetLimit = 100.dp
 
 @Composable
 fun MapScreenContent(
@@ -62,9 +60,7 @@ fun MapScreenContent(
         uiSettings = rememberMapUiSettings(),
         properties = rememberMapProperties(),
         contentPadding = mapPadding
-    ) {
-        Marker(state = MarkerState(position = initialLocation))
-    }
+    )
 }
 
 @Composable
