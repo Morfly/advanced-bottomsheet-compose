@@ -39,7 +39,7 @@ fun OfficialMaterial3DemoScreen() {
         }
 
         BottomSheetScaffold(
-            sheetPeekHeight = 56.dp,
+            sheetPeekHeight = 100.dp,
             scaffoldState = scaffoldState,
             sheetTonalElevation = 0.dp,
             sheetContent = {

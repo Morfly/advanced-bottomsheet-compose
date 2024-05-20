@@ -120,8 +120,8 @@ private fun BottomSheet(
                 val sheetHeight = sheetSize.height
                 val newAnchors = DraggableAnchors {
                     with(density) {
-                        // Bottom sheet height is 56 dp.
-                        SheetValue.Peek at (layoutHeight - 56.dp.toPx())
+                        // Bottom sheet height is 100 dp.
+                        SheetValue.Peek at (layoutHeight - 100.dp.toPx())
                         // Offset is 60% which means the bottom sheet takes 40% of the screen.
                         SheetValue.PartiallyExpanded at (layoutHeight * 0.6f)
                         // Bottom sheet height is equal to the height of its content.
