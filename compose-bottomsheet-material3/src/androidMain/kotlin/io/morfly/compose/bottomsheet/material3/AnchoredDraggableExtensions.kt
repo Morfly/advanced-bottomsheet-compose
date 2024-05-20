@@ -26,7 +26,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 /**
- * Updates the anchors similarly to [AnchoredDraggableState.updateAnchors] but animates the
+ * Update the anchors similarly to [AnchoredDraggableState.updateAnchors] but animates the
  * transition instead of snapping in case the [AnchoredDraggableState.currentValue] is not present
  * anymore.
  *

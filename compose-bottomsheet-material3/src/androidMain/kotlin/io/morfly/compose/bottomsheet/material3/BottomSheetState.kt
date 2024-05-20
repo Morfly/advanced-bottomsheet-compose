@@ -38,8 +38,8 @@ import kotlinx.coroutines.launch
 /**
  * State of a [BottomSheetScaffold] composable.
  *
- * Manages values of the bottom sheet and transitions between them as well. It also contains the
- * dimension information about the bottom sheet.
+ * Manages values of the bottom sheet and transitions between them. It also provides the dimension
+ * information about the bottom sheet.
  *
  * @param draggableState the [AnchoredDraggableState] that controls the bottom sheet values and drag
  * animations
@@ -53,6 +53,9 @@ class BottomSheetState<T : Any>(
     internal val defineValues: BottomSheetValuesConfig<T>.() -> Unit,
     internal val density: Density
 ) {
+    /**
+     * Callbacks invoked by [refreshValues].
+     */
     internal val onRefreshValues = mutableSetOf<(Int, T, Boolean) -> Unit>()
 
     /**
@@ -120,7 +123,7 @@ class BottomSheetState<T : Any>(
     fun requireOffset() = draggableState.requireOffset()
 
     /**
-     * Initiates the reconfiguration of the bottom sheet values by calling the [defineValues] lambda.
+     * Initiate the reconfiguration of the bottom sheet values by calling the [defineValues] lambda.
      *
      * @param targetValue the target value of the bottom sheet after the update
      * @param animate animate the transition to a [targetValue] or snap without any animation.
@@ -208,7 +211,7 @@ fun <T : Any> BottomSheetState<T>.requireOffsetDp(): Dp {
 }
 
 /**
- * Creates and [remember] a [BottomSheetState].
+ * Create and [remember] a [BottomSheetState].
  *
  * @param initialValue the initial value of the state
  * @param defineValues a lambda that defines the values of the bottom sheet

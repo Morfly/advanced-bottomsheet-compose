@@ -407,6 +407,7 @@ internal fun <T> BottomSheetNestedScrollConnection(
  * @param layoutHeight the height of the scaffold containing the sheet
  * @param sheetFullHeight the full height of the content of the bottom sheet including an offscreen
  * part
+ * @param density the [Density] instance
  */
 class BottomSheetValuesConfig<T : Any>(
     val layoutHeight: Int,
