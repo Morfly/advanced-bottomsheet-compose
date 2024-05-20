@@ -104,7 +104,7 @@ private fun BottomSheet(
             .nestedScroll(
                 remember(state) {
                     BottomSheetNestedScrollConnection(
-                        anchoredDraggableState = state,
+                        draggableState = state,
                         orientation = Orientation.Vertical,
                         onFling = { velocity ->
                             scope.launch { state.settle(velocity) }
