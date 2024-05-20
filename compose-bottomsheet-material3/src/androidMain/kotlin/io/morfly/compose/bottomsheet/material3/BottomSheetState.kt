@@ -66,6 +66,8 @@ class BottomSheetState<T : Any>(
     /**
      * Height of a layout containing a bottom sheet scaffold in pixels, or [Int.MAX_VALUE] if it has
      * not been initialized yet.
+     *
+     * Will be initialized during the first measurement phase of the provided sheet content.
      */
     var layoutHeight: Int by mutableIntStateOf(Int.MAX_VALUE)
         internal set
@@ -73,12 +75,16 @@ class BottomSheetState<T : Any>(
     /**
      * Full height of a bottom sheet content including an offscreen part in pixels, or
      * [Int.MAX_VALUE] if it has not been initialized yet.
+     *
+     * Will be initialized during the first measurement phase of the provided sheet content.
      */
     var sheetFullHeight: Int by mutableIntStateOf(Int.MAX_VALUE)
         internal set
 
     /**
      * Height of the visible part of a bottom sheet content in pixels.
+     *
+     * Will be initialized during the first measurement phase of the provided sheet content.
      */
     val sheetVisibleHeight: Float by derivedStateOf {
         layoutHeight - offset
@@ -88,8 +94,7 @@ class BottomSheetState<T : Any>(
      * The current offset of the bottom sheet in pixels, or [Float.NaN] if it has not been
      * initialized yet.
      *
-     * The offset will be initialized during the first measurement phase of the provided sheet
-     * content.
+     * Will be initialized during the first measurement phase of the provided sheet content.
      */
     val offset: Float get() = draggableState.offset
 
@@ -186,6 +191,12 @@ class BottomSheetState<T : Any>(
         targetValue: T
     ) = draggableState.snapTo(targetValue)
 
+    internal fun Int.toDpIfInitialized(): Dp =
+        if (this == Int.MAX_VALUE) Dp.Unspecified else with(density) { toDp() }
+
+    internal fun Float.toDpIfInitialized(): Dp =
+        if (isNaN()) Dp.Unspecified else with(density) { toDp() }
+
     companion object {
 
         /**
@@ -203,21 +214,45 @@ class BottomSheetState<T : Any>(
     }
 }
 
+/**
+ * Height of a layout containing a bottom sheet scaffold in dp, or [Dp.Unspecified] if it has
+ * not been initialized yet.
+ *
+ * Will be initialized during the first measurement phase of the provided sheet content.
+ */
 @ExperimentalFoundationApi
 val <T : Any> BottomSheetState<T>.layoutHeightDp: Dp
-    get() = with(density) { layoutHeight.toDp() }
+    get() = layoutHeight.toDpIfInitialized()
 
+/**
+ * Full height of a bottom sheet content including an offscreen part in pixels, or [Dp.Unspecified]
+ * if it has not been initialized yet.
+ *
+ * Will be initialized during the first measurement phase of the provided sheet content.
+ */
 @ExperimentalFoundationApi
 val <T : Any> BottomSheetState<T>.sheetFullHeightDp: Dp
-    get() = with(density) { sheetFullHeight.toDp() }
+    get() = sheetFullHeight.toDpIfInitialized()
 
+/**
+ * Height of the visible part of a bottom sheet content in pixels.
+ *
+ * Will be initialized during the first measurement phase of the provided sheet content.
+ */
+// TODO check if it's correct
 @ExperimentalFoundationApi
 val <T : Any> BottomSheetState<T>.sheetVisibleHeightDp: Dp
-    get() = with(density) { sheetVisibleHeight.toDp() }
+    get() = sheetVisibleHeight.toDpIfInitialized()
 
+/**
+ * The current offset of the bottom sheet in pixels, or [Dp.Unspecified] if it has not been
+ * initialized yet.
+ *
+ * Will be initialized during the first measurement phase of the provided sheet content.
+ */
 @ExperimentalFoundationApi
 val <T : Any> BottomSheetState<T>.offsetDp: Dp
-    get() = with(density) { offset.toDp() }
+    get() = offset.toDpIfInitialized()
 
 @ExperimentalFoundationApi
 fun <T : Any> BottomSheetState<T>.requireLayoutHeightDp(): Dp {
