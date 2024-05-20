@@ -36,13 +36,12 @@ private val MapUiOffsetLimit = 100.dp
 @Composable
 fun MapScreenContent(
     modifier: Modifier = Modifier,
-    initialLocation: LatLng = SanFranciscoLocation,
     bottomPadding: Dp = 0.dp,
     isBottomSheetMoving: Boolean = false,
     layoutHeight: Dp = Dp.Unspecified,
 ) {
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(initialLocation, DefaultMapZoom)
+        position = CameraPosition.fromLatLngZoom(SanFranciscoLocation, DefaultMapZoom)
     }
 
     val maxBottomPadding = remember(layoutHeight) { layoutHeight - MapUiOffsetLimit }
