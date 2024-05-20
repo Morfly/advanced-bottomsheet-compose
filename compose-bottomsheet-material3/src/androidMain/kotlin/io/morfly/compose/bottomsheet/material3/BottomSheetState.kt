@@ -40,11 +40,13 @@ import kotlinx.coroutines.launch
 /**
  * State of a [BottomSheetScaffold] composable.
  *
- * Contains states relating to its swipe position as well as animations between state values.
+ * Manages values of the bottom sheet and transitions between them as well. It also contains the
+ * dimension information about the bottom sheet.
  *
  * @param draggableState the [AnchoredDraggableState] that controls the bottom sheet values and drag
  * animations
  * @param defineValues a lambda that defines the values of the bottom sheet
+ * @param density the [Density] instance
  */
 @ExperimentalFoundationApi
 @Stable
@@ -55,6 +57,9 @@ class BottomSheetState<T : Any>(
 ) {
     internal val onRefreshValues = mutableSetOf<(Int, T, Boolean) -> Unit>()
 
+    /**
+     * The values of the bottom sheet.
+     */
     val values: DraggableAnchors<T> get() = draggableState.anchors
 
     /**
@@ -116,6 +121,12 @@ class BottomSheetState<T : Any>(
 
     fun requireOffset() = draggableState.requireOffset()
 
+    /**
+     * Initiates the reconfiguration of the bottom sheet values by calling the [defineValues] lambda.
+     *
+     * @param targetValue the target value of the bottom sheet after the update
+     * @param animate animate the transition to a [targetValue] or snap without any animation.
+     */
     fun refreshValues(
         targetValue: T = this.targetValue,
         animate: Boolean = true
@@ -125,11 +136,22 @@ class BottomSheetState<T : Any>(
         }
     }
 
+    /**
+     * Animate to a [targetValue].
+     *
+     * @param targetValue The target value of the animation
+     * @param velocity The velocity the animation should start with
+     */
     suspend fun animateTo(
         targetValue: T,
         velocity: Float = draggableState.lastVelocity,
     ) = draggableState.animateTo(targetValue, velocity)
 
+    /**
+     * Snap to a [targetValue] without any animation.
+     *
+     * @param targetValue The target value of the animation
+     */
     suspend fun snapTo(
         targetValue: T
     ) = draggableState.snapTo(targetValue)
