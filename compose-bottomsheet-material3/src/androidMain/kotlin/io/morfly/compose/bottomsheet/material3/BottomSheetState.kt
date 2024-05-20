@@ -59,18 +59,20 @@ class BottomSheetState<T : Any>(
     internal val onRefreshValues = mutableSetOf<(Int, T, Boolean) -> Unit>()
 
     /**
-     * The values of the bottom sheet.
+     * The values of the bottom sheet represented as [DraggableAnchors].
      */
     val values: DraggableAnchors<T> get() = draggableState.anchors
 
     /**
-     * Height of a layout containing a bottom sheet scaffold in pixels.
+     * Height of a layout containing a bottom sheet scaffold in pixels, or [Int.MAX_VALUE] if it has
+     * not been initialized yet.
      */
     var layoutHeight: Int by mutableIntStateOf(Int.MAX_VALUE)
         internal set
 
     /**
-     * Full height of a bottom sheet content including an offscreen part in pixels.
+     * Full height of a bottom sheet content including an offscreen part in pixels, or
+     * [Int.MAX_VALUE] if it has not been initialized yet.
      */
     var sheetFullHeight: Int by mutableIntStateOf(Int.MAX_VALUE)
         internal set
@@ -82,6 +84,13 @@ class BottomSheetState<T : Any>(
         layoutHeight - offset
     }
 
+    /**
+     * The current offset of the bottom sheet in pixels, or [Float.NaN] if it has not been
+     * initialized yet.
+     *
+     * The offset will be initialized during the first measurement phase of the provided sheet
+     * content.
+     */
     val offset: Float get() = draggableState.offset
 
     /**
@@ -96,6 +105,11 @@ class BottomSheetState<T : Any>(
      */
     val targetValue: T get() = draggableState.targetValue
 
+    /**
+     * Require [layoutHeight].
+     *
+     * @throws IllegalStateException If the layout height has not been initialized yet
+     */
     fun requireLayoutHeight(): Int {
         check(layoutHeight != Int.MAX_VALUE) {
             "The layoutHeight was read before being initialized. Did you access the " +
@@ -104,6 +118,11 @@ class BottomSheetState<T : Any>(
         return layoutHeight
     }
 
+    /**
+     * Require [sheetFullHeight].
+     *
+     * @throws IllegalStateException If the [sheetFullHeight] has not been initialized yet
+     */
     fun requireSheetFullHeight(): Int {
         check(sheetFullHeight != Int.MAX_VALUE) {
             "The sheetFullHeight was read before being initialized. Did you access the " +
@@ -112,6 +131,11 @@ class BottomSheetState<T : Any>(
         return sheetFullHeight
     }
 
+    /**
+     * Require [sheetVisibleHeight].
+     *
+     * @throws IllegalStateException If the [sheetVisibleHeight] has not been initialized yet
+     */
     fun requireSheetVisibleHeight(): Float {
         check(!sheetVisibleHeight.isNaN()) {
             "The sheetVisibleHeight was read before being initialized. Did you access the " +
@@ -120,6 +144,11 @@ class BottomSheetState<T : Any>(
         return sheetVisibleHeight
     }
 
+    /**
+     * Require [offset].
+     *
+     * @throws IllegalStateException If the [offset] has not been initialized yet
+     */
     fun requireOffset() = draggableState.requireOffset()
 
     /**
