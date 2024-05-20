@@ -36,7 +36,9 @@ fun BottomSheetContent(
     }
     LazyColumn(
         userScrollEnabled = userScrollEnabled,
-        modifier = modifier.padding(horizontal = 16.dp)
+        modifier = modifier
+            .padding(horizontal = 16.dp)
+            .padding(bottom = 16.dp)
     ) {
         item {
             Header(Modifier.padding(bottom = 16.dp))
