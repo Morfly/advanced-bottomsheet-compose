@@ -71,6 +71,7 @@ private fun Item(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
+            .fillMaxSize()
             .background(MaterialTheme.colorScheme.surfaceContainerLow)
             .padding(16.dp)
     ) {
