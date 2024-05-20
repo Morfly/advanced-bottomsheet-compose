@@ -254,21 +254,43 @@ val <T : Any> BottomSheetState<T>.sheetVisibleHeightDp: Dp
 val <T : Any> BottomSheetState<T>.offsetDp: Dp
     get() = offset.toDpIfInitialized()
 
+/**
+ * Require [layoutHeightDp].
+ *
+ * @throws IllegalStateException If the [BottomSheetState.layoutHeight] has not been initialized yet
+ */
 @ExperimentalFoundationApi
 fun <T : Any> BottomSheetState<T>.requireLayoutHeightDp(): Dp {
     return with(density) { requireLayoutHeight().toDp() }
 }
 
+/**
+ * Require [sheetFullHeightDp].
+ *
+ * @throws IllegalStateException If the [BottomSheetState.sheetFullHeight] has not been initialized
+ * yet
+ */
 @ExperimentalFoundationApi
 fun <T : Any> BottomSheetState<T>.requireSheetFullHeightDp(): Dp {
     return with(density) { requireSheetFullHeight().toDp() }
 }
 
+/**
+ * Require [sheetVisibleHeightDp].
+ *
+ * @throws IllegalStateException If the [BottomSheetState.sheetVisibleHeight] has not been
+ * initialized yet
+ */
 @ExperimentalFoundationApi
 fun <T : Any> BottomSheetState<T>.requireSheetVisibleHeightDp(): Dp {
     return with(density) { requireSheetVisibleHeight().toDp() }
 }
 
+/**
+ * Require [offsetDp].
+ *
+ * @throws IllegalStateException If the [BottomSheetState.offset] has not been initialized yet
+ */
 @ExperimentalFoundationApi
 fun <T : Any> BottomSheetState<T>.requireOffsetDp(): Dp {
     return with(density) { requireOffset().toDp() }
