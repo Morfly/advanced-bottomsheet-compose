@@ -239,7 +239,6 @@ val <T : Any> BottomSheetState<T>.sheetFullHeightDp: Dp
  *
  * Will be initialized during the first measurement phase of the provided sheet content.
  */
-// TODO check if it's correct
 @ExperimentalFoundationApi
 val <T : Any> BottomSheetState<T>.sheetVisibleHeightDp: Dp
     get() = sheetVisibleHeight.toDpIfInitialized()
