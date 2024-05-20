@@ -19,13 +19,6 @@ kotlin {
                 implementation(libs.compose.ui.graphics)
             }
         }
-
-        val androidMain by getting {
-            dependencies {
-                implementation(libs.androidx.core.ktx)
-                implementation(libs.androidx.appcompat) // TODO consider removing
-            }
-        }
     }
 }
 
