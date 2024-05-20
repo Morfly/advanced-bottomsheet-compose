@@ -1,6 +1,8 @@
 
 <h1 align="center">Configurable Bottom Sheet for Compose</h1></br>
 
+![Bottom sheet demo](demos/demo_1.png)
+
 # License
 
 Copyright 2024 morfly (Pavlo Stavytskyi).
