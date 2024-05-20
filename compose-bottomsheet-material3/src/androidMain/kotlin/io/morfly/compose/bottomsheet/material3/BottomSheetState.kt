@@ -225,7 +225,7 @@ val <T : Any> BottomSheetState<T>.layoutHeightDp: Dp
     get() = layoutHeight.toDpIfInitialized()
 
 /**
- * Full height of a bottom sheet content including an offscreen part in pixels, or [Dp.Unspecified]
+ * Full height of a bottom sheet content including an offscreen part in dp, or [Dp.Unspecified]
  * if it has not been initialized yet.
  *
  * Will be initialized during the first measurement phase of the provided sheet content.
@@ -235,7 +235,7 @@ val <T : Any> BottomSheetState<T>.sheetFullHeightDp: Dp
     get() = sheetFullHeight.toDpIfInitialized()
 
 /**
- * Height of the visible part of a bottom sheet content in pixels.
+ * Height of the visible part of a bottom sheet content in dp.
  *
  * Will be initialized during the first measurement phase of the provided sheet content.
  */
@@ -245,7 +245,7 @@ val <T : Any> BottomSheetState<T>.sheetVisibleHeightDp: Dp
     get() = sheetVisibleHeight.toDpIfInitialized()
 
 /**
- * The current offset of the bottom sheet in pixels, or [Dp.Unspecified] if it has not been
+ * The current offset of the bottom sheet in dp, or [Dp.Unspecified] if it has not been
  * initialized yet.
  *
  * Will be initialized during the first measurement phase of the provided sheet content.
