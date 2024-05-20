@@ -6,7 +6,7 @@
   <a href="https://search.maven.org/search?q=g:%22io.morfly.airin%22%20AND%20a:%22airin-gradle-plugin%22"><img alt="Maven Central" src="https://img.shields.io/maven-central/v/io.morfly.airin/airin-gradle-plugin.svg?label=Maven%20Central"/></a>
 </p><br>
 
-![Bottom sheet demo](demos/demo_1.png)
+![Bottom sheet demo](demos/demo_cover.png)
 
 ## Installation
 [![Maven Central](https://img.shields.io/maven-central/v/io.morfly.airin/airin-gradle-plugin.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22io.morfly.airin%22%20AND%20a:%22airin-gradle-plugin%22)
@@ -26,8 +26,8 @@ enum class SheetValue { Peek, PartiallyExpanded, Expanded }
 val sheetState = rememberBottomSheetState(
     initialValue = SheetValue.PartiallyExpanded,
     defineValues = {
-        // Bottom sheet height is 56 dp.
-        SheetValue.Peek at height(56.dp)
+        // Bottom sheet height is 100 dp.
+        SheetValue.Peek at height(100.dp)
         // Bottom sheet offset is 60%, meaning it takes 40% of the screen.
         SheetValue.PartiallyExpanded at offset(percent = 60)
         // Bottom sheet height is equal to its content height.
@@ -58,19 +58,35 @@ BottomSheetScaffold(
 | Dynamic configuration | | Allows to dynamically **add**/**update**/**remove** bottom sheet states while using it.|
 
 ### Bottom sheet values
-`offset(px = 200)` — 
 
-`offset(dp = 56.dp)` —
+```kotlin
+val sheetState = rememberBottomSheetState(
+    initialValue = SheetValue.PartiallyExpanded,
+    defineValues = {
+        SheetValue.Expanded at offset(...)
+        SheetValue.Expanded at height(...)
+        SheetValue.Expanded at contentHeight
+    }
+)
+```
+Define bottom sheet position using the offset from the top of the screen.
 
-`offset(percent = 60)` —
+- `offset(px = 200f)` — bottom sheet offset in `Float` pixels.
 
-`height(px = 200)` —
+- `offset(dp = 56.dp)` — bottom sheet offset in dp.
 
-`height(dp = 56.dp)` —
+- `offset(percent = 60)` — bottom sheet offset as percentage of the screen height. (It takes 40% of the screen height in this case)
 
-`height(percent = 40)` —
+Define bottom sheet position using its height.
 
-`contentHeight` — a dynamically calculated height of the bottom sheet so it wraps its content.
+- `height(px = 200f)` — bottom sheet height in `Float` pixels.
+
+- `height(dp = 56.dp)` — bottom sheet height in dp.
+
+- `height(percent = 40)` — bottom sheet height as a percentage of the screen height. (It takes 40% of the screen height in this case)
+
+Finally, there is a special case where you can configure the bottom sheet to wrap it's content height.
+- `contentHeight` — a dynamically calculated height of the bottom sheet so it wraps its content.
 
 ### Dynamically refreshing values
 
@@ -80,7 +96,7 @@ var isInitialState by remember { mutableStateOf(true) }
 val sheetState = rememberBottomSheetState(
     initialValue = SheetValue.PartiallyExpanded,
     defineValues = {
-        SheetValue.Peek at height(56.dp)
+        SheetValue.Peek at height(100.dp)
         if (isInitialState) {
             SheetValue.PartiallyExpanded at offset(percent = 60)
         }
