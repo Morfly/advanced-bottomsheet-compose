@@ -20,7 +20,7 @@ import io.morfly.compose.bottomsheet.material3.BottomSheetScaffold
 import io.morfly.compose.bottomsheet.material3.layoutHeightDp
 import io.morfly.compose.bottomsheet.material3.rememberBottomSheetScaffoldState
 import io.morfly.compose.bottomsheet.material3.rememberBottomSheetState
-import io.morfly.compose.bottomsheet.material3.sheetVisibleHeightDp
+import io.morfly.compose.bottomsheet.material3.requireSheetVisibleHeightDp
 
 @Composable
 fun CustomFinalizedDemoScreen() {
@@ -56,7 +56,7 @@ fun CustomFinalizedDemoScreen() {
         },
         content = {
             val bottomPadding by remember {
-                derivedStateOf { sheetState.sheetVisibleHeightDp }
+                derivedStateOf { sheetState.requireSheetVisibleHeightDp() }
             }
             val isBottomSheetMoving by remember {
                 derivedStateOf { sheetState.currentValue != sheetState.targetValue }

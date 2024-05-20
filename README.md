@@ -1,5 +1,5 @@
 
-<h1 align="center">Configurable Bottom Sheet for Compose</h1></br>
+<h1 align="center">Configurable Bottom Sheet for Compose</h1>
 
 <p align="center">
   <a href="https://opensource.org/licenses/Apache-2.0"><img alt="Apache 2.0 license" src="https://img.shields.io/badge/License-Apache%202.0-blue.svg"/></a>
@@ -9,7 +9,7 @@
 ![Bottom sheet demo](demos/demo_1.png)
 
 ## Installation
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.morfly.airin/airin-core/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.morfly.airin/airin-core)
+[![Maven Central](https://img.shields.io/maven-central/v/io.morfly.airin/airin-gradle-plugin.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22io.morfly.airin%22%20AND%20a:%22airin-gradle-plugin%22)
 
 ```kotlin
 dependencies {
@@ -46,7 +46,7 @@ BottomSheetScaffold(
     },
     content = {
         // Screen content
-    },
+    }
 )
 ```
 
@@ -59,19 +59,23 @@ BottomSheetScaffold(
 
 ### Bottom sheet values
 `offset(px = 200)` — 
+
 `offset(dp = 56.dp)` —
+
 `offset(percent = 60)` —
 
 `height(px = 200)` —
+
 `height(dp = 56.dp)` —
+
 `height(percent = 40)` —
 
-`contentHeight` — provides access to a dynamically calculated height of the bottom sheet so it wraps its content.
+`contentHeight` — a dynamically calculated height of the bottom sheet so it wraps its content.
 
 ### Dynamically refreshing values
 
 ```kotlin
-var isInitialState by rememberSaveable { mutableStateOf(true) }
+var isInitialState by remember { mutableStateOf(true) }
 
 val sheetState = rememberBottomSheetState(
     initialValue = SheetValue.PartiallyExpanded,
@@ -85,7 +89,7 @@ val sheetState = rememberBottomSheetState(
     confirmValueChange = {
         if (isInitialState) {
             isInitialState = false
-            // Triggers defineValues lambda.
+            // Invokes defineValues lambda again.
             refreshValues()
         }
         true
@@ -106,7 +110,7 @@ BottomSheetScaffold(
     },
     content = {
         val bottomPadding by remember {
-            derivedStateOf { sheetState.requireSheetVisibleHeightDp }
+            derivedStateOf { sheetState.requireSheetVisibleHeightDp() }
         }
 
         val cameraPositionState = rememberCameraPositionState()
@@ -119,6 +123,16 @@ BottomSheetScaffold(
     },
 )
 ```
+
+`offset`, `offsetDp` — 
+
+`layoutHeight`, `layoutHeightDp` —
+
+`sheetFullHeight`, `sheetFullHeightDp` —
+
+`sheetVisibleHeight`, `sheetVisibleHeightDp` —
+
+For each of the properties above a function with `require...` prefix which is recommented to use. For instance `requireOffset()`, `requireOffsetDp()`.
 
 ## License
 ```
