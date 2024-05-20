@@ -334,7 +334,11 @@ fun <T : Any> rememberBottomSheetState(
         velocityThreshold = velocityThreshold,
         animationSpec = animationSpec,
         confirmValueChange = { value ->
-            // TODO comment bug workaround
+            // If BottomSheetState.refreshValues is called while the bottom sheet is moving, the
+            // underlying AnchoredDraggableState may bug out, so that it just hangs at a random
+            // position and stops anchoring. This is a workaround to prevent that from happening.
+            // If the new value is not in the list of anchors, the bottom sheet will be animated to
+            // the closest anchor considering the direction of the movement.
             with(draggableState) {
                 val currentOffset = requireOffset()
                 val searchUpwards =
