@@ -50,7 +50,6 @@ fun CustomFinalizedDemoScreen() {
 
     BottomSheetScaffold(
         scaffoldState = scaffoldState,
-        sheetTonalElevation = 0.dp,
         sheetContent = {
             BottomSheetContent()
         },
