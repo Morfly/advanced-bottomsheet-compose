@@ -21,11 +21,13 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.Saver
@@ -325,7 +327,8 @@ fun <T : Any> rememberBottomSheetState(
     lateinit var draggableState: AnchoredDraggableState<T>
 
     val scope = rememberCoroutineScope()
-    var prevOffset by remember { mutableFloatStateOf(0f) }
+    var prevSearchedUpwards by remember { mutableStateOf<Boolean?>(null) }
+    var prevOffset by remember { mutableFloatStateOf(Float.NaN) }
 
     draggableState = rememberAnchoredDraggableState(
         initialValue = initialValue,
@@ -341,8 +344,9 @@ fun <T : Any> rememberBottomSheetState(
             with(draggableState) {
                 val currentOffset = requireOffset()
                 val searchUpwards =
-                    if (prevOffset == currentOffset) null
+                    if (prevOffset == currentOffset) prevSearchedUpwards
                     else prevOffset < currentOffset
+                prevSearchedUpwards = searchUpwards
 
                 prevOffset = currentOffset
                 if (!anchors.hasAnchorFor(value)) {
@@ -361,6 +365,12 @@ fun <T : Any> rememberBottomSheetState(
             }
         }
     )
+
+    LaunchedEffect(draggableState.anchors) {
+        if (prevOffset.isNaN()) {
+            prevOffset = with(draggableState) { anchors.positionOf(currentValue) }
+        }
+    }
 
     state = rememberBottomSheetState(draggableState, defineValues)
     return state
