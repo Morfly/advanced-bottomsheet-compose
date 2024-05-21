@@ -349,6 +349,7 @@ fun <T : Any> rememberBottomSheetState(
 
                 prevSearchedUpwards = searchUpwards
                 prevOffset = currentOffset
+
                 if (!anchors.hasAnchorFor(value)) {
                     val closest = if (searchUpwards != null) {
                         anchors.closestAnchor(currentOffset, searchUpwards)
