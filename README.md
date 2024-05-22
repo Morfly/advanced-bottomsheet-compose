@@ -7,7 +7,7 @@
 </p><br>
 
 <p align="center">
-<b>Configurable Bottom Sheet</b> provides an implementation of a <a href="https://m3.material.io/components/bottom-sheets/overview">Material3 Standard Bottom Sheet</a> component for Compose with advanced configuration abilities. 
+<b>Configurable Bottom Sheet</b> provides an implementation of a <a href="https://m3.material.io/components/bottom-sheets/overview">Material3 Standard Bottom Sheet</a> component for Compose with advanced and flexible configuration abilities. 
 </p><br>
 
 
