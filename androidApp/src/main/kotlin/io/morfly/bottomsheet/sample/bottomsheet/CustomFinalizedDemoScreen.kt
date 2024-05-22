@@ -30,7 +30,7 @@ fun CustomFinalizedDemoScreen() {
         initialValue = SheetValue.PartiallyExpanded,
         defineValues = {
             // Bottom sheet height is 100 dp.
-            SheetValue.Peek at height(100.dp)
+            SheetValue.Collapsed at height(100.dp)
             if (isInitialState) {
                 // Offset is 60% which means the bottom sheet takes 40% of the screen.
                 SheetValue.PartiallyExpanded at offset(percent = 60)
