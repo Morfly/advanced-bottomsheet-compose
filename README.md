@@ -15,13 +15,13 @@
 
 If you ever tried to do a task as simple as creating a bottom sheet in Compose with more than 2 expanded states while being able to precisely configure each of them or dynamically redefine them, you know that the official Material3 implementation is not flexible enough to do it. 
 
-With **Configurable Bottom Sheet** you can implement more sophisticated use cases for your designs that rely on bottom sheets. 
+With **Advanced Bottom Sheet** you can implement more sophisticated use cases for your designs that rely on bottom sheets. 
 
 ## Installation
 [![Maven Central](https://img.shields.io/maven-central/v/io.morfly.airin/airin-gradle-plugin.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22io.morfly.airin%22%20AND%20a:%22airin-gradle-plugin%22)
 
 #### Gradle
-Add the dependency below to the`build.gradle.kts` file of your module. The **Configurable Bottom Sheet** is compatible with [Compose Material3](https://developer.android.com/jetpack/androidx/releases/compose-material3).
+Add the dependency below to the`build.gradle.kts` file of your module. The **Advanced Bottom Sheet** is compatible with [Compose Material3](https://developer.android.com/jetpack/androidx/releases/compose-material3).
 ```kotlin
 dependencies {
     implementation("io.morfly.compose:advanced-bottomsheet-material3:<version>")
@@ -29,7 +29,7 @@ dependencies {
 ```
 
 ## How to use
-Configurable Bottom Sheet follows the API of `BottomSheetScaffold` component from the official Material3 implementation as close as possible while adding advanced configuration abilities for bottom sheets.
+Advanced Bottom Sheet follows the API of `BottomSheetScaffold` component from the official Material3 implementation as close as possible while adding advanced configuration abilities for bottom sheets.
 
 Folow the following 3 steps to implement a bottom sheet in your app.
 
