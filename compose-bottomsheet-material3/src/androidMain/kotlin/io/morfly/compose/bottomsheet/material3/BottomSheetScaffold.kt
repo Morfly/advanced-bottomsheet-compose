@@ -172,7 +172,7 @@ fun <T : Any> BottomSheetScaffold(
             SideEffect {
                 scaffoldState.sheetState.layoutHeight = layoutHeight
             }
-            BottomSheet(
+            StandardBottomSheet(
                 state = scaffoldState.sheetState,
                 sheetMaxWidth = sheetMaxWidth,
                 sheetSwipeEnabled = sheetSwipeEnabled,
@@ -268,7 +268,7 @@ private enum class BottomSheetScaffoldLayoutSlot { TopBar, Body, Sheet, Snackbar
 
 @ExperimentalFoundationApi
 @Composable
-internal fun <T : Any> BottomSheet(
+internal fun <T : Any> StandardBottomSheet(
     state: BottomSheetState<T>,
     calculateAnchors: (sheetFullHeight: Int) -> DraggableAnchors<T>,
     sheetMaxWidth: Dp,
