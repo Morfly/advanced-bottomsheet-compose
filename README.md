@@ -1,5 +1,5 @@
 
-<h1 align="center">Configurable Bottom Sheet for Compose</h1>
+<h1 align="center">Advanced Bottom Sheet for Compose</h1>
 
 <p align="center">
   <a href="https://opensource.org/licenses/Apache-2.0"><img alt="Apache 2.0 license" src="https://img.shields.io/badge/License-Apache%202.0-blue.svg"/></a>
@@ -7,7 +7,7 @@
 </p><br>
 
 <p align="center">
-<b>Configurable Bottom Sheet</b> provides an implementation of a <a href="https://m3.material.io/components/bottom-sheets/overview">Material3 Standard Bottom Sheet</a> component for Compose with advanced and flexible configuration abilities. 
+<b>Advanced Bottom Sheet</b> provides an implementation of a <a href="https://m3.material.io/components/bottom-sheets/overview">Material3 Standard Bottom Sheet</a> component for Compose with flexible configuration abilities. 
 </p><br>
 
 
@@ -24,7 +24,7 @@ With **Configurable Bottom Sheet** you can implement more sophisticated use case
 Add the dependency below to the`build.gradle.kts` file of your module. The **Configurable Bottom Sheet** is compatible with [Compose Material3](https://developer.android.com/jetpack/androidx/releases/compose-material3).
 ```kotlin
 dependencies {
-    implementation("io.morfly.compose:bottomsheet-material3:<version>")
+    implementation("io.morfly.compose:advanced-bottomsheet-material3:<version>")
 }
 ```
 
