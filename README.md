@@ -196,3 +196,20 @@ By using `derivedStateOf` you will get realtime updates once the bottom sheet is
 `sheetVisibleHeight`, `sheetVisibleHeightDp` — visible height of the bottom sheet in pixels and dp.
 
 For each of the properties above a function with `require...` prefix is available which is preferred way to retrieve these values. For instance `requireOffset()`, `requireOffsetDp()`, etc.
+
+## License
+```
+Copyright 2024 morfly (Pavlo Stavytskyi).
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   https://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+```
