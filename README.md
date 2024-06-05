@@ -3,7 +3,6 @@
 
 <p align="center">
   <a href="https://opensource.org/licenses/Apache-2.0"><img alt="Apache 2.0 license" src="https://img.shields.io/badge/License-Apache%202.0-blue.svg"/></a>
-  <a href="https://search.maven.org/search?q=g:%22io.morfly.airin%22%20AND%20a:%22airin-gradle-plugin%22"><img alt="Maven Central" src="https://img.shields.io/maven-central/v/io.morfly.airin/airin-gradle-plugin.svg?label=Maven%20Central"/></a>
 </p><br>
 
 <p align="center">
@@ -16,14 +15,11 @@
 The purpose of this repository is to lift the limitations of the original Material 3 bottom sheet by providing a more flexible API for configuring bottom sheet states. With **Advanced Bottom Sheet** you can implement more sophisticated use cases for your designs that rely on bottom sheets. 
 
 ## Installation
-[![Maven Central](https://img.shields.io/maven-central/v/io.morfly.airin/airin-gradle-plugin.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22io.morfly.airin%22%20AND%20a:%22airin-gradle-plugin%22)
 
 #### Gradle
 Add the dependency below to the`build.gradle.kts` file of your module. The **Advanced Bottom Sheet** is compatible with [Compose Material3](https://developer.android.com/jetpack/androidx/releases/compose-material3).
 ```kotlin
-dependencies {
-    implementation("io.morfly.compose:advanced-bottomsheet-material3:<version>")
-}
+// Coming soon, check back in a couple of days.
 ```
 
 ## How to use
