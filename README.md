@@ -13,9 +13,7 @@
 
 ![Bottom sheet demo](demos/demo_cover.png)
 
-If you ever tried to do a task as simple as creating a bottom sheet in Compose with more than 2 expanded states while being able to precisely configure each of them or dynamically redefine them, you know that the official Material3 implementation is not flexible enough to do it. 
-
-With **Advanced Bottom Sheet** you can implement more sophisticated use cases for your designs that rely on bottom sheets. 
+The purpose of this repository is to lift the limitations of the original Material 3 bottom sheet by providing a more flexible API for configuring bottom sheet states. With **Advanced Bottom Sheet** you can implement more sophisticated use cases for your designs that rely on bottom sheets. 
 
 ## Installation
 [![Maven Central](https://img.shields.io/maven-central/v/io.morfly.airin/airin-gradle-plugin.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22io.morfly.airin%22%20AND%20a:%22airin-gradle-plugin%22)
@@ -79,11 +77,9 @@ BottomSheetScaffold(
 ```
 
 ### Comparing with Google's implementation
-|Feature | Official Material 3 sheet | This sheet |
-|-|-|-|
-| Bottom sheet values (states) | Has only 2 expanded values, `PartiallyExpanded` and `Expanded`. Does not allow to have more. | Allows to configure as many values (states) as you want. |
-| Flexible configuration| TODO | Provides a rich configuration API that allows setting bottom sheet dimensions as **offset** and **height** values specified in **pixels**, **dp** or **percent**. |
-| Dynamic reconfiguration | TODO | Allows to dynamically **add**/**update**/**remove** bottom sheet values (states) while using it.|
+This project mitigates 2 constraints of the original Material 3 bottom sheet implementation from Google.
+- **More than 2 expanded states**. The original implementation allows the maximum of 2 expanded states. The **advanced bottom sheet** provides a convenient API for declaring as many states as you like.
+- **Dynamic state changes**. It also enables the ability to dynamically change the number of states whyle the bottom sheet is being used including mid-animation cases when it's being dragged.
 
 ### Bottom sheet values
 You can have as many bottom sheet values as you like and be able to easily configure the position of each of them. 
@@ -127,8 +123,6 @@ In some cases, you might need to add, update or remove the bottom sheet values w
 Imagine a use case when your bottom sheet has 3 values, `Collapsed`, `PartiallyExpanded` and `Expanded`. You need the mid value `PartiallyExpanded` to be present when you open the screen. However, once the user drags the bottom sheet you need to remove it so that only `Collapsed` and `PartiallyExpanded` values are present.
 
 The `BottomSheetState` instance provides a `refreshValues` function that upon calling will invoke the `defineValues` lambda again.
-
-`<Animation>`
 
 ```kotlin
 var isInitialState by remember { mutableStateOf(true) }
