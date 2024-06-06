@@ -11,14 +11,14 @@ class MavenPublishPlugin : ConventionPlugin({
     mavenPublishing {
         val version: String by properties
         coordinates(
-            groupId = "io.morfly.TODO",
+            groupId = "io.morfly.compose",
             artifactId = project.name,
             version = version
         )
 
         pom {
-            name.set("TODO")
-            description.set("TODO")
+            name.set("Advanced Bottom Sheet for Compose")
+            description.set("Advanced Bottom Sheet provides an implementation of a Standard Bottom Sheet component for Compose with flexible configuration abilities")
             inceptionYear.set("2024")
             url.set("https://github.com/open-turo/nibel")
             licenses {
@@ -36,9 +36,9 @@ class MavenPublishPlugin : ConventionPlugin({
                 }
             }
             scm {
-                url.set("https://github.com/open-turo/nibel")
-                connection.set("scm:git:git://github.com/morfly/MultiState-BottomSheet.git")
-                developerConnection.set("scm:git:ssh://git@github.com/morfly/MultiState-BottomSheet.git")
+                url.set("https://github.com/Morfly/advanced-bottomsheet-compose")
+                connection.set("scm:git:git://github.com/Morfly/advanced-bottomsheet-compose.git")
+                developerConnection.set("scm:git:ssh://git@github.com/Morfly/advanced-bottomsheet-compose.git")
             }
         }
 
