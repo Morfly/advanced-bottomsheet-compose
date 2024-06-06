@@ -23,4 +23,4 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 rootProject.name = "MultiState-BottomSheet"
 include(":androidApp")
-include(":compose-bottomsheet-material3")
+include(":advanced-bottomsheet-material3")

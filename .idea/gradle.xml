@@ -21,10 +21,10 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/advanced-bottomsheet-material3" />
             <option value="$PROJECT_DIR$/androidApp" />
             <option value="$PROJECT_DIR$/build-tools" />
             <option value="$PROJECT_DIR$/build-tools/conventions" />
-            <option value="$PROJECT_DIR$/compose-bottomsheet-material3" />
           </set>
         </option>
         <option name="resolveExternalAnnotations" value="false" />

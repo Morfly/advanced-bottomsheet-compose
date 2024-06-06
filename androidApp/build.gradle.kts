@@ -59,7 +59,7 @@ secrets {
 }
 
 dependencies {
-    implementation(projects.composeBottomsheetMaterial3)
+    implementation(projects.advancedBottomsheetMaterial3)
 
     implementation(platform(libs.compose.bom))
 
