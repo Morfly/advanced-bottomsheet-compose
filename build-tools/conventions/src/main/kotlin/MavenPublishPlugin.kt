@@ -20,7 +20,7 @@ class MavenPublishPlugin : ConventionPlugin({
             name.set("Advanced Bottom Sheet for Compose")
             description.set("Advanced bottom sheet component for Compose with flexible configuration")
             inceptionYear.set("2024")
-            url.set("https://github.com/open-turo/nibel")
+            url.set("https://github.com/Morfly/advanced-bottomsheet-compose")
             licenses {
                 license {
                     name.set("The Apache License, Version 2.0")
