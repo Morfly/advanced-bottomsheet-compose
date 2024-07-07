@@ -18,7 +18,7 @@ class MavenPublishPlugin : ConventionPlugin({
 
         pom {
             name.set("Advanced Bottom Sheet for Compose")
-            description.set("Advanced Bottom Sheet provides an implementation of a Standard Bottom Sheet component for Compose with flexible configuration abilities")
+            description.set("Advanced bottom sheet component for Compose with flexible configuration")
             inceptionYear.set("2024")
             url.set("https://github.com/open-turo/nibel")
             licenses {
