@@ -21,6 +21,6 @@ dependencyResolutionManagement {
 }
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
-rootProject.name = "MultiState-BottomSheet"
+rootProject.name = "advanced-bottomsheet-compose"
 include(":androidApp")
 include(":advanced-bottomsheet-material3")
