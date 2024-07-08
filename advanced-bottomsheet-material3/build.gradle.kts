@@ -9,14 +9,20 @@ plugins {
 }
 
 kotlin {
-    androidTarget()
+    androidTarget { publishLibraryVariants("release") }
 
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(libs.compose.material3)
-                implementation(libs.compose.ui)
-                implementation(libs.compose.ui.graphics)
+                implementation(libs.compose.material3.ver)
+                implementation(libs.compose.ui.ver)
+                implementation(libs.compose.ui.graphics.ver)
+            }
+        }
+
+        val androidMain by getting {
+            dependencies {
+                implementation(project.dependencies.platform(libs.compose.bom))
             }
         }
     }
@@ -59,8 +65,4 @@ tasks.withType<KotlinCompile> {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-}
-
-dependencies {
-    implementation(platform(libs.compose.bom))
 }

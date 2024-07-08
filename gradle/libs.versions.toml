@@ -34,6 +34,11 @@ compose-coil = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 # ===== Gradle plugins =====
 gradlePlugin-mavenPublish = { module = "com.vanniktech:gradle-maven-publish-plugin", version.ref = "mavenPublish" }
 
+# ===== Temporary artifacts with versions to overcome bug during publishing to Maven Central =====
+compose-material3-ver = { group = "androidx.compose.material3", name = "material3", version = "1.2.1" }
+compose-ui-ver = { group = "androidx.compose.ui", name = "ui", version = "1.6.6" }
+compose-ui-graphics-ver = { group = "androidx.compose.ui", name = "ui-graphics", version = "1.6.6" }
+
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
