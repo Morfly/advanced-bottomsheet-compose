@@ -19,7 +19,7 @@ The purpose of this repository is to lift the limitations of the original Materi
 [![Maven Central](https://img.shields.io/maven-central/v/io.morfly.compose/advanced-bottomsheet-material3.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22io.morfly.compose%22%20AND%20a:%22advanced-bottomsheet-material3%22)
 
 #### Gradle
-Add the dependency below to the`build.gradle.kts` file of your module. The **Advanced Bottom Sheet** is compatible with [Compose Material3](https://developer.android.com/jetpack/androidx/releases/compose-material3).
+Add the dependency below to the `build.gradle.kts` file of your module. The **Advanced Bottom Sheet** is compatible with [Compose Material3](https://developer.android.com/jetpack/androidx/releases/compose-material3).
 ```kotlin
 dependencies {
     implementation("io.morfly.compose:advanced-bottomsheet-material3:<version>")
