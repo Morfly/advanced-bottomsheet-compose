@@ -225,8 +225,9 @@ internal fun BottomSheetScaffoldLayout(
         }[0].measure(looseConstraints)
 
         val topBarPlaceable = topBar?.let {
-            subcompose(BottomSheetScaffoldLayoutSlot.TopBar, topBar)[0]
-                .measure(looseConstraints)
+            subcompose(BottomSheetScaffoldLayoutSlot.TopBar, topBar).takeIf { it.isNotEmpty() }?.let {
+                it[0].measure(looseConstraints)
+            }
         }
         val topBarHeight = topBarPlaceable?.height ?: 0
 
