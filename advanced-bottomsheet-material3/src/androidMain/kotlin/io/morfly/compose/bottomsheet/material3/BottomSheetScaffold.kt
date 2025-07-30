@@ -59,6 +59,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.Velocity
+import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -142,6 +143,8 @@ fun <T : Any> BottomSheetScaffold(
     scaffoldState: BottomSheetScaffoldState<T>,
     sheetContent: @Composable ColumnScope.() -> Unit,
     modifier: Modifier = Modifier,
+    sheetAlignment: Alignment.Horizontal = Alignment.CenterHorizontally,
+    sheetPaddingHorizontal: Dp = 0.dp,
     sheetMaxWidth: Dp = BottomSheetDefaults.SheetMaxWidth,
     sheetShape: Shape = BottomSheetDefaults.ExpandedShape,
     sheetContainerColor: Color = BottomSheetDefaults.ContainerColor,
@@ -160,6 +163,8 @@ fun <T : Any> BottomSheetScaffold(
 
     BottomSheetScaffoldLayout(
         modifier = modifier,
+        sheetAlignment = sheetAlignment,
+        sheetPaddingHorizontal = sheetPaddingHorizontal,
         topBar = topBar,
         body = content,
         snackbarHost = {
@@ -206,6 +211,8 @@ fun <T : Any> BottomSheetScaffold(
 @Composable
 internal fun BottomSheetScaffoldLayout(
     modifier: Modifier,
+    sheetAlignment: Alignment.Horizontal,
+    sheetPaddingHorizontal: Dp,
     topBar: @Composable (() -> Unit)?,
     body: @Composable (innerPadding: PaddingValues) -> Unit,
     bottomSheet: @Composable (layoutHeight: Int) -> Unit,
@@ -245,7 +252,18 @@ internal fun BottomSheetScaffoldLayout(
 
         layout(width = layoutWidth, height = layoutHeight) {
             val sheetOffsetY = sheetOffset().roundToInt()
-            val sheetOffsetX = Integer.max(0, (layoutWidth - sheetPlaceable.width) / 2)
+            val sheetOffsetX = when (sheetAlignment) {
+                Alignment.Start -> {
+                    0 + sheetPaddingHorizontal.toPx().toInt()
+                }
+                Alignment.CenterHorizontally -> {
+                    Integer.max(0, (layoutWidth - sheetPlaceable.width) / 2)
+                }
+                Alignment.End -> {
+                    Integer.max(0, (layoutWidth - sheetPlaceable.width - sheetPaddingHorizontal.toPx().toInt()))
+                }
+                else -> throw IllegalArgumentException()
+            }
 
             val snackbarOffsetX = (layoutWidth - snackbarPlaceable.width) / 2
 
